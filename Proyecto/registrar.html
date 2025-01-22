@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Registro Comercio/Usuario</title>
+  <link rel="stylesheet" href="./css/styles.css" />
+</head>
+<body>
+  <header>
+    <h1>Bienvenido a nuestro sistema</h1>
+    <nav>
+      <ul>
+        <li><a href="index.html">Inicio</a></li>
+        <li><a href="servicios.html">Servicios</a></li>
+        <li><a href="actividades.html">Actividades</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <h2>Selecciona una opción</h2>
+    <button id="btn-comercio">Comercio</button>
+    <button id="btn-usuario">Usuario</button>
+
+    <div id="seleccion-inicial"></div>
+
+    <!-- Formulario de Comercio -->
+    <section id="formulario-comercio" class="hidden">
+      <h3>Formulario de Comercio</h3>
+      <form id="comercio-form">
+        <label for="nombre-comercio">Nombre del Comercio:</label>
+        <input type="text" id="nombre-comercio" required />
+
+        <label for="descripcion-comercio">Descripción:</label>
+        <textarea id="descripcion-comercio" required></textarea>
+
+        <label for="precio-comercio">Precio:</label>
+        <input type="number" id="precio-comercio" required />
+
+        <label for="valoracion-comercio">Valoración:</label>
+        <input type="number" id="valoracion-comercio" required />
+
+        <button type="submit">Registrar Comercio</button>
+      </form>
+    </section>
+
+    <!-- Contenedor donde mostrará info del Comercio -->
+    <div id="comercio-info"></div>
+
+    <!-- Formulario de Usuario -->
+    <section id="formulario-usuario" class="hidden">
+      <h3>Formulario de Usuario</h3>
+      <form id="usuario-form">
+        <label for="nombre-usuario">Nombre:</label>
+        <input type="text" id="nombre-usuario" required />
+
+        <label for="email-usuario">Email:</label>
+        <input type="email" id="email-usuario" required />
+
+        <label for="telefono-usuario">Teléfono:</label>
+        <input type="text" id="telefono-usuario" required />
+
+        <label for="direccion-usuario">Dirección:</label>
+        <input type="text" id="direccion-usuario" required />
+
+        <button type="submit">Registrar Usuario</button>
+      </form>
+    </section>
+
+    <!-- Contenedor donde mostrará info del Usuario -->
+    <div id="usuario-info"></div>
+
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Comercio & Servicios</p>
+  </footer>
+
+  <!-- Carga primero las clases, luego el main.js -->
+  <script type="module" src="./javascript/clases.js"></script>
+  <script type="module" src="./javascript/usuario.js"></script>
+</body>
+</html>

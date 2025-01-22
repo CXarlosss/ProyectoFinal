@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Servicios</title>
+    <link rel="stylesheet" href="./css/styles-servicios.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Servicios Disponibles</h1>
+      <!-- Aquí podrías incluir tu menú de navegación -->
+      <nav>
+        <ul>
+          <li><a href="index.html">Inicio</a></li>
+          <li><a href="actividades.html">Actividades</a></li>
+          <li><a href="contactanos.html">Contáctanos</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      <div class="main-buttons">
+        <button id="btn-mostrar-todos">General</button>
+        <button id="btn-filtrar-actividades">Filtrar Actividades</button>
+        <button id="btn-filtrar-comercios">Filtrar Comercios</button>
+        <button id="btn-mostrar-mas">Mostrar más</button>
+        
+      </div>
+
+      <!-- Contenedor donde se inyectará el grid de servicios -->
+      <div id="servicios-container" class="grid"></div>
+    </main>
+
+    <footer>
+      <p>&copy; 2025 - Marketplace de Productos Locales</p>
+    </footer>
+
+    <!-- Script con la lógica para cargar y mostrar servicios -->
+    <script type="module" src="./javascript/servicios.js"></script>
+  </body>
+</html>

@@ -1,2 +1,4 @@
 _hidden
 node_modules
+dist 
+build

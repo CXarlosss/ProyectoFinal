@@ -35,11 +35,23 @@
         <label for="descripcion-comercio">Descripción:</label>
         <textarea id="descripcion-comercio" required></textarea>
 
+        <label for="ubicacion-comercio">Ubicación:</label>
+        <input type="text" id="ubicacion-comercio" required />
+
         <label for="precio-comercio">Precio:</label>
         <input type="number" id="precio-comercio" required />
 
         <label for="valoracion-comercio">Valoración:</label>
         <input type="number" id="valoracion-comercio" required />
+
+        <label for="horarios-comercio">Horario:</label>    
+        <input type="text" id="horario-comercio" required /> 
+
+        <label for="metodo-pago-comercio">Método de Pago:</label>
+        <input type="text" id="metodo-pago-comercio" required />
+
+        <label for="categoria-comercio">Categoría:</label>
+        <input type="text" id="categoria-comercio"  />
 
         <button type="submit">Registrar Comercio</button>
       </form>
@@ -78,7 +90,7 @@
   </footer>
 
   <!-- Carga primero las clases, luego el main.js -->
-  <script type="module" src="./javascript/clases.js"></script>
-  <script type="module" src="./javascript/usuario.js"></script>
+  <script type="module" src="./clases/clases.js"></script>
+  <script type="module" src="./javascript/registrar.js"></script>
 </body>
 </html>

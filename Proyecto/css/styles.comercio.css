@@ -1,0 +1,22 @@
+
+.__circuit-header-card {
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.__circuit-extended-info {
+  background: #f9f9f9;
+  border-top: 1px solid #ccc;
+  padding: 10px;
+  display: none; /* Ocultar inicialmente */
+}
+
+.__circuit-extended-info.__hidden {
+  display: none;
+}
+
+.__circuit-extended-info:not(.__hidden) {
+  display: block;
+}

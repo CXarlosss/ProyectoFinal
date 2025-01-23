@@ -1,3 +1,4 @@
+//@ts-check
 import { ComercioActividad, Usuario } from './clases.js';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -11,28 +12,28 @@ document.addEventListener('DOMContentLoaded', () => {
   const usuarioInfo = document.getElementById('usuario-info');
 
   // Variables para almacenar instancias
-  let comercioActual = null;
-  let usuarioActual = null;
+  let comercioActual= ComercioActividad || null;
+  let usuarioActual = Usuario || null ;
 
   // Mostrar formulario de Comercio
-  btnComercio.addEventListener('click', () => {
+  btnComercio?.addEventListener('click', () => {
     if (seleccionInicial) seleccionInicial.classList.add('hidden');
-    formularioComercio.classList.remove('hidden');
+    formularioComercio?.classList.remove('hidden');
   });
 
   // Mostrar formulario de Usuario
-  btnUsuario.addEventListener('click', () => {
+  btnUsuario?.addEventListener('click', () => {
     if (seleccionInicial) seleccionInicial.classList.add('hidden');
-    formularioUsuario.classList.remove('hidden');
+    formularioUsuario?.classList.remove('hidden');
   });
 
   // Registrar Comercio
   const formComercio = document.getElementById('comercio-form');
-  formComercio.addEventListener('submit', (e) => {
+  formComercio?.addEventListener('submit', (e) => {
     e.preventDefault();
-    const nombre = document.getElementById('nombre-comercio').value;
+    const nombre = (document.getElementById('nombre-comercio')).value;
     const descripcion = document.getElementById('descripcion-comercio').value;
-    const precio = document.getElementById('precio-comercio').value;
+    const precio = parseFloat((document.getElementById('precio-comercio')).value);
     const valoracion = document.getElementById('valoracion-comercio').value;
 
     // Instancia
@@ -54,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
     );
 
     // Ocultamos el formulario
-    formularioComercio.classList.add('hidden');
+    formularioComercio?.classList.add('hidden');
 
     // Mostramos la info con un botón “Editar” en la misma línea
     comercioInfo.innerHTML = `
@@ -66,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Agregar listener al botón “Editar Comercio” recién creado
     const btnEditarComercio = document.getElementById('editar-comercio');
-    btnEditarComercio.addEventListener('click', () => {
+    btnEditarComercio?.addEventListener('click', () => {
       editarComercio();
     });
   });
@@ -94,8 +95,8 @@ document.addEventListener('DOMContentLoaded', () => {
     e.preventDefault();
 
     // Solo hacer esto si el botón dice "Guardar Cambios"
-    const btnSubmit = formComercio.querySelector('button[type="submit"]');
-    if (btnSubmit.textContent !== 'Guardar Cambios') return;
+    const btnSubmit = formComercio?.querySelector('button[type="submit"]');
+    if (btnSubmit?.textContent !== 'Guardar Cambios') return;
 
     // Actualizar datos
     comercioActual.nombre = document.getElementById('nombre-comercio').value;
@@ -104,7 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
     comercioActual.valoracion = document.getElementById('valoracion-comercio').value;
 
     // Ocultamos el formulario
-    formularioComercio.classList.add('hidden');
+    formularioComercio?.classList.add('hidden');
 
     // Volvemos a mostrar la info actualizada con botón de Editar
     comercioInfo.innerHTML = `
@@ -119,17 +120,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Volver a agregar listener de editar
     const btnEditarComercio = document.getElementById('editar-comercio');
-    btnEditarComercio.addEventListener('click', () => {
+    btnEditarComercio?.addEventListener('click', () => {
       editarComercio();
     });
 
     // Removemos este listener para no duplicar eventos
-    formComercio.removeEventListener('submit', guardarCambiosComercio);
+    formComercio?.removeEventListener('submit', guardarCambiosComercio);
   }
 
   // Registrar Usuario
   const formUsuario = document.getElementById('usuario-form');
-  formUsuario.addEventListener('submit', (e) => {
+  formUsuario?.addEventListener('submit', (e) => {
     e.preventDefault();
     const nombre = document.getElementById('nombre-usuario').value;
     const email = document.getElementById('email-usuario').value;
@@ -149,7 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
     );
 
     // Ocultamos el formulario
-    formularioUsuario.classList.add('hidden');
+    formularioUsuario?.classList.add('hidden');
 
     // Mostramos info con un botón “Editar”
     usuarioInfo.innerHTML = `
@@ -160,7 +161,7 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
 
     const btnEditarUsuario = document.getElementById('editar-usuario');
-    btnEditarUsuario.addEventListener('click', () => {
+    btnEditarUsuario?.addEventListener('click', () => {
       editarUsuario();
     });
   });
@@ -184,8 +185,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function guardarCambiosUsuario(e) {
     e.preventDefault();
-    const btnSubmit = formUsuario.querySelector('button[type="submit"]');
-    if (btnSubmit.textContent !== 'Guardar Cambios') return;
+    const btnSubmit = formUsuario?.querySelector('button[type="submit"]');
+    if (btnSubmit?.textContent !== 'Guardar Cambios') return;
 
     // Actualizamos la instancia
     usuarioActual.nombre = document.getElementById('nombre-usuario').value;
@@ -194,7 +195,7 @@ document.addEventListener('DOMContentLoaded', () => {
     usuarioActual.direccion = document.getElementById('direccion-usuario').value;
 
     // Ocultamos el formulario
-    formularioUsuario.classList.add('hidden');
+    formularioUsuario?.classList.add('hidden');
 
     // Mostramos la info con el nuevo nombre
     usuarioInfo.innerHTML = `
@@ -209,10 +210,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Volver a agregar listener de editar
     const btnEditarUsuario = document.getElementById('editar-usuario');
-    btnEditarUsuario.addEventListener('click', () => {
+    btnEditarUsuario?.addEventListener('click', () => {
       editarUsuario();
     });
 
-    formUsuario.removeEventListener('submit', guardarCambiosUsuario);
+    formUsuario?.removeEventListener('submit', guardarCambiosUsuario);
   }
 });

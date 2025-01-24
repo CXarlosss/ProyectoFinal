@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Servicios - Plataforma Local</title>
+    <link rel="stylesheet" href="./css/estilosservicios.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav class="navbar">
+            <div class="logo">Plataforma Local</div>
+            <ul class="nav-links">
+                <li><a href="index.html">Inicio</a></li>
+                <li><a href="usuario.html">Usuario</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Servicios Section -->
+    <section class="servicios">
+        <div class="container">
+            <h1>Servicios Disponibles</h1>
+
+            <!-- Listado de servicios -->
+            <div id="listaServicios" class="lista-servicios">
+                <h2>Servicios Actuales</h2>
+                <!-- Aquí se renderizarán los servicios como "cajas" -->
+            </div>
+
+            <!-- Formulario para crear un nuevo servicio -->
+            <form id="crearServicioForm" class="crear-servicio-form">
+                <h2>Crear Nuevo Servicio</h2>
+                <input type="text" id="nombreServicio" name="nombreServicio" placeholder="Nombre del Servicio" required>
+                <textarea id="descripcionServicio" name="descripcionServicio" placeholder="Descripción del Servicio" required></textarea>
+                <button type="submit" class="btn-primary">Crear Servicio</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2025 Plataforma Local. Todos los derechos reservados.</p>
+    </footer>
+
+    <script src="servicios.js"></script>
+</body>
+</html>

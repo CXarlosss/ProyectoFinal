@@ -10,7 +10,7 @@ body {
     font-family: Arial, Helvetica, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #bbc9cf; 
+    background-color: #d2c7d3; 
     color: #383434;               
 }
 
@@ -79,7 +79,7 @@ button:hover {
 
 
 section {
-    background-color: #c4b5be; /* Fondo púrpura */
+    background-color: #d8d3d6; /* Fondo púrpura */
     border-radius: 5px;
     margin-top: 20px;
     padding: 20px;
@@ -96,7 +96,7 @@ form {
     max-width: 400px;
     /* Caja contenedora */
     box-shadow: 1px 1px 5px rgba(0,0,0,0.2);
-    background-color: #fff;      /* Fondo claro para inputs */
+    background-color: #e4e1e1;      /* Fondo claro para inputs */
     border-radius: 5px;
     padding: 15px;
     color: #333;                 /* Texto oscuro dentro del form */
@@ -112,6 +112,7 @@ form input,
 form textarea,
 form button {
     width: 100%;
+
     margin-bottom: 10px;
     padding: 5px;
     border-radius: 5px;
@@ -139,14 +140,9 @@ form button:hover {
 
 /* FOOTER */
 
-footer{
-    position:absolute;
-    bottom:0;
-    height: 40px;
-    margin-top:50px;
-    width:100%;
-    background-color:  #50203f; 
-    color: white;
-    padding: 10px;
+footer {
     text-align: center;
-} 
+    padding: 20px;
+    background-color: #331428; 
+    color: white;
+}

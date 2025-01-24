@@ -130,15 +130,9 @@ button:hover {
     background-color: #b2005e;
     color: #fff; 
   }
-  footer{
-    position:absolute;
-    bottom:0;
-    height: 40px;
-    margin-top:50px;
-    width:100%;
-    background-color:  #50203f; 
-    color: white;
-    padding: 10px;
+footer {
     text-align: center;
-} 
-
+    padding: 20px;
+    background-color: #331428; 
+    color: white;
+}

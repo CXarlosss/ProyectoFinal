@@ -1,0 +1,121 @@
+/* styles.css */
+
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+    background-color: #f4f4f9;
+    color: #333;
+}
+
+/* Navbar Styles */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background-color: #0078D7;
+    color: white;
+}
+.navbar .logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 1rem;
+}
+.nav-links a {
+    color: white;
+    text-decoration: none;
+    font-size: 1rem;
+}
+.nav-links a:hover {
+    text-decoration: underline;
+}
+
+/* Hero Section */
+.hero {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 2rem;
+    background: linear-gradient(to right, #0078D7, #003E7E);
+    color: white;
+}
+.hero h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+.hero p {
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+}
+.hero .btn-primary {
+    padding: 0.8rem 1.5rem;
+    background-color: #FFD700;
+    color: #333;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-right: 1rem;
+}
+.hero .btn-secondary {
+    padding: 0.8rem 1.5rem;
+    background-color: #333;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+.hero .btn-primary:hover, .hero .btn-secondary:hover {
+    opacity: 0.9;
+}
+
+/* Beneficios Section */
+.beneficios {
+    padding: 2rem;
+    background-color: white;
+    text-align: center;
+}
+.beneficios h2 {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+}
+.beneficios-container {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 2rem;
+}
+.beneficio {
+    background: #f4f4f9;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    flex: 1 1 calc(30% - 1rem);
+    min-width: 250px;
+}
+.beneficio h3 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+.beneficio p {
+    font-size: 1rem;
+}
+
+/* Footer */
+footer {
+    background-color: #0078D7;
+    color: white;
+    text-align: center;
+    padding: 1rem 0;
+    margin-top: 2rem;
+}

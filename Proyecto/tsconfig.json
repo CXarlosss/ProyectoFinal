@@ -1,5 +1,6 @@
 {
-  "include":["./javascript/**/*.js", "clases/clase-comercio.js"],
+  "include":["./javascript/**/*.js", "clases/clases.js", "store/store.js"],
+  
   "compileOnSave": false,
   "compilerOptions": {
     /* Visit https://aka.ms/tsconfig to read more about this file */

@@ -1,6 +1,5 @@
 {
-  "include":["./javascript/**/*.js", "clases/clases.js"],
-  "js/ts.implicitProjectConfig.checkJs": true,
+  "include":["./javascript/**/*.js", "clases/clase-comercio.js"],
   "compileOnSave": false,
   "compilerOptions": {
     /* Visit https://aka.ms/tsconfig to read more about this file */

@@ -1,6 +1,7 @@
 //@ts-check
 // Importar las clases necesarias
-import { ComercioActividad, Usuario } from '../clases/clases.js';
+import { ComercioActividad, } from '../clases/clase-comercio.js';
+import { Usuario, } from '../clases/clase-usuario.js';
 
 // Ejecutar el script cuando el DOM esté cargado
 document.addEventListener('DOMContentLoaded', () => {

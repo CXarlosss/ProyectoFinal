@@ -1,4 +1,4 @@
-//@ts
+//@ts-check
 // Importar las clases necesarias
 import { ComercioActividad, Usuario } from '../clases/clases.js';
 
@@ -130,12 +130,32 @@ document.addEventListener('DOMContentLoaded', () => {
    * @param {HTMLFormElement | null} form
    */
   function editarComercio(comercioInfo, form) {
-    if (!comercioActual || !form) return;
+    if (!comercioInfo || !form) return;
 
     /** @type {HTMLInputElement | null} */
-    const nombreInput = document.getElementById('nombre-comercio');
-    if (nombreInput) nombreInput.value = comercioActual.nombre;
+    const nombreInput = /** @type {HTMLInputElement | null} */ (document.getElementById('nombre-comercio'));
+    if (nombreInput && comercioActual) nombreInput.value = comercioActual.nombre;
+    form.classList.remove('hidden');
+  }
+  /**
+   * @param {Usuario} usuario
+   * @param {HTMLFormElement | null} form
+   */
+  function editarUsuario(usuario, form) {
+    if (!usuario || !form) return;
+
+    /** @type {HTMLInputElement | null} */
+    const nombreInput = /** @type {HTMLInputElement | null} */ (document.getElementById('nombre-usuario'));
+    const emailInput = /** @type {HTMLInputElement | null} */ (document.getElementById('email-usuario'));
+    const telefonoInput = /** @type {HTMLInputElement | null} */ (document.getElementById('telefono-usuario'));
+    const direccionInput = /** @type {HTMLInputElement | null} */ (document.getElementById('direccion-usuario'));
+
+    if (nombreInput) nombreInput.value = usuario.nombre;
+    if (emailInput) emailInput.value = usuario.email;
+    if (telefonoInput) telefonoInput.value = usuario.telefono;
+    if (direccionInput) direccionInput.value = usuario.direccion;
 
     form.classList.remove('hidden');
   }
+
 });

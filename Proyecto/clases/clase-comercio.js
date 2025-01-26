@@ -24,6 +24,7 @@ export class ComercioActividad {
     this.categoria = categoria;
     this.imagen = imagen;
     this.actividades = actividades || [];
+    this.servicios = undefined;
   }
 }
 

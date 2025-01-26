@@ -1,5 +1,5 @@
-import { Comercio } from "../class/clase-comercio.js";
-import { Usuario } from "../class/clase-usuario.js";
+import { ComercioActividad as Comercio } from "../clases/clase-comercio.js";
+import { Usuario } from "../clases/clase-usuario.js";
 
 /**
  * @typedef {Object} ActionType
@@ -43,22 +43,22 @@ const appReducer = (state = INITIAL_STATE, action) => {
     case ACTION_TYPES.ADD_USER:
       return {
         ...state,
-        usuarios: [...state.usuarios, action.payload],
+        usuarios: action.payload instanceof Usuario ? [...state.usuarios, action.payload] : state.usuarios,
       };
     case ACTION_TYPES.ADD_COMMERCE:
       return {
         ...state,
-        comercios: [...state.comercios, action.payload],
+        comercios: action.payload instanceof Comercio ? [...state.comercios, action.payload] : state.comercios,
       };
     case ACTION_TYPES.REMOVE_USER:
       return {
         ...state,
-        usuarios: state.usuarios.filter((usuario) => usuario.id !== action.payload),
+        usuarios: state.usuarios.filter((usuario) => typeof action.payload === 'number' && usuario.id !== action.payload),
       };
     case ACTION_TYPES.REMOVE_COMMERCE:
       return {
         ...state,
-        comercios: state.comercios.filter((comercio) => comercio.id !== action.payload),
+        comercios: state.comercios.filter((comercio) => typeof action.payload === 'number' && comercio.id !== action.payload),
       };
     case ACTION_TYPES.FILTER_SERVICES:
       return {
@@ -70,7 +70,7 @@ const appReducer = (state = INITIAL_STATE, action) => {
     case ACTION_TYPES.SHOW_SERVICE:
       return {
         ...state,
-        servicioMostrado: action.payload,
+        servicioMostrado: typeof action.payload === 'string' ? action.payload : null,
       };
     default:
       return state;

@@ -1,4 +1,4 @@
-export class ComercioActividad {
+export class Comercio {
   /**
    * @param {Number} id
    * @param {String} nombre
@@ -10,7 +10,7 @@ export class ComercioActividad {
    * @param {String} metodoPago
    * @param {String} categoria
    * @param {String} imagen
-   * @param {Array<ComercioActividad>} actividades
+   * @param {Array<Comercio>} actividades
    */
   constructor(id, nombre, descripcion, precio, valoracion, ubicacion, horarios, metodoPago, categoria, imagen, actividades) {
     this.id = id;

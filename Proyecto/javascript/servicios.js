@@ -1,111 +1,162 @@
 //@ts-check
 // Variables globales
 import { Usuario } from '../clases/clase-usuario';
-import { ComercioActividad } from '../clases/clase-comercio';
-/**
- * 
- * @type {any[]}
- */
-let allServicios = []; // Contiene todos los servicios cargados inicialmente
-/**
- * @type {string | any[]}
- */
-let filteredServicios = []; // Contiene los servicios mostrados actualmente
-let currentIndex = 0; // Índice para controlar cuántos servicios se muestran
-const ITEMS_PER_PAGE = 5; // Número de servicios a mostrar por página
+import { Comercio } from '../clases/clase-comercio';
 
+let allServicios = [];
+let filteredServicios = [];
+const ITEMS_PER_PAGE = 10;
+
+ 
 document.addEventListener('DOMContentLoaded', () => {
   const serviciosContainer = document.getElementById('servicios-container');
-  const btnFiltrarActividades = document.getElementById('btn-filtrar-actividades');
-  const btnFiltrarComercios = document.getElementById('btn-filtrar-comercios');
-  const btnMostrarTodos = document.getElementById('btn-mostrar-todos');
+  const btnCrearServicio = document.getElementById('btn-crear-servicio');
+  const modalCrearServicio = document.getElementById('modal-crear-servicio');
+  const formCrearServicio = document.getElementById('crear-servicio-form');
+  const btnCerrarModal = document.getElementById('btn-cerrar-modal');
 
-  // Cargar datos desde Api.json
-  fetch('./api/factory.json')
-    .then(response => response.ok ? response.json() : Promise.reject(new Error(`Error al cargar JSON: ${response.status}`)))
-    .then(data => {
-      allServicios = data; // Guardamos la lista completa
-      filteredServicios = [...allServicios]; // Inicialmente, todos los servicios
-      currentIndex = 0; // Reiniciar el índice
-      mostrarServicios(filteredServicios.slice(0, ITEMS_PER_PAGE)); // Mostrar los primeros servicios
-    })
-    .catch(error => {
-      console.error('Error al cargar los servicios:', error);
-      if (serviciosContainer) {
-        serviciosContainer.innerHTML = '<p>Hubo un error al cargar los servicios.</p>';
-      }
-    });
-
-  // Listeners de los botones
-  btnFiltrarActividades?.addEventListener('click', () => {
-    filtrarServicios("Actividad");
+  // Mostrar el modal al hacer clic en "Crear Servicio"
+  btnCrearServicio?.addEventListener('click', () => {
+    modalCrearServicio?.classList.remove('hidden');
   });
 
-  btnFiltrarComercios?.addEventListener('click', () => {
-    filtrarServicios("Comercio");
+  // Cerrar el modal
+  btnCerrarModal?.addEventListener('click', () => {
+    modalCrearServicio?.classList.add('hidden');
   });
 
-  btnMostrarTodos?.addEventListener('click', () => {
-    filtrarServicios(''); // Mostrar todos los servicios
+  // Manejar el envío del formulario de creación
+  formCrearServicio?.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    // Obtener valores del formulario
+    const nombre = document.getElementById('nombre-servicio')?.setAttribute("value","") || '';
+    const descripcion = document.getElementById('descripcion-servicio')?.setAttribute("value","") || '';
+    const ubicacion = document.getElementById('ubicacion-servicio')?.setAttribute("value","") || '';
+    const valoracion = document.getElementById('valoracion-servicio')?.setAttribute("value","") || '';
+    const imagen = document.getElementById('imagen-servicio')?.setAttribute("value","") || '';
+
+    // Crear un nuevo servicio
+    const nuevoServicio = {
+      id: Date.now().toString(), // ID único basado en timestamp
+      nombre,
+      descripcion,
+      ubicacion,
+      valoracion,
+      imagen,
+    };
+
+    // Añadir el nuevo servicio a la lista
+    allServicios.push(nuevoServicio);
+    filteredServicios = [...allServicios];
+
+    // Actualizar la vista y cerrar el modal
+    mostrarServicios(filteredServicios.slice(0, ITEMS_PER_PAGE));
+    modalCrearServicio?.classList.add('hidden');
   });
-  
 });
+document.addEventListener('DOMContentLoaded', () => {
+  const serviciosContainer = document.getElementById('servicios-container');
+  const btnCrearServicio = document.getElementById('btn-crear-servicio');
+  const modalCrearServicio = document.getElementById('modal-crear-servicio');
+  const formCrearServicio = document.getElementById('crear-servicio-form');
+  const btnCerrarModal = document.getElementById('btn-cerrar-modal');
 
-// Función para mostrar servicios
+  // Mostrar el modal al hacer clic en "Crear Servicio"
+  btnCrearServicio?.addEventListener('click', () => {
+    modalCrearServicio?.classList.remove('hidden');
+  });
+
+  // Cerrar el modal
+  btnCerrarModal?.addEventListener('click', () => {
+    modalCrearServicio?.classList.add('hidden');
+  });
+
+  // Manejar el envío del formulario de creación
+  formCrearServicio?.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    // Obtener valores del formulario
+    const nombre = document.getElementById('nombre-servicio')?.setAttribute("value","") || '';
+    const descripcion = document.getElementById('descripcion-servicio')?.setAttribute("value","") || '';
+    const ubicacion = document.getElementById('ubicacion-servicio')?.setAttribute("value","") || '';
+    const valoracion = document.getElementById('valoracion-servicio')?.setAttribute("value","") || '';
+    const imagen = document.getElementById('imagen-servicio')?.setAttribute("value","") || '';
+
+    // Crear un nuevo servicio
+    const nuevoServicio = {
+      id: Date.now().toString(), // ID único basado en timestamp
+      nombre,
+      descripcion,
+      ubicacion,
+      valoracion,
+      imagen,
+    };
+
+    // Añadir el nuevo servicio a la lista
+    allServicios.push(nuevoServicio);
+    filteredServicios = [...allServicios];
+
+    // Actualizar la vista y cerrar el modal
+    mostrarServicios(filteredServicios.slice(0, ITEMS_PER_PAGE));
+    modalCrearServicio?.classList.add('hidden');
+  });
+});
 /**
- * Muestra los servicios en el contenedor #servicios-container
- * @param {Array<{imagen: string, nombre: string, descripcion: string, ubicacion: string, valoracion: string, id: string}>} servicios - La lista de servicios a mostrar
+ * @param {any[]} servicios
  */
 function mostrarServicios(servicios) {
   const serviciosContainer = document.getElementById('servicios-container');
-  if (!serviciosContainer) return;
+  if (serviciosContainer) {
+    serviciosContainer.innerHTML = '';
+  }
 
-  serviciosContainer.innerHTML = ''; // Limpiar el contenedor
-  
   servicios.forEach(servicio => {
-    const card = document.createElement('div');
-    card.classList.add('card');
+    const servicioElement = document.createElement('div');
+    servicioElement.classList.add('servicio');
 
-    card.innerHTML = `
-      <img src="${servicio.imagen}" alt="${servicio.nombre}" class="card-img" />
-      <h2 class="card-title">${servicio.nombre}</h2>
-      <p class="card-desc">${servicio.descripcion}</p>
-      <p class="card-location">Ubicación: ${servicio.ubicacion}</p>
-      <p class="card-rating">${servicio.valoracion}</p>
-      <a href="detalles.html?id=${servicio.id}" class="card-link">Más detalles</a>
+    servicioElement.innerHTML = `
+      <h3>${servicio.nombre}</h3>
+      <p>${servicio.descripcion}</p>
+      <p>Ubicación: ${servicio.ubicacion}</p>
+      <p>Valoración: ${servicio.valoracion}</p>
+      <img src="${servicio.imagen}" alt="${servicio.nombre}">
     `;
 
-    serviciosContainer.appendChild(card);
+    serviciosContainer?.appendChild(servicioElement);
+  });
+/**
+ * @typedef {Object} Servicio
+ * @property {string} id
+ * @property {string} nombre
+ * @property {string} descripcion
+ * @property {string} ubicacion
+ * @property {string} valoracion
+ * @property {string} imagen
+ */
+
+/**
+ * @param {Servicio[]} servicios
+ */
+function renderServicios(servicios) {
+  const serviciosContainer = document.getElementById('servicios-container');
+  if (serviciosContainer) {
+    serviciosContainer.innerHTML = '';
+  }
+
+  servicios.forEach(servicio => {
+    const servicioElement = document.createElement('div');
+    servicioElement.classList.add('servicio');
+
+    servicioElement.innerHTML = `
+      <h3>${servicio.nombre}</h3>
+      <p>${servicio.descripcion}</p>
+      <p>Ubicaci n: ${servicio.ubicacion}</p>
+      <p>Valoraci n: ${servicio.valoracion}</p>
+      <img src="${servicio.imagen}" alt="${servicio.nombre}">
+    `;
+
+    serviciosContainer?.appendChild(servicioElement);
   });
 }
-
-// Filtra los servicios por categoría y reinicia la paginación
-/**
- * @param {string} categoria
- */
-// Filtra los servicios por categoría y reinicia la paginación
-function filtrarServicios(categoria) {
-  const serviciosContainer = document.getElementById('servicios-container');
-  const mostrarMasButton = document.getElementById('btn-mostrar-mas');
-
-  if (!serviciosContainer) {
-    throw new Error('No se encontró el contenedor de servicios');
-  }
-
-  serviciosContainer.innerHTML = '';
-  if (mostrarMasButton) {
-    mostrarMasButton.style.display = 'block';
-  }
-  currentIndex = 0;
-
-  // Usa la propiedad "categoria" en lugar de "categoria-comercio"
-  filteredServicios = categoria
-    ? allServicios.filter(s => s.categoria?.toLowerCase() === categoria.toLowerCase())
-    : allServicios;
-
-  mostrarServicios(filteredServicios.slice(0, ITEMS_PER_PAGE));
-
-  if (filteredServicios.length <= ITEMS_PER_PAGE && mostrarMasButton) {
-    mostrarMasButton.style.display = 'none';
-  }
 }

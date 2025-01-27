@@ -1,4 +1,4 @@
-import { ComercioActividad as Comercio } from "../clases/clase-comercio.js";
+import { Comercio as Comercio } from "../clases/clase-comercio.js";
 import { Usuario } from "../clases/clase-usuario.js";
 
 /**
@@ -7,7 +7,7 @@ import { Usuario } from "../clases/clase-usuario.js";
  * @property {Usuario | Comercio | string} [payload]
  */
 
-const ACTION_TYPES = {
+export const ACTION_TYPES = {
   ADD_USER: "ADD_USER",
   ADD_COMMERCE: "ADD_COMMERCE",
   REMOVE_USER: "REMOVE_USER",
@@ -33,33 +33,37 @@ const INITIAL_STATE = {
 };
 
 /**
- * Reducer para manejar el estado global.
- * @param {State} state - Estado actual.
- * @param {ActionType} action - Acción a reducir.
- * @returns {State} El nuevo estado.
+ * Reducer principal de la aplicación.
+ * @param {typeof INITIAL_STATE} state - Estado actual.
+ * @param {Object} action - Acción que modifica el estado.
+ * @returns {typeof INITIAL_STATE} Nuevo estado.
  */
-const appReducer = (state = INITIAL_STATE, action) => {
+export const appReducer = (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case ACTION_TYPES.ADD_USER:
       return {
         ...state,
         usuarios: action.payload instanceof Usuario ? [...state.usuarios, action.payload] : state.usuarios,
       };
+
     case ACTION_TYPES.ADD_COMMERCE:
       return {
         ...state,
         comercios: action.payload instanceof Comercio ? [...state.comercios, action.payload] : state.comercios,
       };
+
     case ACTION_TYPES.REMOVE_USER:
       return {
         ...state,
-        usuarios: state.usuarios.filter((usuario) => typeof action.payload === 'number' && usuario.id !== action.payload),
+        usuarios: state.usuarios.filter((usuario) => usuario.id !== action.payload),
       };
+
     case ACTION_TYPES.REMOVE_COMMERCE:
       return {
         ...state,
-        comercios: state.comercios.filter((comercio) => typeof action.payload === 'number' && comercio.id !== action.payload),
+        comercios: state.comercios.filter((comercio) => comercio.id !== action.payload),
       };
+
     case ACTION_TYPES.FILTER_SERVICES:
       return {
         ...state,
@@ -67,11 +71,13 @@ const appReducer = (state = INITIAL_STATE, action) => {
           comercio.servicios.some((servicio) => servicio.nombre.includes(action.payload))
         ),
       };
+
     case ACTION_TYPES.SHOW_SERVICE:
       return {
         ...state,
-        servicioMostrado: typeof action.payload === 'string' ? action.payload : null,
+        servicioMostrado: action.payload,
       };
+
     default:
       return state;
   }
@@ -129,13 +135,13 @@ const createStore = (reducer) => {
   };
 
   return {
+    getState,
     addUser,
     addCommerce,
     removeUser,
     removeCommerce,
     filterServices,
     showService,
-    getState,
   };
 };
 

@@ -1,111 +1,144 @@
-import { Comercio as Comercio } from "../clases/clase-comercio.js";
+import { Servicio } from "../clases/clase-servicio.js";
 import { Usuario } from "../clases/clase-usuario.js";
 
 /**
+ * Tipos de acciones que maneja el reducer.
  * @typedef {Object} ActionType
- * @property {string} type
- * @property {Usuario | Comercio | string} [payload]
+ * @property {string} type - Tipo de acción.
+ * @property {Usuario | Servicio | string} [payload] - Datos enviados con la acción.
  */
 
 export const ACTION_TYPES = {
   ADD_USER: "ADD_USER",
-  ADD_COMMERCE: "ADD_COMMERCE",
+  ADD_SERVICE: "ADD_SERVICE",
   REMOVE_USER: "REMOVE_USER",
-  REMOVE_COMMERCE: "REMOVE_COMMERCE",
+  REMOVE_SERVICE: "REMOVE_SERVICE",
   FILTER_SERVICES: "FILTER_SERVICES",
   SHOW_SERVICE: "SHOW_SERVICE",
 };
 
 /**
+ * Estado inicial de la aplicación.
  * @typedef {Object} State
- * @property {Usuario[]} usuarios
- * @property {Comercio[]} comercios
- * @property {Comercio[]} serviciosFiltrados
- * @property {string | null} servicioMostrado
+ * @property {Usuario[]} usuarios - Lista de usuarios.
+ * @property {Servicio[]} servicios - Lista de servicios.
+ * @property {Servicio[]} serviciosFiltrados - Lista de servicios filtrados.
+ * @property {Servicio | null} servicioMostrado - Servicio actualmente mostrado.
  */
 
 /** @type {State} */
 const INITIAL_STATE = {
   usuarios: [],
-  comercios: [],
+  servicios: [],
   serviciosFiltrados: [],
   servicioMostrado: null,
 };
 
 /**
  * Reducer principal de la aplicación.
- * @param {typeof INITIAL_STATE} state - Estado actual.
- * @param {Object} action - Acción que modifica el estado.
- * @returns {typeof INITIAL_STATE} Nuevo estado.
+ * @param {State} state - Estado actual.
+ * @param {ActionType} action - Acción que modifica el estado.
+ * @returns {State} - Nuevo estado.
  */
 export const appReducer = (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case ACTION_TYPES.ADD_USER:
-      return {
-        ...state,
-        usuarios: action.payload instanceof Usuario ? [...state.usuarios, action.payload] : state.usuarios,
-      };
+      if (action.payload instanceof Usuario) {
+        return {
+          ...state,
+          usuarios: [...state.usuarios, action.payload],
+        };
+      }
+      console.error("Payload inválido para ADD_USER");
+      return state;
 
-    case ACTION_TYPES.ADD_COMMERCE:
-      return {
-        ...state,
-        comercios: action.payload instanceof Comercio ? [...state.comercios, action.payload] : state.comercios,
-      };
+    case ACTION_TYPES.ADD_SERVICE:
+      if (action.payload instanceof Servicio) {
+        return {
+          ...state,
+          servicios: [...state.servicios, action.payload],
+        };
+      }
+      console.error("Payload inválido para ADD_SERVICE");
+      return state;
 
     case ACTION_TYPES.REMOVE_USER:
-      return {
-        ...state,
-        usuarios: state.usuarios.filter((usuario) => usuario.id !== action.payload),
-      };
+      if (typeof action.payload === "string") {
+        return {
+          ...state,
+          usuarios: state.usuarios.filter(
+            (usuario) => String(usuario.id) !== String(action.payload)
+          ),
+        };
+      }
+      console.error("Payload inválido para REMOVE_USER");
+      return state;
 
-    case ACTION_TYPES.REMOVE_COMMERCE:
-      return {
-        ...state,
-        comercios: state.comercios.filter((comercio) => comercio.id !== action.payload),
-      };
+    case ACTION_TYPES.REMOVE_SERVICE:
+      if (typeof action.payload === "string") {
+        return {
+          ...state,
+          servicios: state.servicios.filter(
+            (servicio) => servicio.id !== Number(action.payload)
+          ),
+        };
+      }
+      console.error("Payload inválido para REMOVE_SERVICE");
+      return state;
 
     case ACTION_TYPES.FILTER_SERVICES:
-      return {
-        ...state,
-        serviciosFiltrados: state.comercios.filter((comercio) =>
-          comercio.servicios.some((servicio) => servicio.nombre.includes(action.payload))
-        ),
-      };
+      if (typeof action.payload === "string") {
+        return {
+          ...state,
+          serviciosFiltrados: state.servicios.filter((servicio) =>
+            servicio.nombre.toLowerCase().includes(typeof action.payload === "string" ? action.payload.toLowerCase() : "")
+          ),
+        };
+      }
+      console.error("Payload inválido para FILTER_SERVICES");
+      return state;
 
     case ACTION_TYPES.SHOW_SERVICE:
-      return {
-        ...state,
-        servicioMostrado: action.payload,
-      };
+      if (typeof action.payload === "string" || typeof action.payload === "number") {
+        const id = Number(action.payload);
+        return {
+          ...state,
+          servicioMostrado: state.servicios.find((servicio) => servicio.id === id) || null,
+        };
+      }
+      console.error("SHOW_SERVICE recibió un payload no válido:", action.payload);
+      return state;
 
     default:
       return state;
   }
-};
-
+}
+/**
+ * @typedef {object} publicMethods  
+ * @property {Function} getState
+ * @property {Function} addUser
+ * @property {Function} addService
+ * @property {Function} removeUser
+ * @property {Function} removeService
+ * @property {Function} filterServices
+ */
+/**
+ * @typedef {object} store
+ * @property {Function} getState
+ * @property {publicMethods} article
+*/
 /**
  * Crea el store con métodos de acceso y manejo de acciones.
- * @param {typeof appReducer} reducer
+ * @param {Function} reducer - Reducer principal de la aplicación.
+ * @returns {Store} - Métodos del store.
  */
 const createStore = (reducer) => {
-  let currentState = INITIAL_STATE;
+  let currentState = reducer(undefined, {});
 
-  // Acciones
-  const addUser = (usuario) => _dispatch({ type: ACTION_TYPES.ADD_USER, payload: usuario });
-  const addCommerce = (comercio) => _dispatch({ type: ACTION_TYPES.ADD_COMMERCE, payload: comercio });
-  const removeUser = (id) => _dispatch({ type: ACTION_TYPES.REMOVE_USER, payload: id });
-  const removeCommerce = (id) => _dispatch({ type: ACTION_TYPES.REMOVE_COMMERCE, payload: id });
-  const filterServices = (query) => _dispatch({ type: ACTION_TYPES.FILTER_SERVICES, payload: query });
-  const showService = (servicio) => _dispatch({ type: ACTION_TYPES.SHOW_SERVICE, payload: servicio });
-
-  // Métodos públicos
+  // Obtener el estado actual.
   const getState = () => currentState;
 
-  // Métodos privados
-  /**
-   * Maneja la acción y actualiza el estado.
-   * @param {ActionType} action
-   */
+  // Manejar una acción y actualizar el estado.
   const _dispatch = (action) => {
     const previousState = currentState;
     currentState = reducer(currentState, action);
@@ -120,11 +153,7 @@ const createStore = (reducer) => {
     );
   };
 
-  /**
-   * Obtiene las diferencias entre dos estados.
-   * @param {State} previousState
-   * @param {State} currentState
-   */
+  // Obtener las diferencias entre dos estados.
   const _getDifferences = (previousState, currentState) => {
     return Object.keys(currentState).reduce((diff, key) => {
       if (previousState[key] !== currentState[key]) {
@@ -134,15 +163,24 @@ const createStore = (reducer) => {
     }, {});
   };
 
+  // Acciones disponibles para interactuar con el estado.
+  const addUser = (usuario) => _dispatch({ type: ACTION_TYPES.ADD_USER, payload: usuario });
+  const addService = (servicio) => _dispatch({ type: ACTION_TYPES.ADD_SERVICE, payload: servicio });
+  const removeUser = (id) => _dispatch({ type: ACTION_TYPES.REMOVE_USER, payload: id });
+  const removeService = (id) => _dispatch({ type: ACTION_TYPES.REMOVE_SERVICE, payload: id });
+  const filterServices = (query) => _dispatch({ type: ACTION_TYPES.FILTER_SERVICES, payload: query });
+  const showService = (id) => _dispatch({ type: ACTION_TYPES.SHOW_SERVICE, payload: id });
+
   return {
     getState,
     addUser,
-    addCommerce,
+    addService,
     removeUser,
-    removeCommerce,
+    removeService,
     filterServices,
     showService,
   };
 };
 
+// Crear y exportar el store.
 export const store = createStore(appReducer);

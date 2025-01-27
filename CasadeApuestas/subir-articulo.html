@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subir Artículo</title>
+    <link rel="stylesheet" href="./css/styles-subir-articulos.css">
+</head>
+<body>
+    <header>
+        <h1>Subir Artículo</h1>
+    </header>
+    
+    <nav>
+        <a href="index.html">Inicio</a>
+        <a href="subastas-activas.html">Subastas Activas</a>
+        <a href="subir-articulo.html">Subir Artículo</a>
+        <a href="#">Contacto</a>
+    </nav>
+
+    <div class="container">
+        <h2>Crear un Nuevo Artículo</h2>
+        <form id="uploadForm">
+            <div class="form-group">
+                <label for="title">Título del Artículo</label>
+                <input type="text" id="title" placeholder="Ejemplo: Reloj Vintage">
+            </div>
+            <div class="form-group">
+                <label for="price">Precio Inicial (€)</label>
+                <input type="number" id="price" placeholder="Ejemplo: 100">
+            </div>
+            <div class="form-group">
+                <label for="image">URL de la Imagen</label>
+                <input type="text" id="image" placeholder="Ejemplo: https://via.placeholder.com/300">
+            </div>
+            <div class="form-group">
+                <label for="description">Descripción</label>
+                <textarea id="description" rows="4" placeholder="Describe el artículo aquí..."></textarea>
+            </div>
+            <div class="form-group">
+                <button type="button" onclick="addItem()">Crear Artículo</button>
+            </div>
+        </form>
+
+        <div class="created-items" id="createdItems">
+            <h3>Artículos Creados</h3>
+            <!-- Los artículos creados se agregarán aquí -->
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Casa de Pujas. Todos los derechos reservados.</p>
+    </footer>
+
+    <script src="./js/subir-articulo.js"></script>
+</body>
+</html>

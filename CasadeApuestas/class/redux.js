@@ -1,58 +1,74 @@
-import { createStore } from "../class/redux.js";
+// redux.js
+//@ts-check
+import { Articulo } from './Articulo.js';
 
-// Estado inicial
-interface User {
-    id: number;
-    name: string;
-}
-
-interface Auction {
-    id: number;
-    item: string;
-    bid: number;
-}
-
-const initialState = {
-    users: [] as User[],
-    auctions: [] as Auction[],
+/**
+ * Estado inicial de la aplicación.
+ */
+const INITIAL_STATE = {
+  articles: /** @type {Articulo[]} */ ([]),
 };
 
-// Tipos
-type State = typeof initialState;
-type Action = 
-    | { type: "REGISTER_USER"; payload: any }
-    | { type: "ADD_AUCTION"; payload: any };
+/**
+ * Tipos de acciones.
+ */
+const ACTION_TYPES = {
+  CREATE_ARTICLE: 'CREATE_ARTICLE',
+  DELETE_ARTICLE: 'DELETE_ARTICLE',
+};
 
-// Reducer
-function auctionReducer(state: State = initialState, action: Action): State {
-    switch (action.type) {
-        case "REGISTER_USER":
-            return {
-                ...state,
-                users: [...state.users, action.payload],
-            };
-        case "ADD_AUCTION":
-            return {
-                ...state,
-                auctions: [...state.auctions, action.payload],
-            };
-        default:
-            return state;
-    }
+/**
+ * Reducer para manejar el estado global.
+ * @param {typeof INITIAL_STATE} state
+ * @param {{ type: string, article?: Articulo }} action
+ * @returns {typeof INITIAL_STATE}
+ */
+function reducer(state = INITIAL_STATE, action) {
+  switch (action.type) {
+    case ACTION_TYPES.CREATE_ARTICLE:
+      return {
+        ...state,
+        articles: action.article ? [...state.articles, action.article] : state.articles,
+      };
+    case ACTION_TYPES.DELETE_ARTICLE:
+      return {
+        ...state,
+        articles: state.articles.filter((article) => article.id !== action.article?.id),
+      };
+    default:
+      return state;
+  }
 }
 
-// Crear el store
-const store = createStore(auctionReducer);
+/**
+ * Store de la aplicación.
+ */
+export const store = (() => {
+  let currentState = INITIAL_STATE;
 
-export default store;
-// Acción para registrar usuario
-export const registerUser = (user) => ({
-    type: "REGISTER_USER",
-    payload: user,
-});
+  const dispatch = (action) => {
+    currentState = reducer(currentState, action);
+    const event = new CustomEvent('stateChanged', { detail: { state: currentState } });
+    window.dispatchEvent(event);
+  };
 
-// Acción para añadir una subasta
-export const addAuction = (auction) => ({
-    type: "ADD_AUCTION",
-    payload: auction,
-});
+  const getState = () => currentState;
+
+  return { dispatch, getState };
+})();
+
+/**
+ * Acción para crear un artículo.
+ * @param {Articulo} article
+ */
+export function createArticulo(article) {
+  store.dispatch({ type: ACTION_TYPES.CREATE_ARTICLE, article });
+}
+
+/**
+ * Acción para eliminar un artículo.
+ * @param {Articulo} article
+ */
+export function deleteArticulo(article) {
+  store.dispatch({ type: ACTION_TYPES.DELETE_ARTICLE, article });
+}

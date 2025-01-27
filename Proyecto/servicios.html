@@ -28,30 +28,30 @@
       </div>
     
       <!-- Formulario Modal para crear servicios -->
-      <div id="modal-crear-servicio" class="modal hidden">
+      <section id="modal-crear-servicio" class="modal hidden">
         <div class="modal-content">
           <h2>Crear Servicio</h2>
           <form id="crear-servicio-form">
             <label for="nombre-servicio">Nombre:</label>
-            <input type="text" id="nombre-servicio" required />
+            <input type="text" id="nombre-servicio" required /></br>
     
             <label for="descripcion-servicio">Descripción:</label>
-            <textarea id="descripcion-servicio" required></textarea>
+            <textarea id="descripcion-servicio" required></textarea></br>
     
             <label for="ubicacion-servicio">Ubicación:</label>
-            <input type="text" id="ubicacion-servicio" required />
+            <input type="text" id="ubicacion-servicio" required /></br>
     
             <label for="valoracion-servicio">Valoración:</label>
-            <input type="number" id="valoracion-servicio" min="1" max="5" required />
+            <input type="number" id="valoracion-servicio" min="1" max="5" required /></br>
     
             <label for="imagen-servicio">URL de Imagen:</label>
-            <input type="url" id="imagen-servicio" required />
+            <input type="url" id="imagen-servicio" required /></br>
     
             <button type="submit">Guardar Servicio</button>
             <button type="button" id="btn-cerrar-modal">Cancelar</button>
           </form>
         </div>
-      </div>
+      </section>
     
       <!-- Contenedor donde se inyectará el grid de servicios -->
       <div id="servicios-container" class="grid"></div>
@@ -63,6 +63,6 @@
 
     <!-- Script con la lógica para cargar y mostrar servicios -->
     <script type="module" src="./javascript/servicios.js"></script>
-    <script type="module" src="./javascript/registrar.js"></script>
+   
   </body>
 </html>

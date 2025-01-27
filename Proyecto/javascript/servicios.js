@@ -3,20 +3,59 @@
 import { store } from "../store/redux.js";
 import { Servicio } from "../clases/clase-servicio.js";
 
-// Simulando un estado global como si fuera Redux
-import serviciosJSON from "../api/factory.json"; // Importar el JSON con los datos iniciales
-
-/** @type {{ servicios: Servicio[] }} */
+/**
+ * /** @type {{ servicios: Servicio[] }} */
 const state = {
-  servicios: [], 
+  servicios: [
+    // Ejemplo 1: Servicio de limpieza
+    new Servicio(
+      1,
+      "Servicio de limpieza",
+      "Limpieza profesional a domicilio.",
+      30, // Precio
+      4.5, // Valoración
+      "Madrid", // Ubicación
+      "8:00-20:00", // Horarios
+      "Efectivo, Tarjeta", // Métodos de pago
+      "Hogar", // Categoría
+      "https://example.com/imagen1.jpg", // Imagen
+      ["limpieza", "hogar"] // Etiquetas
+    ),
+    // Ejemplo 2: Reparación de electrodomésticos
+    new Servicio(
+      2,
+      "Reparación de electrodomésticos",
+      "Reparación rápida y eficaz.",
+      50, // Precio
+      4.8, // Valoración
+      "Barcelona", // Ubicación
+      "9:00-18:00", // Horarios
+      "Tarjeta", // Métodos de pago
+      "Reparaciones", // Categoría
+      "https://example.com/imagen2.jpg", // Imagen
+      ["reparación", "electrodomésticos"] // Etiquetas
+    ),
+    // Ejemplo 3: Clases de yoga
+    new Servicio(
+      3,
+      "Clases de yoga",
+      "Clases personalizadas para todos los niveles.",
+      20, // Precio
+      4.9, // Valoración
+      "Valencia", // Ubicación
+      "10:00-12:00", // Horarios
+      "Efectivo, Transferencia", // Métodos de pago
+      "Salud y Bienestar", // Categoría
+      "https://example.com/imagen3.jpg", // Imagen
+      ["yoga", "bienestar", "salud"] // Etiquetas
+    )
+  ]
 };
 
 console.log("Servicios iniciales cargados:", state.servicios);
-//Cargar Servicios desde el json
 
-/**
- * Función para renderizar los servicios en el contenedor.
- */
+
+
 const renderServicios = () => {
   const serviciosContainer = document.getElementById("servicios-container");
 
@@ -25,9 +64,15 @@ const renderServicios = () => {
     return;
   }
 
-  serviciosContainer.innerHTML = state.servicios
+  // Obtener los servicios del estado global
+  const state = store.getState();
+  const servicios = state.servicios;
+
+  console.log("Renderizando servicios:", servicios);
+
+  serviciosContainer.innerHTML = servicios
     .map(
-      (servicio) => `
+      (/** @type {{ imagen: any; nombre: any; descripcion: any; ubicacion: any; valoracion: any; id: any; }} */ servicio) => `
         <div class="card">
           <img src="${servicio.imagen}" alt="Imagen de ${servicio.nombre}" class="card-img" />
           <h3>${servicio.nombre}</h3>
@@ -39,6 +84,8 @@ const renderServicios = () => {
       `
     )
     .join("");
+
+  console.log("Servicios renderizados correctamente.");
 };
 
 /**
@@ -48,11 +95,21 @@ const renderServicios = () => {
 const registrarServicio = (e) => {
   e.preventDefault();
 
-  const nombreInput = /** @type {HTMLInputElement} */ (document.getElementById("nombre-servicio"));
-  const descripcionInput = /** @type {HTMLInputElement} */ (document.getElementById("descripcion-servicio"));
-  const ubicacionInput = /** @type {HTMLInputElement} */ (document.getElementById("ubicacion-servicio"));
-  const valoracionInput = /** @type {HTMLInputElement} */ (document.getElementById("valoracion-servicio"));
-  const imagenInput = /** @type {HTMLInputElement} */ (document.getElementById("imagen-servicio"));
+  const nombreInput = /** @type {HTMLInputElement} */ (
+    document.getElementById("nombre-servicio")
+  );
+  const descripcionInput = /** @type {HTMLInputElement} */ (
+    document.getElementById("descripcion-servicio")
+  );
+  const ubicacionInput = /** @type {HTMLInputElement} */ (
+    document.getElementById("ubicacion-servicio")
+  );
+  const valoracionInput = /** @type {HTMLInputElement} */ (
+    document.getElementById("valoracion-servicio")
+  );
+  const imagenInput = /** @type {HTMLInputElement} */ (
+    document.getElementById("imagen-servicio")
+  );
 
   if (
     !nombreInput ||
@@ -65,22 +122,22 @@ const registrarServicio = (e) => {
     return;
   }
 
-  const nuevoServicio = {
-    id: Date.now(),
-    nombre: nombreInput.value,
-    descripcion: descripcionInput.value,
-    ubicacion: ubicacionInput.value,
-    valoracion: parseFloat(valoracionInput.value),
-    imagen: imagenInput.value,
-    precio: 0, // Asignar un valor por defecto o agregar un input para este campo
-    horarios: "", // Asignar un valor por defecto o agregar un input para este campo
-    metodoPago: "", // Asignar un valor por defecto o agregar un input para este campo
-    categoria: "", // Asignar un valor por defecto o agregar un input para este campo
-    etiquetas: [] // Asignar un valor por defecto o agregar un input para este campo
-  };
+  const nuevoServicio = new Servicio(
+    Date.now(),
+    nombreInput.value,
+    descripcionInput.value,
+    0, // Precio por defecto
+    parseFloat(valoracionInput.value),
+    ubicacionInput.value,
+    "", // Horarios por defecto
+    "", // Método de pago por defecto
+    "", // Categoría por defecto
+    imagenInput.value,
+    [] // Etiquetas por defecto
+  );
 
-  // Agregar el nuevo servicio al estado
-  state.servicios.push(nuevoServicio);
+  // Agregar el nuevo servicio al estado global
+  store.addService(nuevoServicio);
 
   // Limpiar el formulario
   nombreInput.value = "";
@@ -89,7 +146,7 @@ const registrarServicio = (e) => {
   valoracionInput.value = "";
   imagenInput.value = "";
 
-  // Ocultar el modal
+  // Ocultar el modal (si existe)
   document.getElementById("modal-crear-servicio")?.classList.add("hidden");
 
   // Renderizar los servicios actualizados
@@ -97,7 +154,7 @@ const registrarServicio = (e) => {
 };
 
 /**
- * Función para eliminar un servicio del estado.
+ * Función para eliminar un servicio del estado global.
  * @param {MouseEvent} e
  */
 const eliminarServicio = (e) => {
@@ -106,10 +163,10 @@ const eliminarServicio = (e) => {
     const id = target.dataset.id;
     if (!id) return;
 
-    state.servicios = state.servicios.filter(
-      (servicio) => servicio.id !== parseInt(id, 10)
-    );
-    store.remoteService(id);
+    // Eliminar el servicio del estado global
+    store.removeService(id);
+
+    // Renderizar los servicios actualizados
     renderServicios();
   }
 };
@@ -129,6 +186,9 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
+  // Render inicial con los servicios del estado global
+  renderServicios();
+
   // Mostrar el modal de creación
   btnCrearServicio.addEventListener("click", () => {
     modalCrearServicio.classList.remove("hidden");
@@ -144,7 +204,4 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Manejar la eliminación de servicios
   serviciosContainer.addEventListener("click", eliminarServicio);
-
-  // Render inicial (por si hay datos precargados)
-  renderServicios();
 });

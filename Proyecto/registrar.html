@@ -2,97 +2,75 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Registro Comercio/Usuario</title>
-  <link rel="stylesheet" href="./css/styles.css" />
-</head>
-<body>
-  <header>
-    <h1>Bienvenido a nuestro sistema</h1>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Registro de Usuario</title>
+  <link rel="stylesheet" href="./css/styles-registrar.css" />
+</head> 
+<header>
+    <h1>Registro de Usuario</h1>
     <nav>
       <ul>
         <li><a href="index.html">Inicio</a></li>
         <li><a href="servicios.html">Servicios</a></li>
-        
       </ul>
     </nav>
   </header>
+<body>
+ 
 
   <main>
-    <h2>Selecciona una opción</h2>
-    <button id="btn-comercio">Comercio</button>
-    <button id="btn-usuario">Usuario</button>
-
-    <div id="seleccion-inicial"></div>
-
-    <!-- Formulario de Comercio -->
-    <section id="formulario-comercio" class="hidden">
-      <h3>Formulario de Comercio</h3>
-      <div class="promocion-visual" id="promocion-comercio">
-        <p>Regístrate ahora y obtén acceso exclusivo a promociones y descuentos.</p>
-        <img src="#" alt="Promoción" />
-      </div>
-      <form id="comercio-form">
-        <label for="nombre-comercio">Nombre del Comercio:</label>
-        <input type="text" id="nombre-comercio" required />
-    
-        <label for="descripcion-comercio">Descripción:</label>
-        <textarea id="descripcion-comercio" required></textarea>
-    
-        <label for="ubicacion-comercio">Ubicación:</label>
-        <input type="text" id="ubicacion-comercio" required />
-    
-        <button type="submit">Registrar Comercio</button>
-      </form>
-    
-      <!-- Barra de Progreso -->
-      <progress id="barra-progreso" value="0" max="100" class="hidden"></progress>
-    </section>
-    
-    <!-- Sección de Agradecimiento -->
-    <section id="agradecimiento" class="hidden"></section>
-
-    <!-- Contenedor donde mostrará info del Usuario -->
-    <section id="formulario-usuario" class="hidden">
+    <section id="formulario-usuario">
       <h3>Formulario de Usuario</h3>
-      <div class="promocion-visual" id="promocion-usuario">
-        <p>Regístrate ahora y accede a beneficios exclusivos como promociones personalizadas y descuentos especiales.</p>
+      <div class="promocion-visual">
+        <p>
+          Regístrate ahora y accede a beneficios exclusivos como promociones personalizadas y descuentos especiales.
+        </p>
         <img src="#" alt="Promoción exclusiva" />
       </div>
       <form id="usuario-form">
         <label for="nombre-usuario">Nombre:</label>
         <input type="text" id="nombre-usuario" required />
-    
+
         <label for="email-usuario">Email:</label>
         <input type="email" id="email-usuario" required />
-    
+
         <label for="telefono-usuario">Teléfono:</label>
         <input type="text" id="telefono-usuario" required />
-    
+
         <label for="direccion-usuario">Dirección:</label>
         <input type="text" id="direccion-usuario" required />
-    
+
+        <label for="password-usuario">Contraseña:</label>
+        <input type="password" id="password-usuario" required />
+
         <button type="submit">Registrar Usuario</button>
       </form>
-    
-      <!-- Barra de Progreso -->
-      <progress id="barra-progreso-usuario" value="0" max="100" class="hidden"></progress>
     </section>
-    
-    <!-- Sección de Agradecimiento -->
-    <section id="agradecimiento-usuario" class="hidden"></section>
-    
 
+    <!-- Sección de Agradecimiento -->
+    <section id="agradecimiento-usuario" class="hidden">
+      <h3>¡Registro Completado!</h3>
+      <p>Gracias por registrarte. A continuación, te mostramos un resumen de tu información:</p>
+      <div id="resumen-usuario"></div>
+      <a href="servicios.html" class="btn">Explorar Servicios</a>
+    </section>
   </main>
 
   <footer>
     <p>&copy; 2025 Comercio & Servicios</p>
   </footer>
 
-  <!-- Carga primero las clases, luego el main.js -->
-  <script type="module" src="./clases/clase-usuario.js"></script>
-  <script type="module" src="./clases/clase-comercio.js"></script>
-  <script type="module" src="./javascript/registrarComercio.js"></script>
+
+  <!-- Modal -->
+  <div class="modal hidden" id="miModal">
+  <div class="modal-content">
+    <h2>¡Registro Completado!</h2>
+    <p>Gracias por registrarte. Aquí tienes un resumen de tus datos:</p>
+    <div id="resumen-usuario"></div>
+    <button onclick="cerrarModal()">Cerrar</button>
+  </div>
+</div>
+
   <script type="module" src="./javascript/registrarUsuario.js"></script>
 </body>
 </html>

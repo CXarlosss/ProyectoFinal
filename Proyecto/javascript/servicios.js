@@ -1,61 +1,92 @@
 //@ts-check
 
 import { store } from "../store/redux.js";
-import { Servicio } from "../clases/clase-servicio.js";
+import { Servicio as ServicioClass } from "../clases/clase-servicio.js";
 
 /**
- * /** @type {{ servicios: Servicio[] }} */
+ * @type {{ servicios: Servicio[] }}
+ */
 const state = {
-  servicios: [
-    // Ejemplo 1: Servicio de limpieza
-    new Servicio(
-      1,
-      "Servicio de limpieza",
-      "Limpieza profesional a domicilio.",
-      30, // Precio
-      4.5, // Valoración
-      "Madrid", // Ubicación
-      "8:00-20:00", // Horarios
-      "Efectivo, Tarjeta", // Métodos de pago
-      "Hogar", // Categoría
-      "https://example.com/imagen1.jpg", // Imagen
-      ["limpieza", "hogar"] // Etiquetas
-    ),
-    // Ejemplo 2: Reparación de electrodomésticos
-    new Servicio(
-      2,
-      "Reparación de electrodomésticos",
-      "Reparación rápida y eficaz.",
-      50, // Precio
-      4.8, // Valoración
-      "Barcelona", // Ubicación
-      "9:00-18:00", // Horarios
-      "Tarjeta", // Métodos de pago
-      "Reparaciones", // Categoría
-      "https://example.com/imagen2.jpg", // Imagen
-      ["reparación", "electrodomésticos"] // Etiquetas
-    ),
-    // Ejemplo 3: Clases de yoga
-    new Servicio(
-      3,
-      "Clases de yoga",
-      "Clases personalizadas para todos los niveles.",
-      20, // Precio
-      4.9, // Valoración
-      "Valencia", // Ubicación
-      "10:00-12:00", // Horarios
-      "Efectivo, Transferencia", // Métodos de pago
-      "Salud y Bienestar", // Categoría
-      "https://example.com/imagen3.jpg", // Imagen
-      ["yoga", "bienestar", "salud"] // Etiquetas
-    )
-  ]
+  servicios: []
 };
 
-console.log("Servicios iniciales cargados:", state.servicios);
+// Cargar datos desde el archivo JSON
+/**
+ * @typedef {Object} Servicio
+ * @property {number} id
+ * @property {string} nombre
+ * @property {string} descripcion
+ * @property {number} precio
+ * @property {number} valoracion
+ * @property {string} ubicacion
+ * @property {string} horarios
+ * @property {string} metodoPago
+ * @property {string} categoria
+ * @property {string} imagen
+ * @property {string[]} etiquetas
+ */
+
+/**
+ * @param {Servicio[]} current
+ * @param {Servicio[]} newData
+ * @returns {Servicio[]}
+ */
+const mergeServicios = (current, newData) => {
+  const ids = new Set(current.map(servicio => servicio.id));
+  return [...current, ...newData.filter(servicio => !ids.has(servicio.id))];
+};
+
+fetch('./api/factory.json')
+  .then(response => {
+    if (!response.ok) {
+      throw new Error(`Error al cargar JSON: ${response.status}`);
+    }
+    return response.json();
+  })
+  .then(data => {
+    state.servicios = mergeServicios(state.servicios, data.servicios);
+    console.log("Servicios combinados sin duplicados:", state.servicios);
+    renderServicios();
+  })
+  .catch(error => {
+    console.error('Error al cargar los servicios:', error);
+  });
 
 
+/**
+ * Inicializar eventos al cargar el DOM.
+ */
+document.addEventListener("DOMContentLoaded", () => {
+  const btnCrearServicio = document.getElementById("btn-crear-servicio");
+  const formCrearServicio = document.getElementById("crear-servicio-form");
+  const serviciosContainer = document.getElementById("servicios-container");
+  const btnCerrarModal = document.getElementById("btn-cerrar-modal");
+  const modalCrearServicio = document.getElementById("modal-crear-servicio");
 
+  if (!btnCrearServicio || !formCrearServicio || !serviciosContainer || !modalCrearServicio || !btnCerrarModal) {
+    console.error("No se encontraron algunos elementos necesarios para la interacción.");
+    return;
+  }
+
+  // Render inicial con los servicios del estado global
+  renderServicios();
+
+  // Mostrar el modal de creación
+  btnCrearServicio.addEventListener("click", () => {
+    modalCrearServicio.classList.remove("hidden");
+  });
+
+  // Cerrar el modal
+  btnCerrarModal.addEventListener("click", () => {
+    modalCrearServicio.classList.add("hidden");
+  });
+
+  // Manejar el envío del formulario de creación
+  formCrearServicio.addEventListener("submit", registrarServicio);
+
+  // Manejar la eliminación de servicios
+  serviciosContainer.addEventListener("click", eliminarServicio);
+});
 const renderServicios = () => {
   const serviciosContainer = document.getElementById("servicios-container");
 
@@ -65,7 +96,6 @@ const renderServicios = () => {
   }
 
   // Obtener los servicios del estado global
-  const state = store.getState();
   const servicios = state.servicios;
 
   console.log("Renderizando servicios:", servicios);
@@ -122,7 +152,7 @@ const registrarServicio = (e) => {
     return;
   }
 
-  const nuevoServicio = new Servicio(
+  const nuevoServicio = new ServicioClass(
     Date.now(),
     nombreInput.value,
     descripcionInput.value,
@@ -170,38 +200,3 @@ const eliminarServicio = (e) => {
     renderServicios();
   }
 };
-
-/**
- * Inicializar eventos al cargar el DOM.
- */
-document.addEventListener("DOMContentLoaded", () => {
-  const btnCrearServicio = document.getElementById("btn-crear-servicio");
-  const formCrearServicio = document.getElementById("crear-servicio-form");
-  const serviciosContainer = document.getElementById("servicios-container");
-  const btnCerrarModal = document.getElementById("btn-cerrar-modal");
-  const modalCrearServicio = document.getElementById("modal-crear-servicio");
-
-  if (!btnCrearServicio || !formCrearServicio || !serviciosContainer || !modalCrearServicio || !btnCerrarModal) {
-    console.error("No se encontraron algunos elementos necesarios para la interacción.");
-    return;
-  }
-
-  // Render inicial con los servicios del estado global
-  renderServicios();
-
-  // Mostrar el modal de creación
-  btnCrearServicio.addEventListener("click", () => {
-    modalCrearServicio.classList.remove("hidden");
-  });
-
-  // Cerrar el modal
-  btnCerrarModal.addEventListener("click", () => {
-    modalCrearServicio.classList.add("hidden");
-  });
-
-  // Manejar el envío del formulario de creación
-  formCrearServicio.addEventListener("submit", registrarServicio);
-
-  // Manejar la eliminación de servicios
-  serviciosContainer.addEventListener("click", eliminarServicio);
-});

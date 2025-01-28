@@ -1,15 +1,85 @@
-[
-  {
-  "id": 1,
-  "nombre": "Clase de Yoga",
-  "descripcion": "Clases personalizadas de yoga para todos los niveles.",
-  "precio": 15,
-  "valoracion": 5,
-  "ubicacion": "Avenida de la Paz, 123",
-  "horarios": "Lunes a Viernes de 10:00 a 18:00",
-  "metodoPago": "Efectivo, Tarjeta",
-  "categoria": "Actividad",
-  "imagen": "https://images.pexels.com/photos/3823062/pexels-photo-3823062.jpeg",
-  "etiquetas": ["yoga", "bienestar", "actividad física"]
+
+{
+  "servicios": [
+    {
+      "id": 1,
+      "nombre": "Clase de Yoga",
+      "descripcion": "Clases de Yoga individualizadas para todos los niveles",
+      "imagen": "https://images.pexels.com/photos/3823062/pexels-photo-3823062.jpeg",
+      "ubicacion": "Avenida de la Paz, 123",
+      "valoracion": 5
+    },
+    {
+      "id": 2,
+      "nombre": "Carnicería Los Tres",
+      "descripcion": "Carnes frescas de calidad, producidas localmente.",
+      "imagen": "https://images.pexels.com/photos/65174/pexels-photo-65174.jpeg",
+      "ubicacion": "Calle de la Libertad, 45",
+      "valoracion": 4
+    },
+    {
+      "id": 3,
+      "nombre": "Crosfit",
+      "descripcion": "Clases de Crosfit de forma individual o grupal.",
+      "imagen": "https://images.pexels.com/photos/1552249/pexels-photo-1552249.jpeg",
+      "ubicacion": "Calle del Sol, 67",
+      "valoracion": 4
+    },
+    {
+      "id": 4,
+      "nombre": "Frutería el Valle",
+      "descripcion": "Frutería local de productos locales",
+      "imagen": "https://images.pexels.com/photos/4199122/pexels-photo-4199122.jpeg",
+      "ubicacion": "Avenida de la Paz, 123",
+      "valoracion": 4
+    },
+    {
+      "id": 5,
+      "nombre": "Spa Relax",
+      "descripcion": "Sesiones de spa y masajes terapéuticos.",
+      "imagen": "https://images.pexels.com/photos/3865676/pexels-photo-3865676.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "ubicacion": "Calle Primavera, 10",
+      "valoracion": 5
+    },
+    {
+      "id": 6,
+      "nombre": "Tienda Vegana Verde",
+      "descripcion": "Productos ecológicos y veganos certificados.",
+      "imagen": "https://images.pexels.com/photos/3756523/pexels-photo-3756523.jpeg",
+      "ubicacion": "Calle Esperanza, 22",
+      "valoracion": 4
+    },
+    {
+      "id": 7,
+      "nombre": "Clínica de Fisioterapia Vital",
+      "descripcion": "Tratamientos personalizados para lesiones y bienestar físico.",
+      "imagen": "https://images.pexels.com/photos/4506168/pexels-photo-4506168.jpeg",
+      "ubicacion": "Avenida Central, 89",
+      "valoracion": 5
+    },
+    {
+      "id": 8,
+      "nombre": "Panadería La Espiga",
+      "descripcion": "Pan artesanal y repostería fresca cada día.",
+      "imagen": "https://images.pexels.com/photos/209291/pexels-photo-209291.jpeg",
+      "ubicacion": "Calle Dulce, 15",
+      "valoracion": 5
+    },
+    {
+      "id": 9,
+      "nombre": "Club de Senderismo",
+      "descripcion": "Excursiones guiadas por rutas naturales.",
+      "imagen": "https://images.pexels.com/photos/1054221/pexels-photo-1054221.jpeg",
+      "ubicacion": "Punto de encuentro: Plaza Mayor",
+      "valoracion": 4
+    },
+    {
+      "id": 10,
+      "nombre": "Pescadería El Mar",
+      "descripcion": "Pescado fresco traído directamente de la lonja.",
+      "imagen": "https://images.pexels.com/photos/3535383/pexels-photo-3535383.jpeg",
+      "ubicacion": "Calle del Puerto, 18",
+      "valoracion": 4
+    }
+  ]
 }
-] 

@@ -2,58 +2,89 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Marketplace de Productos Locales</title>
-  <!-- Enlazamos el CSS externo -->
+  <!-- Enlace al CSS -->
   <link rel="stylesheet" href="css/styles-main.css" />
+  <!-- Iconos para mejorar la UI -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 </head>
 <body>
-
-  <!-- Sección principal con la imagen de fondo y título -->
+  <!-- Encabezado principal con imagen de fondo -->
   <header class="hero">
-    <div class="hero-overlay"><!-- Capa semitransparente opcional --></div>
+    <div class="hero-overlay"></div>
     <div class="hero-content">
-      <h1>Bienvenido a LocalMarket</h1>
-      <p>Descubre los mejores productos y servicios de tu comunidad.</p>
+      <h1>Bienvenido a <span class="highlight">LocalMarket</span></h1>
+      <p>Tu conexión directa con los productos y servicios de tu comunidad.</p>
       <a href="registrar.html" class="btn-cta">Regístrate o Inicia Sesión</a>
     </div>
   </header>
 
-  <!-- Sección de explicación / descripción -->
+  <!-- Sección explicativa -->
   <section class="info-section">
-    <h2>¿Qué es LocalMarket?</h2>
-    <p>
-      LocalMarket es un <strong>Marketplace de Productos Locales</strong>, 
-      donde pequeños comercios y artesanos pueden ofrecer sus mercancías y servicios 
-      directamente a la comunidad. Nuestro objetivo es fomentar el comercio de proximidad, 
-      potenciar la economía local y brindar una experiencia de compra cercana y de calidad.
-    </p>
-
-    <p>
-      En LocalMarket encontrarás:
-    </p>
-    <ul>
-      <li>Productos frescos y de temporada</li>
-      <li>Artesanías y creaciones únicas</li>
-      <li>Servicios y actividades de tu ciudad o barrio</li>
-    </ul>
-
-    <p>
-      Nos enorgullece conectar a los vecinos con las pequeñas empresas que dan vida a 
-      la comunidad. Cada compra que realizas en LocalMarket <strong>apoya la economía 
-      local</strong> y contribuye al desarrollo sostenible de tu entorno.
-    </p>
+    <div class="container">
+      <h2>¿Qué es LocalMarket?</h2>
+      <p>
+        LocalMarket es una plataforma diseñada para conectar a los vecinos con pequeños negocios, 
+        fomentando el comercio local y la economía sostenible. Aquí puedes encontrar:
+      </p>
+      <div class="features-grid">
+        <div class="feature-item">
+          <i class="fas fa-carrot"></i>
+          <h3>Productos frescos</h3>
+          <p>Frutas, verduras y alimentos locales directamente del productor.</p>
+        </div>
+        <div class="feature-item">
+          <i class="fas fa-palette"></i>
+          <h3>Artesanías únicas</h3>
+          <p>Descubre artículos hechos a mano con un toque especial.</p>
+        </div>
+        <div class="feature-item">
+          <i class="fas fa-cogs"></i>
+          <h3>Servicios locales</h3>
+          <p>Accede a talleres, actividades y servicios cerca de ti.</p>
+        </div>
+      </div>
+    </div>
   </section>
 
-  <!-- Pie de página con posibles enlaces de navegación -->
-  <footer>
-    <nav>
-      <ul>
-        <li><a href="registrar.html">Registrar</a></li>
-        <li><a href="servicios.html">Servicios</a></li>
-        
+  <!-- Sección de beneficios -->
+  <section class="benefits-section">
+    <div class="container">
+      <h2>¿Por qué elegir LocalMarket?</h2>
+      <ul class="benefits-list">
+        <li><i class="fas fa-check-circle"></i> Apoya a tu comunidad.</li>
+        <li><i class="fas fa-check-circle"></i> Descubre productos únicos y sostenibles.</li>
+        <li><i class="fas fa-check-circle"></i> Construye conexiones con tus vecinos.</li>
       </ul>
-    </nav>
-    <p>&copy; 2025 LocalMarket - Todos los derechos reservados.</p>
+    </div>
+  </section>
+
+  <!-- Sección de llamada a la acción -->
+  <section class="cta-section">
+    <div class="container">
+      <h2>Únete hoy mismo</h2>
+      <p>
+        Sé parte de LocalMarket y comienza a disfrutar de los beneficios de apoyar y conectar 
+        con tu comunidad.
+      </p>
+      <a href="registrar.html" class="btn-cta-large">Comienza ahora</a>
+    </div>
+  </section>
+
+  <!-- Pie de página -->
+  <footer>
+    <div class="container">
+      <nav class="footer-nav">
+        <ul>
+          <li><a href="registrar.html">Registrar</a></li>
+          <li><a href="servicios.html">Servicios</a></li>
+          <li><a href="contacto.html">Contacto</a></li>
+          <li><a href="faq.html">Preguntas Frecuentes</a></li>
+        </ul>
+      </nav>
+      <p>&copy; 2025 LocalMarket - Todos los derechos reservados.</p>
+    </div>
   </footer>
 
 </body>

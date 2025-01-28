@@ -76,18 +76,19 @@ section {
     padding: 20px 30px;
     border-radius: 12px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    max-width: 400px;
+    
     width: 100%;
     text-align: center;
+    transition: all 200ms ease-in-out;
+    scale:0.9
 }
 section:hover{
-  scale:1.1
+  scale:1
 }
 
 .hidden {
     display: none;
-}
-
+} 
 /* Formularios */
 form {
     display: flex;
@@ -145,4 +146,85 @@ button:hover {
 .modal-content button {
     margin-top: 15px;
     background-color: #b2005e;
+}
+.error {
+  color: red;
+  font-size: 0.9rem;
+  margin-top: 5px;
+  display: none; /* Oculto por defecto */
+}
+
+input.error {
+  border: 2px solid red;
+}
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
+.usuario-card {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 16px;
+  background-color: #ffffff;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.usuario-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.usuario-card h4 {
+  margin-bottom: 8px;
+}
+
+.usuario-card p {
+  margin: 8px 0;
+  font-size: 0.9em;
+  color: #555;
+}
+
+.usuario-card button {
+  margin: 10px 5px;
+  padding: 8px 16px;
+  font-size: 0.9em;
+  color: white;
+  background-color: #007bff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.usuario-card button:hover {
+  background-color: #0056b3;
+}
+
+.usuario-card .btn-editar {
+  background-color: #28a745;
+}
+
+.usuario-card .btn-editar:hover {
+  background-color: #1e7e34;
+}
+
+.usuario-card .btn-mensaje {
+  background-color: #ffc107;
+}
+
+.usuario-card .btn-mensaje:hover {
+  background-color: #d39e00;
+}
+.section-lista-usuarios {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;
+  width: 100%;
 }

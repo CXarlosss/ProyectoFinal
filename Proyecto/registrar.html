@@ -3,11 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Registro de Usuario</title>
+  <title>Gestión de Usuarios</title>
   <link rel="stylesheet" href="./css/styles-registrar.css" />
-</head> 
-<header>
-    <h1>Registro de Usuario</h1>
+</head>
+<body>
+  <header>
+    <h1>Gestión de Usuarios</h1>
     <nav>
       <ul>
         <li><a href="index.html">Inicio</a></li>
@@ -15,18 +16,18 @@
       </ul>
     </nav>
   </header>
-<body>
- 
 
   <main>
-    <section id="formulario-usuario">
-      <h3>Formulario de Usuario</h3>
-      <div class="promocion-visual">
-        <p>
-          Regístrate ahora y accede a beneficios exclusivos como promociones personalizadas y descuentos especiales.
-        </p>
-        <img src="#" alt="Promoción exclusiva" />
-      </div>
+    <!-- Pantalla inicial -->
+    <section id="pantalla-inicial">
+      <h2>¿Qué quieres hacer?</h2>
+      <button id="btn-registrarse">Registrarse</button>
+      <button id="btn-iniciar-sesion">Iniciar Sesión</button>
+    </section>
+
+    <!-- Formulario de registro -->
+    <section id="formulario-registro" class="hidden">
+      <h3>Registro de Usuario</h3>
       <form id="usuario-form">
         <label for="nombre-usuario">Nombre:</label>
         <input type="text" id="nombre-usuario" required />
@@ -47,30 +48,30 @@
       </form>
     </section>
 
-    <!-- Sección de Agradecimiento -->
-    <section id="agradecimiento-usuario" class="hidden">
-      <h3>¡Registro Completado!</h3>
-      <p>Gracias por registrarte. A continuación, te mostramos un resumen de tu información:</p>
-      <div id="resumen-usuario"></div>
-      <a href="servicios.html" class="btn">Explorar Servicios</a>
+    <!-- Formulario de inicio de sesión -->
+    <section id="formulario-login" class="hidden">
+      <h3>Iniciar Sesión</h3>
+      <form id="login-form">
+        <label for="nombre-login">Nombre:</label>
+        <input type="text" id="nombre-login" required />
+
+        <label for="password-login">Contraseña:</label>
+        <input type="password" id="password-login" required />
+
+        <button type="submit">Iniciar Sesión</button>
+      </form>
+    </section>
+
+    <!-- Sección de usuarios -->
+    <section id="lista-usuarios" class="hidden">
+      <h3>Usuarios</h3>
+      <div id="usuarios-container" class="grid-container"></div>
     </section>
   </main>
 
   <footer>
-    <p>&copy; 2025 Comercio & Servicios</p>
+    <p>&copy; 2025 Gestión de Usuarios</p>
   </footer>
-
-
-  <!-- Modal -->
-  <div class="modal hidden" id="miModal">
-  <div class="modal-content">
-    <h2>¡Registro Completado!</h2>
-    <p>Gracias por registrarte. Aquí tienes un resumen de tus datos:</p>
-    <div id="resumen-usuario"></div>
-    <button onclick="cerrarModal()">Cerrar</button>
-  </div>
-</div>
-
   <script type="module" src="./javascript/registrarUsuario.js"></script>
 </body>
 </html>

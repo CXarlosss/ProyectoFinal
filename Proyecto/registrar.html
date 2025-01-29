@@ -9,24 +9,17 @@
 <body>
   <header>
     <h1>Gestión de Usuarios</h1>
-    <nav>
-      <ul>
-        <li><a href="index.html">Inicio</a></li>
-        <li><a href="servicios.html">Servicios</a></li>
-      </ul>
-    </nav>
   </header>
 
   <main>
-    <!-- Pantalla inicial -->
-    <section id="pantalla-inicial">
-      <h2>¿Qué quieres hacer?</h2>
-      <button id="btn-registrarse">Registrarse</button>
-      <button id="btn-iniciar-sesion">Iniciar Sesión</button>
-    </section>
+    <!-- Botones para alternar entre registro e inicio de sesión -->
+    <div class="toggle-buttons">
+      <button id="mostrar-registro">Registrarse</button>
+      <button id="mostrar-login">Iniciar Sesión</button>
+    </div>
 
     <!-- Formulario de registro -->
-    <section id="formulario-registro" class="hidden">
+    <section id="formulario-registro">
       <h3>Registro de Usuario</h3>
       <form id="usuario-form">
         <label for="nombre-usuario">Nombre:</label>
@@ -52,8 +45,8 @@
     <section id="formulario-login" class="hidden">
       <h3>Iniciar Sesión</h3>
       <form id="login-form">
-        <label for="nombre-login">Nombre:</label>
-        <input type="text" id="nombre-login" required />
+        <label for="email-login">Email:</label>
+        <input type="email" id="email-login" required />
 
         <label for="password-login">Contraseña:</label>
         <input type="password" id="password-login" required />
@@ -61,17 +54,8 @@
         <button type="submit">Iniciar Sesión</button>
       </form>
     </section>
-
-    <!-- Sección de usuarios -->
-    <section id="lista-usuarios" class="hidden">
-      <h3>Usuarios</h3>
-      <div id="usuarios-container" class="grid-container"></div>
-    </section>
   </main>
 
-  <footer>
-    <p>&copy; 2025 Gestión de Usuarios</p>
-  </footer>
   <script type="module" src="./javascript/registrarUsuario.js"></script>
 </body>
 </html>

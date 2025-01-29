@@ -1,54 +1,44 @@
 // @ts-check
-
-// @ts-check
 import { Usuario } from "../clases/clase-usuario.js";
 
 document.addEventListener("DOMContentLoaded", () => {
-  
-  const pantallaInicial = /** @type {HTMLElement | null} */ (document.getElementById("pantalla-inicial"));
-  const formularioRegistro = /** @type {HTMLElement | null} */ (document.getElementById("formulario-registro"));
-  const formularioLogin = /** @type {HTMLElement | null} */ (document.getElementById("formulario-login"));
-  const listaUsuarios = /** @type {HTMLElement | null} */ (document.getElementById("lista-usuarios"));
+  const formularioRegistro = /** @type {HTMLFormElement | null} */ (
+    document.getElementById("usuario-form")
+  );
+  const formularioLogin = /** @type {HTMLFormElement | null} */ (
+    document.getElementById("login-form")
+  );
+  const btnMostrarRegistro = /** @type {HTMLButtonElement | null} */ (
+    document.getElementById("mostrar-registro")
+  );
+  const btnMostrarLogin = /** @type {HTMLButtonElement | null} */ (
+    document.getElementById("mostrar-login")
+  );
+  const seccionRegistro = /** @type {HTMLElement | null} */ (
+    document.getElementById("formulario-registro")
+  );
+  const seccionLogin = /** @type {HTMLElement | null} */ (
+    document.getElementById("formulario-login")
+  );
 
-  const btnRegistrarse = /** @type {HTMLElement | null} */ (document.getElementById("btn-registrarse"));
-  const btnIniciarSesion = /** @type {HTMLElement | null} */ (document.getElementById("btn-iniciar-sesion"));
-  const usuarioForm = /** @type {HTMLFormElement | null} */ (document.getElementById("usuario-form"));
-  const loginForm = /** @type {HTMLFormElement | null} */ (document.getElementById("login-form"));
-
-  /** @type {Usuario[]} */
-  const usuarios = [
-    new Usuario(1, "Juan Pérez", "juan.perez@example.com", "123456", "611223344", "Calle Falsa 123"),
-    new Usuario(2, "Ana García", "ana.garcia@example.com", "123456", "622334455", "Avenida Siempre Viva 742"),
-    new Usuario(3, "Carlos López", "carlos.lopez@example.com", "123456", "633445566", "Boulevard Solitario 456"),
-    new Usuario(4, "María Rodríguez", "maria.rodriguez@example.com", "123456", "644556677", "Plaza Mayor 23"),
-    new Usuario(5, "Luis Martínez", "luis.martinez@example.com", "123456", "655667788", "Calle del Sol 45"),
-  ];
-
-  /** @type {Usuario | null} */
-  let usuarioLogueado = null;
-
-  // Eventos principales
-  btnRegistrarse?.addEventListener("click", mostrarFormularioRegistro);
-  btnIniciarSesion?.addEventListener("click", mostrarFormularioLogin);
-
-  usuarioForm?.addEventListener("submit", registrarUsuario);
-  loginForm?.addEventListener("submit", iniciarSesion);
-
-  function mostrarFormularioRegistro() {
-    pantallaInicial?.classList.add("hidden");
-    formularioRegistro?.classList.remove("hidden");
+  if (!formularioRegistro || !formularioLogin || !btnMostrarRegistro || !btnMostrarLogin || !seccionRegistro || !seccionLogin) {
+    console.error("Error al cargar elementos del DOM.");
+    return;
   }
 
-  function mostrarFormularioLogin() {
-    pantallaInicial?.classList.add("hidden");
-    formularioLogin?.classList.remove("hidden");
-  }
+  // Alternar entre registro e inicio de sesión
+  btnMostrarRegistro.addEventListener("click", () => {
+    seccionRegistro.classList.remove("hidden");
+    seccionLogin.classList.add("hidden");
+  });
 
-  /**
-   * @param {Event} e
-   */
-  function registrarUsuario(e) {
-  
+  btnMostrarLogin.addEventListener("click", () => {
+    seccionRegistro.classList.add("hidden");
+    seccionLogin.classList.remove("hidden");
+  });
+
+  // Evento para registrar usuario
+  formularioRegistro.addEventListener("submit", (e) => {
     e.preventDefault();
 
     const nombre = /** @type {HTMLInputElement} */ (document.getElementById("nombre-usuario")).value.trim();
@@ -57,96 +47,47 @@ document.addEventListener("DOMContentLoaded", () => {
     const direccion = /** @type {HTMLInputElement} */ (document.getElementById("direccion-usuario")).value.trim();
     const password = /** @type {HTMLInputElement} */ (document.getElementById("password-usuario")).value.trim();
 
+    if (!nombre || !email || !telefono || !direccion || !password) {
+      alert("Todos los campos son obligatorios.");
+      return;
+    }
+
+    // Comprobar si el usuario ya existe
+    const usuariosGuardados = /** @type {Usuario[]} */ (JSON.parse(localStorage.getItem("usuarios") || "[]"));
+    const usuarioExistente = usuariosGuardados.find(user => user.email === email);
+
+    if (usuarioExistente) {
+      alert("Este email ya está registrado. Inicia sesión.");
+      return;
+    }
+
+    // Crear usuario
     const nuevoUsuario = new Usuario(Date.now(), nombre, email, password, telefono, direccion);
-    usuarios.push(nuevoUsuario);
+    usuariosGuardados.push(nuevoUsuario);
 
-    formularioRegistro?.classList.add("hidden");
-    usuarioLogueado = nuevoUsuario;
-    console.log("Usuario logueado inicialmente:", usuarioLogueado);
+    // Guardar en localStorage
+    localStorage.setItem("usuarios", JSON.stringify(usuariosGuardados));
+    localStorage.setItem("usuarioRegistrado", JSON.stringify(nuevoUsuario));
 
-    mostrarUsuarios();
-  }
+    // Redirigir a la página de usuario
+    window.location.href = "paginadelusuario.html";
+  });
 
-  /**
-   * @param {Event} e
-   */
-  function iniciarSesion(e) {
+  // Evento para iniciar sesión
+  formularioLogin.addEventListener("submit", (e) => {
     e.preventDefault();
 
-    const nombre = /** @type {HTMLInputElement} */ (document.getElementById("nombre-login")).value.trim();
+    const email = /** @type {HTMLInputElement} */ (document.getElementById("email-login")).value.trim();
     const password = /** @type {HTMLInputElement} */ (document.getElementById("password-login")).value.trim();
 
-    const usuarioEncontrado = usuarios.find((usuario) => usuario.nombre === nombre && usuario.password === password);
+    const usuariosGuardados = /** @type {Usuario[]} */ (JSON.parse(localStorage.getItem("usuarios") || "[]"));
+    const usuarioEncontrado = usuariosGuardados.find(user => user.email === email && user.password === password);
 
     if (usuarioEncontrado) {
-      usuarioLogueado = usuarioEncontrado;
-      formularioLogin?.classList.add("hidden");
-      mostrarUsuarios();
+      localStorage.setItem("usuarioRegistrado", JSON.stringify(usuarioEncontrado));
+      window.location.href = "paginadelusuario.html";
     } else {
-      alert("Nombre o contraseña incorrectos.");
+      alert("Email o contraseña incorrectos.");
     }
-  }
-
-  /**
-   * Muestra los usuarios en un grid.
-   */
-  function mostrarUsuarios() {
-    listaUsuarios?.classList.remove("hidden");
-    const usuariosContainer = /** @type {HTMLElement | null} */ (document.getElementById("usuarios-container"));
-    if (!usuariosContainer) return;
-
-    usuariosContainer.innerHTML = usuarios
-      .map(
-        (usuario) => `
-        <div class="usuario-card">
-          <h4>${usuario.nombre}</h4>
-          <p><strong>Email:</strong> ${usuario.email}</p>
-          <p><strong>Teléfono:</strong> ${usuario.telefono}</p>
-          <p><strong>Dirección:</strong> ${usuario.direccion}</p>
-          <button class="btn-editar" data-id="${usuario.id}">Editar Perfil</button>
-          <button class="btn-mensaje" data-id="${usuario.id}">Enviar Mensaje</button>
-        </div>
-      `
-      )
-      .join("");
-
-      // Agregar eventos para editar y enviar mensajes
-    /** @type {NodeListOf<HTMLButtonElement>} */
-    const botonesEditar = usuariosContainer.querySelectorAll(".btn-editar");
-    botonesEditar.forEach((btn) => btn.addEventListener("click", () => editarPerfil(btn.dataset.id || "")));
-
-    /** @type {NodeListOf<HTMLButtonElement>} */
-    const botonesMensaje = usuariosContainer.querySelectorAll(".btn-mensaje");
-    botonesMensaje.forEach((btn) => btn.addEventListener("click", () => enviarMensaje(btn.dataset.id || "")));
-}
-
-
-  /**
-   * Edita el perfil de un usuario.
-   * @param {string} id
-   */
-  function editarPerfil(id) {
-    const usuario = usuarios.find((usuario) => String(usuario.id) === id);
-    if (usuario) {
-      const nuevoNombre = prompt(`Editar nombre (${usuario.nombre}):`, usuario.nombre);
-      if (nuevoNombre) usuario.nombre = nuevoNombre;
-      mostrarUsuarios();
-    }
-  }
-
-  /**
-   * Envía un mensaje a un usuario.
-   * @param {string} id
-   */
-  function enviarMensaje(id) {
-    const usuario = usuarios.find((usuario) => String(usuario.id) === id);
-    if (usuario) {
-      const mensaje = prompt(`Escribe un mensaje para ${usuario.nombre}:`);
-      if (mensaje) alert(`Mensaje enviado a ${usuario.nombre}: ${mensaje}`);
-    }
-  }
+  });
 });
-
-
-
-

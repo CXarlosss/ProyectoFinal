@@ -1,5 +1,6 @@
 // @ts-check
 
+/* eslint-disable no-unused-vars */
 import { store } from "../store/redux.js";
 import { Servicio as ServicioClass } from "../clases/clase-servicio.js";
 
@@ -16,31 +17,22 @@ import { Servicio as ServicioClass } from "../clases/clase-servicio.js";
  * @property {string} categoria
  * @property {string} imagen
  * @property {string[]} etiquetas
+ * @property {boolean} favorito
  */
 
 /**
- * @type {{ servicios: Servicio[] }}
+ * @type {{ servicios: Servicio[], favoritos: Servicio[] }}
  */
 const state = {
-  servicios: []
-};
-
-/**
- * Combina dos listas de servicios eliminando duplicados por ID.
- * @param {Servicio[]} current - Lista actual de servicios.
- * @param {Servicio[]} newData - Nueva lista de servicios.
- * @returns {Servicio[]} - Lista combinada de servicios sin duplicados.
- */
-const mergeServicios = (current, newData) => {
-  const ids = new Set(current.map(servicio => servicio.id));
-  return [...current, ...newData.filter(servicio => !ids.has(servicio.id))];
+  servicios: [],
+  favoritos: []
 };
 
 /**
  * Carga los servicios desde un archivo JSON y actualiza el estado.
  */
 const fetchServicios = () => {
-  fetch('./api/factory.json')
+  fetch("./api/factory.json")
     .then(response => {
       if (!response.ok) {
         throw new Error(`Error al cargar JSON: ${response.status}`);
@@ -52,21 +44,23 @@ const fetchServicios = () => {
        * @param {{ servicios: Servicio[] }} data - Datos cargados del JSON.
        */
       data => {
-        state.servicios = mergeServicios(state.servicios, data.servicios);
-        console.log("Servicios combinados sin duplicados:", state.servicios);
+        state.servicios = data.servicios.map(servicio => ({
+          ...servicio,
+          favorito: false
+        }));
+
         renderServicios();
       }
     )
     .catch(error => {
-      console.error('Error al cargar los servicios:', error);
+      console.error("Error al cargar los servicios:", error);
     });
 };
 
 /**
- * Renderiza los servicios en el contenedor, opcionalmente aplicando un filtro.
- * @param {string} filtro - Filtro a aplicar ("actividades" o "comercios").
+ * Renderiza los servicios en el contenedor.
  */
-const renderServicios = (filtro = "") => {
+const renderServicios = () => {
   const serviciosContainer = /** @type {HTMLElement | null} */ (
     document.getElementById("servicios-container")
   );
@@ -76,16 +70,7 @@ const renderServicios = (filtro = "") => {
     return;
   }
 
-  let servicios = state.servicios;
-
-  // Aplicar filtros según la categoría
-  if (filtro === "actividades") {
-    servicios = servicios.filter(servicio => servicio.categoria === "actividad");
-  } else if (filtro === "comercios") {
-    servicios = servicios.filter(servicio => servicio.categoria === "comercio");
-  }
-
-  serviciosContainer.innerHTML = servicios
+  serviciosContainer.innerHTML = state.servicios
     .map(
       servicio => `
         <div class="card">
@@ -94,11 +79,10 @@ const renderServicios = (filtro = "") => {
           <p>${servicio.descripcion}</p>
           <p><strong>Ubicación:</strong> ${servicio.ubicacion}</p>
           <p><strong>Valoración:</strong> ${servicio.valoracion}</p>
-          ${
-            servicio.categoria === "actividad"
-              ? `<button class="btn-acceder" data-id="${servicio.id}">Acceder</button>`
-              : `<button class="btn-eliminar" data-id="${servicio.id}">Eliminar</button>`
-          }
+          <button class="btn-favorito ${servicio.favorito ? "favorito" : ""}" data-id="${servicio.id}">
+            ${servicio.favorito ? "★ Favorito" : "☆ Añadir a Favoritos"}
+          </button>
+          <button class="btn-mensaje" data-id="${servicio.id}">Enviar Mensaje</button>
         </div>
       `
     )
@@ -108,84 +92,42 @@ const renderServicios = (filtro = "") => {
 };
 
 /**
- * Registra un nuevo servicio en el estado a partir del formulario.
- * @param {SubmitEvent} e - Evento del formulario.
+ * Marca o desmarca un servicio como favorito.
+ * @param {string} id - ID del servicio.
  */
-const registrarServicio = e => {
-  e.preventDefault();
+const toggleFavorito = id => {
+  const servicioSeleccionado = state.servicios.find(servicio => servicio.id === parseInt(id));
 
-  const nombreInput = /** @type {HTMLInputElement | null} */ (
-    document.getElementById("nombre-servicio")
-  );
-  const descripcionInput = /** @type {HTMLInputElement | null} */ (
-    document.getElementById("descripcion-servicio")
-  );
-  const ubicacionInput = /** @type {HTMLInputElement | null} */ (
-    document.getElementById("ubicacion-servicio")
-  );
-  const valoracionInput = /** @type {HTMLInputElement | null} */ (
-    document.getElementById("valoracion-servicio")
-  );
-  const imagenInput = /** @type {HTMLInputElement | null} */ (
-    document.getElementById("imagen-servicio")
-  );
-  const categoriaInput = /** @type {HTMLSelectElement | null} */ (
-    document.getElementById("categoria-servicio")
-  );
+  if (!servicioSeleccionado) return;
 
-  if (
-    !nombreInput ||
-    !descripcionInput ||
-    !ubicacionInput ||
-    !valoracionInput ||
-    !imagenInput ||
-    !categoriaInput
-  ) {
-    console.error("Faltan elementos en el formulario.");
-    return;
+  // Cambiar estado de favorito
+  servicioSeleccionado.favorito = !servicioSeleccionado.favorito;
+
+  // Actualizar la lista de favoritos en `state`
+  if (servicioSeleccionado.favorito) {
+    state.favoritos.push(servicioSeleccionado);
+  } else {
+    state.favoritos = state.favoritos.filter(fav => fav.id !== servicioSeleccionado.id);
   }
 
-  const nuevoServicio = {
-    id: Date.now(),
-    nombre: nombreInput.value,
-    descripcion: descripcionInput.value,
-    precio: 0, // Precio por defecto
-    valoracion: parseFloat(valoracionInput.value),
-    ubicacion: ubicacionInput.value,
-    horarios: "", // Horarios por defecto
-    metodoPago: "", // Método de pago por defecto
-    categoria: categoriaInput.value,
-    imagen: imagenInput.value,
-    etiquetas: [] // Etiquetas por defecto
-  };
-
-  // Agregar al estado global y renderizar
-  state.servicios.push(nuevoServicio);
+  console.log(`Favoritos actualizados:`, state.favoritos);
   renderServicios();
-
-  // Limpiar formulario y cerrar modal
-  nombreInput.value = "";
-  descripcionInput.value = "";
-  ubicacionInput.value = "";
-  valoracionInput.value = "";
-  imagenInput.value = "";
-  categoriaInput.value = "actividad";
-
-  document.getElementById("modal-crear-servicio")?.classList.add("hidden");
 };
 
 /**
- * Elimina un servicio del estado por su ID.
- * @param {MouseEvent} e - Evento del clic.
+ * Envía un mensaje a la persona del servicio.
+ * @param {string} id - ID del servicio.
  */
-const eliminarServicio = e => {
-  const target = /** @type {HTMLElement} */ (e.target);
-  if (target.classList.contains("btn-eliminar")) {
-    const id = target.dataset.id;
-    if (!id) return;
+const enviarMensaje = id => {
+  const servicioSeleccionado = state.servicios.find(servicio => servicio.id === parseInt(id));
 
-    state.servicios = state.servicios.filter(servicio => servicio.id !== parseInt(id));
-    renderServicios();
+  if (!servicioSeleccionado) return;
+
+  const mensaje = prompt(`Escribe un mensaje para ${servicioSeleccionado.nombre}:`);
+
+  if (mensaje) {
+    console.log(`Mensaje enviado a ${servicioSeleccionado.nombre}: ${mensaje}`);
+    alert(`Mensaje enviado a ${servicioSeleccionado.nombre}: "${mensaje}"`);
   }
 };
 
@@ -193,46 +135,19 @@ const eliminarServicio = e => {
  * EVENTOS DOM
  * ======================= */
 document.addEventListener("DOMContentLoaded", () => {
-  const btnCrearServicio = /** @type {HTMLElement | null} */ (
-    document.getElementById("btn-crear-servicio")
-  );
-  const formCrearServicio = /** @type {HTMLFormElement | null} */ (
-    document.getElementById("crear-servicio-form")
-  );
-  const btnCerrarModal = /** @type {HTMLElement | null} */ (
-    document.getElementById("btn-cerrar-modal")
-  );
-
-  if (!btnCrearServicio || !formCrearServicio || !btnCerrarModal) {
-    console.error("Elementos necesarios no encontrados.");
-    return;
-  }
-
-  // Cargar servicios iniciales
+  console.log("Iniciando la aplicación...");
   fetchServicios();
-
-  // Eventos del formulario y botones
-  btnCrearServicio.addEventListener("click", () => {
-    document.getElementById("modal-crear-servicio")?.classList.remove("hidden");
-  });
-
-  btnCerrarModal.addEventListener("click", () => {
-    document.getElementById("modal-crear-servicio")?.classList.add("hidden");
-  });
-
-  formCrearServicio.addEventListener("submit", registrarServicio);
-
-  document.getElementById("btn-filtrar-actividades")?.addEventListener("click", () => renderServicios("actividades"));
-  document.getElementById("btn-filtrar-comercios")?.addEventListener("click", () => renderServicios("comercios"));
-  document.getElementById("btn-mostrar-todos")?.addEventListener("click", () => renderServicios());
 
   document.getElementById("servicios-container")?.addEventListener("click", e => {
     const target = /** @type {HTMLElement} */ (e.target);
-    if (target.classList.contains("btn-acceder")) {
-      const id = target.dataset.id;
-      console.log(`Accediendo a la actividad con ID: ${id}`);
-    } else if (target.classList.contains("btn-eliminar")) {
-      eliminarServicio(e);
+    const id = target.dataset.id;
+
+    if (!id) return;
+
+    if (target.classList.contains("btn-favorito")) {
+      toggleFavorito(id);
+    } else if (target.classList.contains("btn-mensaje")) {
+      enviarMensaje(id);
     }
   });
 });

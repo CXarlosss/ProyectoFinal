@@ -1,141 +1,199 @@
 // @ts-check
+
 document.addEventListener("DOMContentLoaded", () => {
+    console.log("DOM cargado correctamente.");
+
+    // Verificar si hay un usuario registrado
     const usuarioGuardado = localStorage.getItem("usuarioRegistrado");
-    const favoritosGuardados = localStorage.getItem("favoritos");
-
-    const chatList = /** @type {HTMLElement | null} */ (document.getElementById("chat-list"));
-    const chatPopup = /** @type {HTMLElement | null} */ (document.getElementById("chat-popup"));
-    const chatMessages = /** @type {HTMLElement | null} */ (document.getElementById("chat-messages"));
-    const chatTitulo = /** @type {HTMLElement | null} */ (document.getElementById("chat-titulo"));
-    const cerrarChat = /** @type {HTMLButtonElement | null} */ (document.getElementById("cerrar-chat"));
-    const mensajeInput = /** @type {HTMLInputElement | null} */ (document.getElementById("mensaje-input"));
-    const enviarMensaje = /** @type {HTMLButtonElement | null} */ (document.getElementById("enviar-mensaje"));
-
-    if (!chatList || !chatPopup || !chatMessages || !chatTitulo || !cerrarChat || !mensajeInput || !enviarMensaje) {
-        console.error("Error: No se encontraron elementos en el DOM.");
-        return;
-    }
-
-    let usuarioActivo = /** @type {string | null} */ (null);
-    let conversaciones = /** @type {Record<string, { remitente: string, mensaje: string }[]>} */ (
-        JSON.parse(localStorage.getItem("conversaciones") || "{}")
-    );
 
     if (!usuarioGuardado) {
         alert("No hay usuario registrado.");
-        window.location.href = "registrar.html"; // Redirigir si no hay usuario
+        window.location.href = "registrar.html";
         return;
     }
 
-    const usuario = /** @type {{ nombre: string }} */ (JSON.parse(usuarioGuardado));
-    const nombreUsuario = /** @type {HTMLElement | null} */ (document.getElementById("nombre"));
+    /** @type {{ id: string, nombre: string }} */
+    const usuario = JSON.parse(usuarioGuardado);
 
-    if (nombreUsuario) {
-        nombreUsuario.textContent = usuario.nombre;
-    }
-
-    // Cargar favoritos
+    // Elementos principales
+    const nombreElement = /** @type {HTMLElement | null} */ (document.getElementById("nombre"));
+    const chatList = /** @type {HTMLElement | null} */ (document.getElementById("chat-list"));
+    const btnCreateChat = /** @type {HTMLButtonElement | null} */ (document.getElementById("btn-create-chat"));
+    const btnCerrarSesion = /** @type {HTMLButtonElement | null} */ (document.getElementById("btn-cerrar-sesion"));
+    const btnIrSecciones = /** @type {HTMLButtonElement | null} */ (document.getElementById("btn-ir-secciones"));
     const favoritosList = /** @type {HTMLElement | null} */ (document.getElementById("favoritos-list"));
-    if (favoritosList && favoritosGuardados) {
-        const favoritos = /** @type {{ nombre: string }[]} */ (JSON.parse(favoritosGuardados));
-        if (favoritos.length > 0) {
-            favoritosList.innerHTML = favoritos
-                .map(fav => `<div class="favorito-item">${fav.nombre}</div>`)
-                .join("");
+    const chatPopup = /** @type {HTMLElement | null} */ (document.getElementById("chat-popup"));
+    const chatTitulo = /** @type {HTMLElement | null} */ (document.getElementById("chat-titulo"));
+    const chatMessages = /** @type {HTMLElement | null} */ (document.getElementById("chat-messages"));
+    const mensajeInput = /** @type {HTMLInputElement | null} */ (document.getElementById("mensaje-input"));
+    const enviarMensajeBtn = /** @type {HTMLButtonElement | null} */ (document.getElementById("enviar-mensaje"));
+    const cerrarChatBtn = /** @type {HTMLButtonElement | null} */ (document.getElementById("cerrar-chat"));
+
+    let usuarioActivo = "";
+    let conversaciones = /** @type {Record<string, { remitente: string, mensaje: string }[]>} */ (
+        JSON.parse(localStorage.getItem(`conversaciones_${usuario.id}`) || "{}")
+    );
+
+    // Asignar nombre del usuario en la bienvenida
+    if (nombreElement) {
+        nombreElement.textContent = usuario.nombre;
+    }
+
+    function cargarChats() {
+        if (!chatList) return;
+
+        const chats = Object.keys(conversaciones).map(id => ({
+            id,
+            nombre: id
+        }));
+
+        chatList.innerHTML = chats.length > 0
+            ? chats.map(chat => `
+                <div class="chat-item" data-id="${chat.id}">
+                    <strong>${chat.nombre}</strong>
+                    <button class="btn-eliminar-chat" data-id="${chat.id}">🗑</button>
+                </div>
+            `).join("")
+            : "<p>No hay chats aún.</p>";
+    }
+
+    cargarChats();
+
+    function cargarFavoritos() {
+        if (!favoritosList) return;
+
+        const favoritos = /** @type {{ id: string, nombre: string }[]} */ (
+            JSON.parse(localStorage.getItem(`favoritos_${usuario.id}`) || "[]")
+        );
+
+        favoritosList.innerHTML = favoritos.length > 0
+            ? favoritos.map(fav => `<div class="favorito-item">${fav.nombre}</div>`).join("")
+            : "<p>No tienes favoritos aún.</p>";
+    }
+
+    cargarFavoritos();
+
+    btnCreateChat?.addEventListener("click", () => {
+        const nombreChat = prompt("Introduce el nombre del usuario con quien quieres chatear:");
+        if (!nombreChat) return;
+
+        const chatId = nombreChat.toLowerCase().replace(/\s+/g, "-");
+
+        if (!conversaciones[chatId]) {
+            conversaciones[chatId] = [];
+            guardarMensajes();
+            cargarChats();
+            alert(`Chat con ${nombreChat} creado exitosamente.`);
         } else {
-            favoritosList.innerHTML = "<p>No tienes favoritos aún.</p>";
+            alert("Ya tienes un chat con este usuario.");
         }
-    }
+    });
 
-    // Cargar chats simulados
-    const chats = /** @type {{ id: string, nombre: string }[]} */ ([
-        { id: "1", nombre: "Juan Pérez" },
-        { id: "2", nombre: "Ana García" }
-    ]);
+    btnCerrarSesion?.addEventListener("click", () => {
+        localStorage.removeItem("usuarioRegistrado");
+        window.location.href = "registrar.html";
+    });
 
-    if (chats.length > 0) {
-        chatList.innerHTML = chats
-            .map(chat => `<div class="chat-item" data-id="${chat.id}" data-nombre="${chat.nombre}"><strong>${chat.nombre}</strong></div>`)
-            .join("");
-    } else {
-        chatList.innerHTML = "<p>No hay chats aún.</p>";
-    }
+    btnIrSecciones?.addEventListener("click", () => {
+        window.location.href = "servicios.html";
+    });
 
-    // Abrir chat
-    chatList.addEventListener("click", (e) => {
-        // Aseguramos que el target es un HTMLElement
+    chatList?.addEventListener("click", (e) => {
         const target = /** @type {HTMLElement | null} */ (e.target);
         if (!target) return;
-    
-        // Convertimos a HTMLDivElement para poder acceder a dataset
-        const chatItem = /** @type {HTMLDivElement | null} */ (target.closest(".chat-item"));
-        if (!chatItem) return;
-    
-        const chatId = chatItem.dataset.id || "";
-        const chatNombre = chatItem.dataset.nombre || "";
-    
-        if (!chatId || !chatNombre) {
-            console.error("No se encontraron datos del chat en el dataset.");
+
+        if (target.classList.contains("btn-eliminar-chat")) {
+            const chatId = target.dataset.id || "";
+            if (chatId) eliminarChat(chatId);
             return;
         }
-    
-        usuarioActivo = chatId;
-        chatTitulo.textContent = `Chat con ${chatNombre}`;
-        chatPopup.classList.remove("hidden");
-    
-        cargarMensajes(usuarioActivo);
-    });
 
-    // Cerrar chat
-    cerrarChat.addEventListener("click", () => {
-        chatPopup.classList.add("hidden");
-        usuarioActivo = null;
-    });
-
-    // Enviar mensaje
-    enviarMensaje.addEventListener("click", () => {
-        if (!usuarioActivo || !mensajeInput) return;
-
-        const mensaje = mensajeInput.value.trim();
-        if (mensaje === "") return;
-
-        if (!conversaciones[usuarioActivo]) {
-            conversaciones[usuarioActivo] = [];
+        if (target.classList.contains("chat-item")) {
+            const chatId = target.dataset.id || "";
+            if (chatId) abrirChat(chatId);
         }
-
-        conversaciones[usuarioActivo].push({
-            remitente: usuario.nombre,
-            mensaje: mensaje
-        });
-
-        mensajeInput.value = "";
-        guardarMensajes();
-        cargarMensajes(usuarioActivo);
     });
 
     /**
-     * Cargar mensajes en el chat activo.
-     * @param {string} usuarioId
+     * @param {string} chatId
      */
-    function cargarMensajes(usuarioId) {
-        if (!chatMessages) return;
+    function abrirChat(chatId) {
+        if (!chatId) return;
 
-        chatMessages.innerHTML = "";
+        try {
+            usuarioActivo = chatId;
+            if (chatTitulo) {
+                chatTitulo.textContent = `Chat con ${chatId}`;
+            } else {
+                throw new Error("No se encontró el título del chat.");
+            }
 
-        if (!conversaciones[usuarioId] || conversaciones[usuarioId].length === 0) {
-            chatMessages.innerHTML = "<p>No hay mensajes aún.</p>";
-            return;
+            if (chatPopup) {
+                chatPopup.classList.remove("hidden");
+            } else {
+                throw new Error("No se encontró el contenedor del chat.");
+            }
+
+            if (chatMessages) {
+                chatMessages.innerHTML = cargarMensajes(chatId);
+            } else {
+                throw new Error("No se encontró el contenedor de mensajes del chat.");
+            }
+        } catch (error) {
+            alert(`Error al abrir el chat con ${chatId}: ${error}`);
         }
+    }
 
-        chatMessages.innerHTML = conversaciones[usuarioId]
-            .map(msg => `<div class="mensaje"><strong>${msg.remitente}:</strong> ${msg.mensaje}</div>`)
-            .join("");
+    cerrarChatBtn?.addEventListener("click", () => {
+        chatPopup?.classList.add("hidden");
+        usuarioActivo = "";
+    });
+
+    enviarMensajeBtn?.addEventListener("click", () => {
+    if (!usuarioActivo || !mensajeInput || !chatMessages) return;
+
+    const mensaje = mensajeInput.value.trim();
+    if (mensaje === "") return;
+
+    if (!conversaciones[usuarioActivo]) {
+        conversaciones[usuarioActivo] = [];
+    }
+
+    conversaciones[usuarioActivo].push({
+        remitente: usuario.nombre,
+        mensaje: mensaje
+    });
+
+    mensajeInput.value = "";
+    guardarMensajes();
+
+    if (chatMessages) {
+        chatMessages.innerHTML = cargarMensajes(usuarioActivo);
+    }
+});
+
+
+    /**
+     * @param {string} chatId
+     */
+    function cargarMensajes(chatId) {
+        return conversaciones[chatId]?.map(msg => `<div class="mensaje"><strong>${msg.remitente}:</strong> ${msg.mensaje}</div>`).join("") || "<p>No hay mensajes aún.</p>";
     }
 
     /**
-     * Guarda las conversaciones en `localStorage`.
+     * @param {string} chatId
      */
+    function eliminarChat(chatId) {
+        if (!chatId) return;
+
+        if (confirm(`¿Seguro que quieres eliminar el chat con ${chatId}?`)) {
+            delete conversaciones[chatId];
+            guardarMensajes();
+            cargarChats();
+        }
+    }
+
     function guardarMensajes() {
-        localStorage.setItem("conversaciones", JSON.stringify(conversaciones));
+        localStorage.setItem(`conversaciones_${usuario.id}`, JSON.stringify(conversaciones));
     }
 });

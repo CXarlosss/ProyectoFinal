@@ -1,49 +1,53 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Perfil del Usuario</title>
-  <link rel="stylesheet" href="./css/styles-usuario.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil del Usuario</title>
+    <link rel="stylesheet" href="./css/styles-usuario.css">
 </head>
 <body>
+    <!-- Encabezado de bienvenida -->
+    <div class="bienvenida">¡Bienvenido, <span id="nombre"></span>!</div>
 
-  <div class="bienvenida">
-    ¡Bienvenido, <span id="nombre"></span>!
-  </div>
+    <!-- Contenedor principal -->
+    <div class="container">
+        <!-- Sección de Chats -->
+        <div class="seccion chats">
+            <h2>Chats</h2>
+            <div id="chat-list">
+                <p>No hay chats aún.</p>
+            </div>
+            <button id="btn-create-chat">Crear Chat</button>
 
-  <div class="container">
-    <!-- Sección de chats -->
-    <div class="seccion chats">
-      <h2>Chats</h2>
-      <div id="chat-list">
-        <p>No hay chats aún.</p>
-      </div>
+            <!-- Chat dentro de la sección de chats -->
+            <div id="chat-popup" class="hidden">
+                <div class="chat-header">
+                    <span id="chat-titulo">Chat</span>
+                    <button id="cerrar-chat" class="btn-cerrar">X</button>
+                </div>
+                <div id="chat-messages"></div>
+                <div class="chat-input">
+                    <input type="text" id="mensaje-input" placeholder="Escribe un mensaje...">
+                    <button id="enviar-mensaje">Enviar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección de Servicios y Favoritos -->
+        <div class="seccion servicios">
+            <h2>Secciones Favoritas</h2>
+            <div id="favoritos-list">
+                <p>No tienes favoritos aún.</p>
+            </div>
+            <button id="btn-ir-secciones">Ir a Secciones</button>
+        </div>
     </div>
 
-    <!-- Sección de favoritos -->
-    <div class="seccion favoritos">
-      <h2>Favoritos</h2>
-      <div id="favoritos-list">
-        <p>No tienes favoritos aún.</p>
-      </div>
-    </div>
-  </div>
+    <!-- Botón de Cerrar Sesión -->
+    <button id="btn-cerrar-sesion" class="btn-cerrar-sesion">Cerrar Sesión</button>
 
-  <!-- Ventana de chat -->
-  <div id="chat-popup" class="chat-popup hidden">
-    <div class="chat-header">
-      <h3 id="chat-titulo">Chat con </h3>
-      <button id="cerrar-chat">X</button>
-    </div>
-    <div class="chat-messages" id="chat-messages"></div>
-    <div class="chat-input">
-      <input type="text" id="mensaje-input" placeholder="Escribe un mensaje...">
-      <button id="enviar-mensaje">Enviar</button>
-    </div>
-  </div>
-
-  <script src="./javascript/paginaUsuario.js"></script>
-
+    <!-- Vincular el script -->
+    <script src="./javascript/paginaUsuario.js"></script>
 </body>
 </html>

@@ -1,6 +1,6 @@
-
+/* Estilos generales */
 body {
-  font-family: Arial, sans-serif;
+  font-family: 'Arial', sans-serif;
   margin: 0;
   padding: 0;
   background-color: #f4f4f4;
@@ -9,6 +9,7 @@ body {
   align-items: center;
 }
 
+/* Contenedor principal */
 .container {
   width: 80%;
   max-width: 1200px;
@@ -17,6 +18,7 @@ body {
   margin-top: 20px;
 }
 
+/* Bienvenida */
 .bienvenida {
   width: 100%;
   text-align: center;
@@ -28,60 +30,201 @@ body {
   border-radius: 5px;
 }
 
+/* Secciones generales */
 .seccion {
   flex: 1;
   background: white;
-  padding: 15px;
-  border-radius: 5px;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease-in-out;
+}
+
+.seccion:hover {
+  transform: scale(1.02);
 }
 
 .seccion h2 {
   text-align: center;
-  border-bottom: 2px solid #007bff;
+  border-bottom: 3px solid #007bff;
   padding-bottom: 10px;
   margin-bottom: 10px;
 }
-/* Ventana emergente de chat */
-.chat-popup {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  width: 300px;
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
-  padding: 10px;
+
+/* Sección de Chats */
+.chats {
+  background: #f8f9fa;
+  border-left: 5px solid #007bff;
+}
+
+/* Chats y favoritos */
+.chats, .favoritos {
+  min-height: 350px;
+}
+
+/* Elementos de la lista de chats */
+.chat-item {
+  padding: 12px;
+  margin: 8px 0;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #ffffff;
+  cursor: pointer;
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  transition: background 0.3s ease-in-out;
 }
 
-.chat-popup.hidden {
+.chat-item:hover {
+  background-color: #e6f2ff;
+}
+
+/* Botón de eliminar chat */
+.btn-eliminar-chat {
+  background: red;
+  color: white;
+  border: none;
+  padding: 5px 8px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-eliminar-chat:hover {
+  background: darkred;
+}
+
+/* Sección de Servicios */
+.servicios {
+  background: #ffffff;
+  border-left: 5px solid #28a745;
+}
+
+/* Favoritos */
+.favorito-item {
+  padding: 12px;
+  margin: 8px 0;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #fffbe6;
+  transition: background 0.3s ease-in-out;
+}
+
+.favorito-item:hover {
+  background-color: #fff2cc;
+}
+
+/* Botón de Ir a Secciones */
+#btn-ir-secciones {
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background 0.3s;
+  width: 100%;
+  display: block;
+  margin-top: 10px;
+}
+
+#btn-ir-secciones:hover {
+  background: #218838;
+}
+
+/* Botón de Crear Chat */
+#btn-create-chat {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background 0.3s;
+  width: 100%;
+  display: block;
+  margin-top: 10px;
+}
+
+#btn-create-chat:hover {
+  background: #0056b3;
+}
+
+/* Botón de Cerrar Sesión */
+#btn-cerrar-sesion {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background 0.3s;
+  width: 80%;
+  margin-top: 20px;
+}
+
+#btn-cerrar-sesion:hover {
+  background: #c82333;
+}
+
+/* Ventana emergente de chat */
+#chat-popup {
+  width: 100%;
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
   display: none;
+  flex-direction: column;
+  margin-top: 20px;
 }
 
+#chat-popup.active {
+  display: flex;
+}
+
+/* Header del chat */
 .chat-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding-bottom: 10px;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 2px solid #ddd;
+  font-size: 18px;
+  font-weight: bold;
 }
 
-.chat-header button {
+/* Botón de cerrar chat */
+#cerrar-chat {
   background: red;
   color: white;
   border: none;
-  padding: 5px;
+  padding: 8px 12px;
+  font-size: 16px;
   cursor: pointer;
+  border-radius: 5px;
+  transition: background 0.3s;
 }
 
-.chat-messages {
+#cerrar-chat:hover {
+  background: darkred;
+}
+
+/* Mensajes del chat */
+#chat-messages {
   max-height: 200px;
   overflow-y: auto;
   padding: 10px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  margin-top: 10px;
 }
 
+/* Entrada de mensaje */
 .chat-input {
   display: flex;
   margin-top: 10px;
@@ -89,7 +232,7 @@ body {
 
 .chat-input input {
   flex: 1;
-  padding: 5px;
+  padding: 10px;
   border: 1px solid #ddd;
   border-radius: 5px;
 }
@@ -98,18 +241,59 @@ body {
   background: #007bff;
   color: white;
   border: none;
-  padding: 5px 10px;
-  cursor: pointer;
-}
-
-.chats, .favoritos {
-  min-height: 300px;
-}
-
-.favorito-item, .chat-item {
   padding: 10px;
-  margin: 5px 0;
-  border: 1px solid #ddd;
+  margin-left: 5px;
   border-radius: 5px;
-  background-color: #f9f9f9;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.chat-input button:hover {
+  background: #0056b3;
+}
+/* Estilos para la ventana emergente de detalles del servicio */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal.hidden {
+  display: none;
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 400px;
+  text-align: center;
+  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+}
+
+.modal-content img {
+  max-width: 100%;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.cerrar-modal {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+  color: red;
+}
+
+.cerrar-modal:hover {
+  color: darkred;
 }

@@ -1,12 +1,14 @@
 // @ts-check
 
+// @ts-check
 import { Usuario } from "../clases/clase-usuario.js";
+
 document.addEventListener("DOMContentLoaded", () => {
+  
   const pantallaInicial = /** @type {HTMLElement | null} */ (document.getElementById("pantalla-inicial"));
   const formularioRegistro = /** @type {HTMLElement | null} */ (document.getElementById("formulario-registro"));
   const formularioLogin = /** @type {HTMLElement | null} */ (document.getElementById("formulario-login"));
   const listaUsuarios = /** @type {HTMLElement | null} */ (document.getElementById("lista-usuarios"));
-  const usuariosContainer = /** @type {HTMLElement | null} */ (document.getElementById("usuarios-container"));
 
   const btnRegistrarse = /** @type {HTMLElement | null} */ (document.getElementById("btn-registrarse"));
   const btnIniciarSesion = /** @type {HTMLElement | null} */ (document.getElementById("btn-iniciar-sesion"));
@@ -41,10 +43,12 @@ document.addEventListener("DOMContentLoaded", () => {
     pantallaInicial?.classList.add("hidden");
     formularioLogin?.classList.remove("hidden");
   }
+
   /**
-   * @param {{ preventDefault: () => void; }} e
+   * @param {Event} e
    */
   function registrarUsuario(e) {
+  
     e.preventDefault();
 
     const nombre = /** @type {HTMLInputElement} */ (document.getElementById("nombre-usuario")).value.trim();
@@ -58,11 +62,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     formularioRegistro?.classList.add("hidden");
     usuarioLogueado = nuevoUsuario;
+    console.log("Usuario logueado inicialmente:", usuarioLogueado);
+
     mostrarUsuarios();
   }
 
   /**
-   * @param {{ preventDefault: () => void; }} e
+   * @param {Event} e
    */
   function iniciarSesion(e) {
     e.preventDefault();
@@ -80,7 +86,6 @@ document.addEventListener("DOMContentLoaded", () => {
       alert("Nombre o contraseña incorrectos.");
     }
   }
-
 
   /**
    * Muestra los usuarios en un grid.
@@ -105,7 +110,7 @@ document.addEventListener("DOMContentLoaded", () => {
       )
       .join("");
 
-    // Agregar eventos para editar y enviar mensajes
+      // Agregar eventos para editar y enviar mensajes
     /** @type {NodeListOf<HTMLButtonElement>} */
     const botonesEditar = usuariosContainer.querySelectorAll(".btn-editar");
     botonesEditar.forEach((btn) => btn.addEventListener("click", () => editarPerfil(btn.dataset.id || "")));
@@ -121,10 +126,10 @@ document.addEventListener("DOMContentLoaded", () => {
    * @param {string} id
    */
   function editarPerfil(id) {
-    const usuarioLogueado = usuarios.find((usuario) => String(usuario.id) === id);
-    if (usuarioLogueado) {
-      const nuevoNombre = prompt(`Editar nombre (${usuarioLogueado.nombre}):`, usuarioLogueado.nombre);
-      if (nuevoNombre) usuarioLogueado.nombre = nuevoNombre;
+    const usuario = usuarios.find((usuario) => String(usuario.id) === id);
+    if (usuario) {
+      const nuevoNombre = prompt(`Editar nombre (${usuario.nombre}):`, usuario.nombre);
+      if (nuevoNombre) usuario.nombre = nuevoNombre;
       mostrarUsuarios();
     }
   }
@@ -140,5 +145,8 @@ document.addEventListener("DOMContentLoaded", () => {
       if (mensaje) alert(`Mensaje enviado a ${usuario.nombre}: ${mensaje}`);
     }
   }
-  }
-);
+});
+
+
+
+

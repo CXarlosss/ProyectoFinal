@@ -63,12 +63,14 @@ body {
 
 /* Estructura general */
 main {
-    display: flex;
+    margin-top:50px;
+    display: block;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     min-height: 80vh;
-    width: 100%;
+    width:50%;
+    height: 50%;
 }
 
 section {
@@ -82,9 +84,7 @@ section {
     transition: all 200ms ease-in-out;
     scale:0.9
 }
-section:hover{
-  scale:1
-}
+
 
 .hidden {
     display: none;

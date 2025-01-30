@@ -1,135 +1,190 @@
-// @ts-check
+document
+  .addEventListener("DOMContentLoaded", () => {
+    console.log("DOM cargado correctamente.");
 
-document.addEventListener("DOMContentLoaded", () => {
-  console.log("DOM cargado correctamente.");
+    // 📌 Selección de elementos del DOM
+    const serviciosContainer = document.getElementById("servicios-container");
+    const btnFiltrarActividades = document.getElementById(
+      "btn-filtrar-actividades"
+    );
+    const btnFiltrarComercios = document.getElementById(
+      "btn-filtrar-comercios"
+    );
+    const btnMostrarTodos = document.getElementById("btn-mostrar-todos");
+    const btnCrearServicio = document.getElementById("btn-crear-servicio");
+    const modalCrearServicio = document.getElementById("modal-crear-servicio");
+    const formCrearServicio = document.getElementById("crear-servicio-form");
+    const btnCerrarModal = document.getElementById("btn-cerrar-modal");
 
-  /** @type {HTMLElement | null} */
-  const serviciosContainer = document.getElementById("servicios-container");
-
-  if (!serviciosContainer) {
-    console.error("No se encontró el contenedor de servicios.");
-    return;
-  }
-
-  // Verificar si hay un usuario logueado
-  const usuarioGuardado = localStorage.getItem("usuarioRegistrado");
-  if (!usuarioGuardado) {
-    alert("No hay usuario registrado.");
-    window.location.href = "registrar.html";
-    return;
-  }
-
-  /** @type {{ id: string, nombre: string }} */
-  const usuario = JSON.parse(usuarioGuardado);
-
-  /** @type {{ servicios: { id: string, nombre: string, descripcion: string, precio: number, valoracion: number, ubicacion: string, horarios: string, metodoPago: string, categoria: string, imagen: string, etiquetas: string[], favorito?: boolean }[], favoritos: { id: string, nombre: string }[] }} */
-  const state = {
-    servicios: [],
-    favoritos: []
-  };
-
-  /**
-   * Cargar los favoritos almacenados del usuario.
-   */
-  function cargarFavoritos() {
-    const favoritosGuardados = localStorage.getItem(`favoritos_${usuario.id}`);
-    state.favoritos = favoritosGuardados ? JSON.parse(favoritosGuardados) : [];
-    console.log(`Favoritos cargados para ${usuario.nombre}:`, state.favoritos);
-  }
-
-  /**
-   * Guardar los favoritos del usuario en `localStorage`.
-   */
-  function guardarFavoritos() {
-    localStorage.setItem(`favoritos_${usuario.id}`, JSON.stringify(state.favoritos));
-    console.log(`Favoritos guardados para ${usuario.nombre}:`, state.favoritos);
-    
-  }
-
-  /**
-   * Renderiza los servicios en el contenedor.
-   */
-  function renderServicios() {
     if (!serviciosContainer) {
-      console.error("Error: No se encontró el contenedor de servicios.");
+      console.error("No se encontró el contenedor de servicios.");
       return;
     }
 
-    serviciosContainer.innerHTML = state.servicios
-      .map(servicio => {
-        const isFavorito = state.favoritos.some(fav => fav.id === servicio.id);
-        return `
+    // 📌 Verificar usuario registrado
+    const usuarioGuardado = localStorage.getItem("usuarioRegistrado");
+    if (!usuarioGuardado) {
+      alert("No hay usuario registrado.");
+      window.location.href = "registrar.html";
+      return;
+    }
+
+    const usuario = JSON.parse(usuarioGuardado);
+    const state = {
+      servicios: [],
+      favoritos: [],
+    };
+    // 📌 Cargar servicios desde JSON
+    function cargarServicios() {
+      fetch("./api/factory.json")
+        .then((response) => {
+          if (!response.ok)
+            throw new Error(`Error al cargar JSON: ${response.status}`);
+          return response.json();
+        })
+        .then((data) => {
+          console.log("Servicios cargados:", data.servicios);
+          state.servicios = data.servicios;
+          renderServicios();
+        })
+        .catch((error) =>
+          console.error("Error al cargar los servicios:", error)
+        );
+    }
+
+    function cargarFavoritos() {
+      const favoritosGuardados = localStorage.getItem(
+        `favoritos_${usuario.id}`
+      );
+      state.favoritos = favoritosGuardados
+        ? JSON.parse(favoritosGuardados)
+        : [];
+    }
+
+    function guardarFavoritos() {
+      localStorage.setItem(
+        `favoritos_${usuario.id}`,
+        JSON.stringify(state.favoritos)
+      );
+    }
+
+    function renderServicios(serviciosFiltrados = state.servicios) {
+      serviciosContainer.innerHTML = serviciosFiltrados
+        .map((servicio) => {
+          const isFavorito = state.favoritos.some(
+            (fav) => fav.id === servicio.id
+          );
+          return `
           <div class="card">
-            <img src="${servicio.imagen}" alt="Imagen de ${servicio.nombre}" class="card-img" />
+            <img src="${servicio.imagen}" alt="Imagen de ${
+            servicio.nombre
+          }" class="card-img" />
             <h3>${servicio.nombre}</h3>
             <p>${servicio.descripcion}</p>
             <p><strong>Ubicación:</strong> ${servicio.ubicacion}</p>
             <p><strong>Valoración:</strong> ${servicio.valoracion}</p>
-            <button class="btn-favorito ${isFavorito ? "favorito" : ""}" data-id="${servicio.id}" data-nombre="${servicio.nombre}">
+            <button class="btn-favorito ${
+              isFavorito ? "favorito" : ""
+            }" data-id="${servicio.id}" data-nombre="${servicio.nombre}">
               ${isFavorito ? "★ Favorito" : "☆ Añadir a Favoritos"}
             </button>
-            <button class="btn-mensaje" data-id="${servicio.id}">Enviar Mensaje</button>
+            <button class="btn-mensaje" data-id="${
+              servicio.id
+            }" data-nombre="${encodeURIComponent(servicio.nombre)}">
+              Enviar Mensaje
+            </button>
           </div>
         `;
-      })
-      .join("");
+        })
+        .join("");
+      cargarFavoritos(); //cargarFavoritos();
 
-    console.log("Servicios renderizados correctamente.");
-  }
-
-  /**
-   * Marca o desmarca un servicio como favorito.
-   * @param {string} id - ID del servicio.
-   * @param {string} nombre - Nombre del servicio.
-   */
-  function toggleFavorito(id, nombre) {
-    const existe = state.favoritos.some(fav => fav.id === id);
-
-    if (existe) {
-      state.favoritos = state.favoritos.filter(fav => fav.id !== id);
-    } else {
-      state.favoritos.push({ id, nombre });
+      console.log("Servicios renderizados correctamente.");
     }
-
-    guardarFavoritos();
-    renderServicios();
-  }
-
-  // Eventos de botones
-  serviciosContainer.addEventListener("click", e => {
-    const target = /** @type {HTMLElement} */ (e.target);
-    if (!target) return;
-
-    const id = target.dataset.id;
-    const nombre = target.dataset.nombre;
-
-    if (!id || !nombre) return;
-
-    if (target.classList.contains("btn-favorito")) {
-      toggleFavorito(id, nombre);
-    }
-  });
-
-  // Cargar servicios y favoritos antes de renderizar
-  fetch("./api/factory.json")
-    .then(response => {
-      if (!response.ok) {
-        throw new Error(`Error al cargar JSON: ${response.status}`);
-      }
-      return response.json();
-    })
-    .then(
-      /**
-       * @param {{ servicios: { id: string, nombre: string, descripcion: string, precio: number, valoracion: number, ubicacion: string, horarios: string, metodoPago: string, categoria: string, imagen: string, etiquetas: string[] }[] }} data
-       */
-      data => {
-        console.log("Servicios cargados:", data.servicios);
-        state.servicios = data.servicios;
-        cargarFavoritos();
-        renderServicios();
-      }
-    )
-    .catch(error => {
-      console.error("Error al cargar los servicios:", error);
+    // 📌 Mostrar modal de creación
+    btnCrearServicio.addEventListener("click", () => {
+      modalCrearServicio.classList.remove("hidden");
     });
-});
+
+    // 📌 Cerrar modal de creación
+    btnCerrarModal.addEventListener("click", () => {
+      modalCrearServicio.classList.add("hidden");
+    });
+
+    function guardarServiciosEnJSON() {
+      localStorage.setItem("./api/factory.json", JSON.stringify(state.servicios));
+      console.log("Servicios guardados en LocalStorage.");
+    }
+
+    // 📌 Crear nuevo servicio desde el formulario
+    formCrearServicio.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const nuevoServicio = {
+        id: Date.now().toString(), // Generar un ID único
+        nombre: document.getElementById("nombre-servicio").value,
+        descripcion: document.getElementById("descripcion-servicio").value,
+        ubicacion: document.getElementById("ubicacion-servicio").value,
+        valoracion: document.getElementById("valoracion-servicio").value,
+        imagen:
+          document.getElementById("imagen-servicio").value || "default.jpg",
+        categoria: document.getElementById("categoria-servicio").value,
+      };
+
+      // Agregar el servicio a la lista
+      state.servicios.push(nuevoServicio);
+      renderServicios();
+      guardarServiciosEnJSON();
+
+      // Cerrar el modal y limpiar el formulario
+      modalCrearServicio.classList.add("hidden");
+      formCrearServicio.reset();
+
+      console.log("Nuevo servicio agregado:", nuevoServicio);
+    });
+
+    // 📌 Cargar servicios al inicio
+    cargarServicios();
+
+    function toggleFavorito(id, nombre) {
+      const existe = state.favoritos.some((fav) => fav.id === id);
+      if (existe) {
+        state.favoritos = state.favoritos.filter((fav) => fav.id !== id);
+      } else {
+        state.favoritos.push({ id, nombre });
+      }
+      guardarFavoritos();
+      renderServicios();
+    }
+
+    serviciosContainer.addEventListener("click", (e) => {
+      const target = e.target;
+      if (!target) return;
+
+      if (target.classList.contains("btn-favorito")) {
+        toggleFavorito(target.dataset.id, target.dataset.nombre);
+      }
+    });
+
+    // 📌 Filtrar actividades
+    btnFiltrarActividades.addEventListener("click", () => {
+      renderServicios(
+        state.servicios.filter((servicio) => servicio.categoria === "actividad")
+      );
+    });
+
+    // 📌 Filtrar comercios
+    btnFiltrarComercios.addEventListener("click", () => {
+      renderServicios(
+        state.servicios.filter((servicio) => servicio.categoria === "comercio")
+      );
+    });
+
+    // 📌 Mostrar todos
+    btnMostrarTodos.addEventListener("click", () => {
+      renderServicios(state.servicios);
+    });
+  })
+  .catch((error) => {
+    console.error("Error al cargar los servicios:", error);
+  });

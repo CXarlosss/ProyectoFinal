@@ -32,10 +32,18 @@ document.addEventListener("DOMContentLoaded", () => {
     let conversaciones = /** @type {Record<string, { remitente: string, mensaje: string }[]>} */ (
         JSON.parse(localStorage.getItem(`conversaciones_${usuario.id}`) || "{}")
     );
-
+        const urlParams = new URLSearchParams(window.location.search);
+        const servicioId = urlParams.get("servicioId");
+        const servicioNombre = decodeURIComponent(urlParams.get("servicioNombre") || "");
+        if (servicioId && servicioNombre) {
+            usuarioActivo = servicioId;
+            if (chatTitulo) chatTitulo.textContent = `Conversación sobre ${servicioNombre}`;
+            if (chatPopup) chatPopup.classList.add("active");
+            actualizarMensajes(servicioId);
+        }
     // Mostrar el nombre del usuario
     if (nombreElement) nombreElement.textContent = usuario.nombre;
-
+        
     function cargarChats() {
         if (!chatList) return;
         chatList.innerHTML = "";
@@ -45,13 +53,14 @@ document.addEventListener("DOMContentLoaded", () => {
             chatList.innerHTML = "<p>No hay chats aún.</p>";
             return;
         }
+        
 
         chats.forEach(chatId => {
             const chatItem = document.createElement("div");
             chatItem.classList.add("chat-item");
             chatItem.setAttribute("data-id", chatId);
             chatItem.innerHTML = `
-                <strong>${chatId}</strong>
+                <strong>$ data-id  </strong>
                 <button class="btn-eliminar-chat" data-id="${chatId}">🗑</button>
             `;
             chatList.appendChild(chatItem);
@@ -63,7 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function cargarFavoritos() {
         if (!favoritosList) return;
         favoritosList.innerHTML = "";
-
+        /** @type {{ id: string, nombre: string }[]} */
         const favoritos = JSON.parse(localStorage.getItem(`favoritos_${usuario.id}`) || "[]");
 
         if (favoritos.length === 0) {
@@ -75,28 +84,54 @@ document.addEventListener("DOMContentLoaded", () => {
             const favItem = document.createElement("div");
             favItem.classList.add("favorito-item");
             favItem.setAttribute("data-id", fav.id);
-            favItem.textContent = fav.nombre;
+            favItem.innerHTML = ` <span>${fav.nombre}</span>
+            <button class="btn-eliminar-favorito" data-id="${fav.id}">❌</button>`;
+            
             favoritosList.appendChild(favItem);
         });
-
+        
+        // 📌 Agregar evento a los botones de eliminar favoritos
+        document.querySelectorAll(".btn-eliminar-favorito").forEach(btn => {
+            btn.addEventListener("click", event => {
+                const target = /** @type {HTMLElement} */ (event.target);
+                const servicioId = target.getAttribute("data-id");
+                if (servicioId) eliminarFavorito(servicioId);
+            });
+        });
         console.log("Favoritos cargados:", favoritos);
-    }
-
-    btnCreateChat?.addEventListener("click", () => {
-        const nombreChat = prompt("Introduce el nombre del usuario con quien quieres chatear:");
-        if (!nombreChat) return;
-
-        const chatId = nombreChat.toLowerCase().replace(/\s+/g, "-");
-
-        if (!conversaciones[chatId]) {
-            conversaciones[chatId] = [];
-            guardarMensajes();
-            cargarChats();
-            alert(`Chat con ${nombreChat} creado exitosamente.`);
-        } else {
-            alert("Ya tienes un chat con este usuario.");
         }
-    });
+        /**
+     * @param {string} servicioId
+     */
+        function eliminarFavorito(servicioId) {
+            /** @type {{ id: string, nombre: string }[]} */
+            let favoritos = JSON.parse(localStorage.getItem(`favoritos_${usuario.id}`) || "[]");
+    
+            // Filtrar el servicio a eliminar
+            favoritos = favoritos.filter(fav => fav.id !== servicioId);
+    
+            // Guardar la nueva lista en localStorage
+            localStorage.setItem(`favoritos_${usuario.id}`, JSON.stringify(favoritos));
+    
+            // Volver a cargar los favoritos actualizados en la interfaz
+            cargarFavoritos();
+        }
+
+        btnCreateChat?.addEventListener("click", () => {
+            const nombreChat = prompt("Introduce el nombre del usuario con quien quieres chatear:");
+            if (!nombreChat) return;
+
+            const chatId = nombreChat.toLowerCase().replace(/\s+/g, "-");
+
+            if (!conversaciones[chatId]) {
+                conversaciones[chatId] = [];
+                guardarMensajes();
+                cargarChats();
+                alert(`Chat con ${nombreChat} creado exitosamente.`);
+            } else {
+                alert("Ya tienes un chat con este usuario.");
+            }
+        });
 
     function guardarMensajes() {
         localStorage.setItem(`conversaciones_${usuario.id}`, JSON.stringify(conversaciones));

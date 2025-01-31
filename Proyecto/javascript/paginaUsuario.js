@@ -1,5 +1,6 @@
 // @ts-check
-
+/* import { store } from "../store/redux.js";
+ */
 document.addEventListener("DOMContentLoaded", () => {
     console.log("DOM cargado correctamente.");
 

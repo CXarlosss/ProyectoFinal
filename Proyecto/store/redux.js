@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Servicio } from "../clases/clase-servicio.js";
 import { Usuario } from "../clases/clase-usuario.js";
 
@@ -130,7 +131,7 @@ export const appReducer = (state = INITIAL_STATE, action) => {
 /**
  * Crea el store con métodos de acceso y manejo de acciones.
  * @param {Function} reducer - Reducer principal de la aplicación.
- * @returns {Store} - Métodos del store.
+ * @returns {store} - Métodos del store.
  */
 const createStore = (reducer) => {
   let currentState = reducer(undefined, {});

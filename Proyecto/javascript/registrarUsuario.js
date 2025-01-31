@@ -1,5 +1,8 @@
+/* eslint-disable no-unused-vars */
 // @ts-check
 import { Usuario } from "../clases/clase-usuario.js";
+import { store } from "../store/redux.js";
+
 
 document.addEventListener("DOMContentLoaded", () => {
   const formularioRegistro = /** @type {HTMLFormElement | null} */ (

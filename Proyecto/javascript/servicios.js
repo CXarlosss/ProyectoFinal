@@ -1,5 +1,6 @@
-document
-  .addEventListener("DOMContentLoaded", () => {
+/*  import { store } from "../store/redux.js"
+ */
+document.addEventListener("DOMContentLoaded", () => {
     console.log("DOM cargado correctamente.");
 
     // 📌 Selección de elementos del DOM
@@ -185,6 +186,5 @@ document
       renderServicios(state.servicios);
     });
   })
-  .catch((error) => {
-    console.error("Error al cargar los servicios:", error);
-  });
+ 
+

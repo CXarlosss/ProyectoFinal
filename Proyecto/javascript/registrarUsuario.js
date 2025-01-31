@@ -1,4 +1,4 @@
-/* eslint-disable no-unused-vars */
+
 // @ts-check
 import { Usuario } from "../clases/class.js";
 import { store } from "../store/redux.js";
@@ -63,6 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Guardar en localStorage
     localStorage.setItem("usuarios", JSON.stringify(usuariosGuardados));
     localStorage.setItem("usuarioRegistrado", JSON.stringify(nuevoUsuario));
+    store.user.login(nuevoUsuario);
     // Redirigir a la página de usuario
     window.location.href = "paginadelusuario.html";
   });

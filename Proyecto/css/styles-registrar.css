@@ -102,7 +102,11 @@ input {
     border-radius: 8px;
     font-size: 1rem;
 }
-
+.toggle-buttons{
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
 button {
     background-color: #b2005e;
     color: #fff;

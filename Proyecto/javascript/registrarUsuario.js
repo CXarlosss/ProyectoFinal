@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 // @ts-check
-import { Usuario } from "../clases/clase-usuario.js";
+import { Usuario } from "../clases/class.js";
 import { store } from "../store/redux.js";
 
 
@@ -23,27 +23,22 @@ document.addEventListener("DOMContentLoaded", () => {
   const seccionLogin = /** @type {HTMLElement | null} */ (
     document.getElementById("formulario-login")
   );
-
   if (!formularioRegistro || !formularioLogin || !btnMostrarRegistro || !btnMostrarLogin || !seccionRegistro || !seccionLogin) {
     console.error("Error al cargar elementos del DOM.");
     return;
   }
-
   // Alternar entre registro e inicio de sesión
   btnMostrarRegistro.addEventListener("click", () => {
     seccionRegistro.classList.remove("hidden");
     seccionLogin.classList.add("hidden");
   });
-
   btnMostrarLogin.addEventListener("click", () => {
     seccionRegistro.classList.add("hidden");
     seccionLogin.classList.remove("hidden");
   });
-
   // Evento para registrar usuario
   formularioRegistro.addEventListener("submit", (e) => {
     e.preventDefault();
-
     const nombre = /** @type {HTMLInputElement} */ (document.getElementById("nombre-usuario")).value.trim();
     const email = /** @type {HTMLInputElement} */ (document.getElementById("email-usuario")).value.trim();
     const telefono = /** @type {HTMLInputElement} */ (document.getElementById("telefono-usuario")).value.trim();
@@ -54,7 +49,6 @@ document.addEventListener("DOMContentLoaded", () => {
       alert("Todos los campos son obligatorios.");
       return;
     }
-
     // Comprobar si el usuario ya existe
     const usuariosGuardados = /** @type {Usuario[]} */ (JSON.parse(localStorage.getItem("usuarios") || "[]"));
     const usuarioExistente = usuariosGuardados.find(user => user.email === email);
@@ -63,19 +57,16 @@ document.addEventListener("DOMContentLoaded", () => {
       alert("Este email ya está registrado. Inicia sesión.");
       return;
     }
-
     // Crear usuario
     const nuevoUsuario = new Usuario(Date.now(), nombre, email, password, telefono, direccion);
     usuariosGuardados.push(nuevoUsuario);
-
     // Guardar en localStorage
     localStorage.setItem("usuarios", JSON.stringify(usuariosGuardados));
     localStorage.setItem("usuarioRegistrado", JSON.stringify(nuevoUsuario));
-
     // Redirigir a la página de usuario
     window.location.href = "paginadelusuario.html";
   });
-
+  
   // Evento para iniciar sesión
   formularioLogin.addEventListener("submit", (e) => {
     e.preventDefault();

@@ -49,11 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
      * @param {string} chatId
      * @param {string} nombreChat
      */
-    /*
-    * 📌 Guarda el nombre real del chat en `localStorage`.
-    * @param {string} chatId - Identificador del chat.
-    * @param {string} nombreChat - Nombre real del servicio.
-    */
+    
    function guardarNombreChat(chatId, nombreChat) {
        let nombresServicios = JSON.parse(localStorage.getItem("nombresServicios") || "{}");
        nombresServicios[chatId] = nombreChat; // Asignar el nombre del servicio al chatId

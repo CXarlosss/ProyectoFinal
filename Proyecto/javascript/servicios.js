@@ -22,7 +22,6 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error("No se encontró el contenedor de servicios.");
       return;
   }
-
   // 📌 Verificar usuario registrado
   const usuarioGuardado = localStorage.getItem("usuarioRegistrado");
   if (!usuarioGuardado) {
@@ -30,7 +29,6 @@ document.addEventListener("DOMContentLoaded", () => {
       window.location.href = "registrar.html";
       return;
   }
-
   /** @type {{ id: string }} */
   const usuario = JSON.parse(usuarioGuardado);
 
@@ -39,7 +37,6 @@ document.addEventListener("DOMContentLoaded", () => {
       servicios: [],
       favoritos: [],
   };
-
   // 📌 Cargar servicios desde JSON
   function cargarServicios() {
       fetch("./api/factory.json")
@@ -57,21 +54,18 @@ document.addEventListener("DOMContentLoaded", () => {
               console.error("Error al cargar los servicios:", error)
           );
   }
-
   function cargarFavoritos() {
       const favoritosGuardados = localStorage.getItem(`favoritos_${usuario.id}`);
       state.favoritos = favoritosGuardados
           ? JSON.parse(favoritosGuardados)
           : [];
   }
-
   function guardarFavoritos() {
       localStorage.setItem(
           `favoritos_${usuario.id}`,
           JSON.stringify(state.favoritos)
       );
   }
-
   /**
    * Renderiza la lista de servicios en la interfaz.
    * @param {typeof state.servicios} [serviciosFiltrados]
@@ -107,22 +101,18 @@ document.addEventListener("DOMContentLoaded", () => {
           .join("");
       cargarFavoritos();
   }
-
   // 📌 Mostrar modal de creación
   btnCrearServicio?.addEventListener("click", () => {
       modalCrearServicio?.classList.remove("hidden");
   });
-
   // 📌 Cerrar modal de creación
   btnCerrarModal?.addEventListener("click", () => {
       modalCrearServicio?.classList.add("hidden");
   });
-
   function guardarServiciosEnJSON() {
       localStorage.setItem("./api/factory.json", JSON.stringify(state.servicios));
       console.log("Servicios guardados en LocalStorage.");
   }
-
   // 📌 Crear nuevo servicio desde el formulario
   formCrearServicio?.addEventListener("submit", (e) => {
       e.preventDefault();
@@ -146,9 +136,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       console.log("Nuevo servicio agregado:", nuevoServicio);
   });
-
   cargarServicios();
-
   /**
    * Alterna el estado de un servicio en la lista de favoritos.
    * @param {string} id 
@@ -164,7 +152,6 @@ document.addEventListener("DOMContentLoaded", () => {
       guardarFavoritos();
       renderServicios();
   }
-
   serviciosContainer.addEventListener("click", (e) => {
       const target = /** @type {HTMLElement} */ (e.target);
       if (!target) return;
@@ -173,19 +160,15 @@ document.addEventListener("DOMContentLoaded", () => {
           toggleFavorito(target.dataset.id || "", target.dataset.nombre || "");
       }
   });
-
   btnFiltrarActividades?.addEventListener("click", () =>
       renderServicios(state.servicios.filter(({ categoria }) => categoria === "actividad"))
   );
-
   btnFiltrarComercios?.addEventListener("click", () =>
       renderServicios(state.servicios.filter(({ categoria }) => categoria === "comercio"))
   );
-
   btnMostrarTodos?.addEventListener("click", () => {
       renderServicios(state.servicios);
   });
-
   function buscarServicios() {
       const inputBuscadorValue = inputBuscador?.setAttribute("value",'') || "";
       const terminoBusqueda = inputBuscadorValue.toLowerCase().trim();
@@ -202,7 +185,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
       renderServicios(serviciosFiltrados);
   }
-
   btnBuscador?.addEventListener("click", buscarServicios);
   inputBuscador?.addEventListener("keyup", (event) => {
       if (event.key === "Enter") {

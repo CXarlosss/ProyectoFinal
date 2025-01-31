@@ -37,34 +37,35 @@ export class Usuario {
   
   export class Servicio {
     /**
-     * @param {number} id
+     * @param {number | string} id  
      * @param {string} nombre
      * @param {string} descripcion
-     * @param {number} precio
-     * @param {number} valoracion
+     * @param {number | string} precio 
+     * @param {number | string} valoracion 
      * @param {string} ubicacion
      * @param {string} horarios
      * @param {string} metodoPago
      * @param {string} categoria
      * @param {string} imagen
      * @param {Array<string>} etiquetas
-     * @param {number} usuarioId
+     * @param {number | string} usuarioId 
      * @param {string} emailUsuario
      */
     constructor(id, nombre, descripcion, precio, valoracion, ubicacion, horarios, metodoPago, categoria, imagen, etiquetas = [], usuarioId, emailUsuario) {
-      this.id = id;
+      this.id = Number(id);
       this.nombre = nombre;
       this.descripcion = descripcion;
-      this.precio = precio;
-      this.valoracion = valoracion || 0;
-      this.ubicacion = ubicacion;
+      this.precio = Number(precio);
+      this.valoracion = Number(valoracion) || 0; 
       this.horarios = horarios;
       this.metodoPago = metodoPago;
       this.categoria = categoria;
       this.imagen = imagen;
-      this.etiquetas = Array.isArray(etiquetas) ? etiquetas : [];
-      this.usuarioId = usuarioId;
+      this.etiquetas = Array.isArray(etiquetas) 
+      ? etiquetas 
+      : etiquetas.split(",").map(tag => tag.trim());
+  
+      this.usuarioId = Number(usuarioId); 
       this.emailUsuario = emailUsuario;
     }
-  }
-  
+}

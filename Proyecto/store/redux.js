@@ -19,6 +19,7 @@ export const ACTION_TYPES = {
   FILTER_SERVICES: "FILTER_SERVICES",
   SHOW_SERVICE: "SHOW_SERVICE",
   SAVE_USER: "SAVE_USER",
+  LOAD_SERVICES: "LOAD_SERVICES",
 };
 
 /**
@@ -110,22 +111,31 @@ export const appReducer = (state = INITIAL_STATE, action) => {
       }
       console.error("Payload inválido para SAVE_USER");
       return state;
+    case ACTION_TYPES.LOAD_SERVICES:
+        if (Array.isArray(action.payload)) {
+          return { ...state, servicios: action.payload }; // ✅ Sobreescribimos los servicios
+        }
+        console.error("Payload inválido para LOAD_SERVICES");
+        return state;
 
     default:
       return state;
   }
 };
 
-
 /**
  * @typedef {Object} PublicMethods
- * @property {(servicio: Servicio) => void} create
- * @property {() => void} read
- * @property {(servicio: Servicio) => void} update
- * @property {(id: number) => void} delete
- * @property {(id: number) => Servicio | undefined} getById
- * @property {() => Servicio[]} getAll
- * @property {() => void} deleteAll
+ * @property {function} create,
+ * @property {function} update,
+ * @property {function} delete
+ * @property {function} getById,
+ * @property {function} getAll
+ * @property {function} deleteAll,
+ * @property {(servicios: Servicio[]) => void} loadServices
+ * @property {(url: string) => Promise<void>} loadServicesFromAPI
+ * @property {function} read
+ * 
+ * 
  */
 
 /**
@@ -202,58 +212,48 @@ const _getDifferences = (previousValue, currentValue) => {
       };
   }, {});
 }
-
-//caso 1
-  //const prevState = { nombre: "Ana", edad: 25, servicioMostrado: "Nutrición" };
-  //const currState = { nombre: "Ana", edad: 26, servicioMostrado: "Nutrición" };
-
-  //console.log(_getDifferences(prevState, currState));
-  // { edad: 26 }   Solo la edad cambió, se devuelve solo esa clave.
-//caso 2
-  //const prevState = { servicioMostrado: "Nutrición" };
-  //const currState = { servicioMostrado: null };
-
-  //console.log(_getDifferences(prevState, currState));
-  // { servicioMostrado: null }  ✅ Se permite null solo en servicioMostrado.
-//caso 3
-  //const prevState = { servicioMostrado: "Nutrición" };
-  //const currState = { servicioMostrado: "Nutrición" };
-
-  //console.log(_getDifferences(prevState, currState));
-  // {}  No hay cambios, se devuelve un objeto vacío.
-//caso 4
-  //const prevState = { edad: 25 };
-  //const currState = { edad: null };
-
-  //console.log(_getDifferences(prevState, currState));
-
-
-  // **📌 Métodos para artículos (servicios)**
   /** @type {PublicMethods} */
   const article = {
-    create: (servicio) => _dispatch({ type: "ADD_SERVICE", payload: servicio }),
-    read: () => _dispatch({ type: "READ_LIST" }),
-    update: (servicio) => _dispatch({ type: "UPDATE_SERVICE", payload: servicio }),
-    delete: (id) => _dispatch({ type: "REMOVE_SERVICE", payload: id }),
-    getById: (id) => currentState.servicios.find((/** @type {{ id: number; }} */ servicio) => servicio.id === id),
+    create: (/** @type {any} */ servicio) => _dispatch({ type: "ADD_SERVICE", payload: servicio }),
+    update: (/** @type {any} */ servicio) => _dispatch({ type: "UPDATE_SERVICE", payload: servicio }),
+    delete: (/** @type {any} */ id) => _dispatch({ type: "REMOVE_SERVICE", payload: id }),
+    getById: (/** @type {any} */ id) => currentState.servicios.find((/** @type {{ id: any; }} */ servicio) => servicio.id === id),
     getAll: () => currentState.servicios,
     deleteAll: () => _dispatch({ type: "DELETE_ALL_SERVICES" }),
+    loadServices: (/** @type {any} */ servicios) => _dispatch({ type: "LOAD_SERVICES", payload: servicios }),
+
+    /**
+     * Carga servicios desde una API o JSON local y los guarda en el store.
+     * @param {string} url - URL del archivo JSON o API.
+     * @returns {Promise<void>}
+     */
+    async loadServicesFromAPI(url) {
+      try {
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error(`Error al cargar servicios: ${response.status}`);
+        }
+
+        const { servicios } = await response.json();
+        article.loadServices(servicios);
+        window.dispatchEvent(new CustomEvent("stateChanged"));
+      } catch (error) {
+        console.error("Error al cargar los servicios desde la API:", error);
+      }
+    },
+
+    read: (/** @type {any} */ id) => currentState.servicios.find((/** @type {{ id: any; }} */ servicio) => servicio.id === id),
   };
 
-  // **📌 Métodos para usuario**
   /** @type {PublicUser} */
   const user = {
     login: (usuario) => _dispatch({ type: "LOGIN", payload: usuario }),
     logout: () => _dispatch({ type: "LOGOUT" }),
   };
 
-  return {
-    getState,
-    article,
-    user,
-    
-  };
+  return { getState, article, user };
 };
 export const store = createStore(appReducer);
 
-
+// ✅ Exportamos la función correctamente
+export const loadServicesFromAPI = store.article.loadServicesFromAPI;

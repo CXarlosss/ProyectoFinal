@@ -1,9 +1,12 @@
 // @ts-check
 
-/*  import { store } from "../store/redux.js"
- */
+ import { store, loadServicesFromAPI } from "../store/redux.js"
+ 
+
+ 
 document.addEventListener("DOMContentLoaded", () => {
   console.log("DOM cargado correctamente.");
+  loadServicesFromAPI("./api/factory.json");
 
   // 📌 Selección de elementos del DOM
   
@@ -37,6 +40,8 @@ document.addEventListener("DOMContentLoaded", () => {
       servicios: [],
       favoritos: [],
   };
+  cargarServicios();
+  cargarFavoritos();
   // 📌 Cargar servicios desde JSON
   function cargarServicios() {
       fetch("./api/factory.json")
@@ -54,53 +59,63 @@ document.addEventListener("DOMContentLoaded", () => {
               console.error("Error al cargar los servicios:", error)
           );
   }
-  function cargarFavoritos() {
-      const favoritosGuardados = localStorage.getItem(`favoritos_${usuario.id}`);
-      state.favoritos = favoritosGuardados
-          ? JSON.parse(favoritosGuardados)
-          : [];
-  }
+    function getServiciosDesdeStore() {
+    return store.getState().servicios;
+}
+ 
   function guardarFavoritos() {
       localStorage.setItem(
           `favoritos_${usuario.id}`,
           JSON.stringify(state.favoritos)
       );
   }
-  /**
-   * Renderiza la lista de servicios en la interfaz.
-   * @param {typeof state.servicios} [serviciosFiltrados]
-   */
-  function renderServicios(serviciosFiltrados = state.servicios) {
-    
-      if (!serviciosContainer) return;
+ /**
+ * Renderiza la lista de servicios en la interfaz.
+ * @param {typeof state.servicios} [serviciosFiltrados]
+ */
+function renderServicios(serviciosFiltrados = getServiciosDesdeStore()) {
+    if (!serviciosContainer) {
+        console.error("El contenedor de servicios no está disponible.");
+        return;
+    }
 
-      serviciosContainer.innerHTML = serviciosFiltrados.slice(0, 8)
-          .map((servicio) => {
-              const isFavorito = state.favoritos.some(
-                  (fav) => fav.id === servicio.id
-              );
-              return `
-              <div class="card">
-                  <img src="${servicio.imagen}" alt="Imagen de ${servicio.nombre}" class="card-img" />
-                  <h3>${servicio.nombre}</h3>
-                  <p>${servicio.descripcion}</p>
-                  <p><strong>Ubicación:</strong> ${servicio.ubicacion}</p>
-                  <p><strong>Valoración:</strong> ${servicio.valoracion}</p>
-                  <button class="btn-favorito ${isFavorito ? "favorito" : ""}" 
-                      data-id="${servicio.id}" 
-                      data-nombre="${servicio.nombre}">
-                      ${isFavorito ? "★ Favorito" : "☆ Añadir a Favoritos"}
-                  </button>
-                  <button class="btn-mensaje" data-id="${servicio.id}" 
-                      data-nombre="${encodeURIComponent(servicio.nombre)}">
-                      Enviar Mensaje
-                  </button>
-              </div>
-          `;
-          })
-          .join("");
-      cargarFavoritos();
-  }
+    serviciosContainer.innerHTML = (serviciosFiltrados || [])
+        .slice(0, 8)
+        .map((servicio) => {
+            if (!servicio) {
+                console.warn("Servicio no definido.");
+                return '';
+            }
+            const isFavorito = state.favoritos.some(
+                (fav) => fav.id === servicio.id
+            );
+            return `
+            <div class="card">
+                <img src="${servicio.imagen || 'default.jpg'}" alt="Imagen de ${servicio.nombre || 'Servicio'}" class="card-img" />
+                <h3>${servicio.nombre || 'Nombre no disponible'}</h3>
+                <p>${servicio.descripcion || 'Descripción no disponible'}</p>
+                <p><strong>Ubicación:</strong> ${servicio.ubicacion || 'Ubicación no disponible'}</p>
+                <p><strong>Valoración:</strong> ${servicio.valoracion || 'No valorado'}</p>
+                <button class="btn-favorito ${isFavorito ? "favorito" : ""}" 
+                    data-id="${servicio.id}" 
+                    data-nombre="${servicio.nombre || ''}">
+                    ${isFavorito ? "★ Favorito" : "☆ Añadir a Favoritos"}
+                </button>
+                <button class="btn-mensaje" data-id="${servicio.id}" 
+                    data-nombre="${encodeURIComponent(servicio.nombre || '')}">
+                    Enviar Mensaje
+                </button>
+            </div>
+        `;
+        })
+        .join("");
+
+    try {
+        cargarFavoritos();
+    } catch (error) {
+        console.error("Error al cargar favoritos:", error);
+    }
+}
   // 📌 Mostrar modal de creación
   btnCrearServicio?.addEventListener("click", () => {
       modalCrearServicio?.classList.remove("hidden");
@@ -118,25 +133,37 @@ document.addEventListener("DOMContentLoaded", () => {
       e.preventDefault();
 
       const nuevoServicio = {
-          id: Date.now().toString(),
+          id: Number(Date.now().toString()),
           nombre: /** @type {HTMLInputElement} */ (document.getElementById("nombre-servicio")).value,
           descripcion: /** @type {HTMLInputElement} */ (document.getElementById("descripcion-servicio")).value,
           ubicacion: /** @type {HTMLInputElement} */ (document.getElementById("ubicacion-servicio")).value,
-          valoracion: /** @type {HTMLInputElement} */ (document.getElementById("valoracion-servicio")).value,
+          valoracion:  Number(/** @type {HTMLInputElement} */(document.getElementById("valoracion-servicio")).value),
           imagen: /** @type {HTMLInputElement} */ (document.getElementById("imagen-servicio")).value || "default.jpg",
           categoria: /** @type {HTMLInputElement} */ (document.getElementById("categoria-servicio")).value,
+          precio: Number(/** @type {HTMLInputElement} */ (document.getElementById("precio-servicio")).value),
+          horarios: /** @type {HTMLInputElement} */ (document.getElementById("horario-servicio")).value,
+          metodoPago: /** @type {HTMLInputElement} */ (document.getElementById("metodo-pago-servicio")).value,
+          etiquetas: /** @type {HTMLInputElement} */ (document.getElementById("etiquetas-servicio")).value,
+          usuarioId: Number((/** @type {HTMLInputElement} */ (document.getElementById("usuario-id-servicio"))).value),
+          emailUsuario: /** @type {HTMLInputElement} */ (document.getElementById("email-usuario-servicio")).value
       };
 
-      state.servicios.push(nuevoServicio);
+      store.article.create(nuevoServicio);
       renderServicios();
       guardarServiciosEnJSON();
 
       modalCrearServicio?.classList.add("hidden");
       formCrearServicio?.setAttribute('reset' , '');
 
-      console.log("Nuevo servicio agregado:", nuevoServicio);
-  });
-  cargarServicios();
+      // 📌 Escuchar cambios en el estado global
+    window.addEventListener("stateChanged", () => {
+        renderServicios();
+    });
+
+    // 📌 Renderizar servicios al cargar
+   
+    renderServicios();
+    });
   /**
    * Alterna el estado de un servicio en la lista de favoritos.
    * @param {string} id 
@@ -191,4 +218,10 @@ document.addEventListener("DOMContentLoaded", () => {
           buscarServicios();
       }
   });
+  function cargarFavoritos() {
+      const favoritosGuardados = localStorage.getItem(`favoritos_${usuario.id}`);
+      state.favoritos = favoritosGuardados
+          ? JSON.parse(favoritosGuardados)
+          : [];
+  }
 });

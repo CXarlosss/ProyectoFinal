@@ -65,7 +65,10 @@ button:hover {
   background-color: #b2005e;
   color: #fff; 
 }
-
+input {
+  padding: 6px;
+  margin: 10px;
+}
 .grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);

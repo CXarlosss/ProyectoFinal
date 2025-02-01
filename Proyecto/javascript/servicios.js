@@ -44,21 +44,32 @@ document.addEventListener("DOMContentLoaded", () => {
   cargarFavoritos();
   // 📌 Cargar servicios desde JSON
   function cargarServicios() {
-      fetch("./api/factory.json")
-          .then((response) => {
-              if (!response.ok)
-                  throw new Error(`Error al cargar JSON: ${response.status}`);
-              return response.json();
-          })
-          .then((data) => {
-              console.log("Servicios cargados:", data.servicios);
-              state.servicios = data.servicios;
-              renderServicios();
-          })
-          .catch((error) =>
-              console.error("Error al cargar los servicios:", error)
-          );
-  }
+    fetch("./api/factory.json")
+        .then((response) => {
+            if (!response.ok) throw new Error(`❌ Error al cargar JSON: ${response.status}`);
+            return response.json();
+        })
+        .then((data) => {
+            console.log("📌 Servicios obtenidos de la API:", data.servicios);
+
+            if (!Array.isArray(data.servicios) || data.servicios.length === 0) {
+                console.warn("⚠️ No se encontraron servicios en el JSON.");
+                return;
+            }
+
+            // 🔴 SOLUCIÓN: Guardar los servicios en `localStorage`
+            localStorage.setItem("servicios", JSON.stringify(data.servicios));
+            console.log("✅ Servicios guardados en LocalStorage:", localStorage.getItem("servicios"));
+
+            // Actualizar el estado y renderizar la interfaz
+            state.servicios = data.servicios;
+            renderServicios();
+        })
+        .catch((error) => console.error("❌ Error al cargar los servicios:", error));
+}
+
+
+
     function getServiciosDesdeStore() {
     return store.getState().servicios;
 }
@@ -101,9 +112,9 @@ function renderServicios(serviciosFiltrados = getServiciosDesdeStore()) {
                     data-nombre="${servicio.nombre || ''}">
                     ${isFavorito ? "★ Favorito" : "☆ Añadir a Favoritos"}
                 </button>
-                <button class="btn-mensaje" data-id="${servicio.id}" 
+                <button class="btn-detalles" data-id="${servicio.id}" 
                     data-nombre="${encodeURIComponent(servicio.nombre || '')}">
-                    Enviar Mensaje
+                    Detalles
                 </button>
             </div>
         `;
@@ -249,10 +260,9 @@ inputBuscador?.addEventListener("keyup", (event) => {
   }
   serviciosContainer.addEventListener("click", (e) => {
     const target = /** @type {HTMLElement} */ (e.target);
-
     if (!target) return;
 
-    // 📌 Asegurar que el clic fue en un botón de favorito
+    // 📌 Manejar clic en el botón de favorito
     if (target.classList.contains("btn-favorito")) {
         const id = target.getAttribute("data-id");
         const nombre = target.getAttribute("data-nombre");
@@ -262,6 +272,23 @@ inputBuscador?.addEventListener("keyup", (event) => {
         } else {
             console.error("Error: ID o nombre del servicio no encontrado.");
         }
+        return; // 🔴 IMPORTANTE: Evita que se siga ejecutando el resto del código
+    }
+
+    // 📌 Manejar clic en el botón de detalles
+    if (target.classList.contains("btn-detalles")) {
+        const servicioId = target.getAttribute("data-id");
+
+        if (servicioId) {
+            console.log("Redirigiendo a detalles del servicio:", servicioId);
+            window.location.href = `serviciosin.html?id=${servicioId}`;
+        } else {
+            console.error("Error: No se encontró el ID del servicio.");
+        }
+        return; // 🔴 IMPORTANTE: Evita que se siga ejecutando el resto del código
     }
 });
+console.log(localStorage.getItem("servicios"));
+
 });
+

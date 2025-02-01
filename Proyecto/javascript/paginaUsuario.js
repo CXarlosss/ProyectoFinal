@@ -28,7 +28,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const mensajeInput = /** @type {HTMLInputElement | null} */ (document.getElementById("mensaje-input"));
         const enviarMensajeBtn = /** @type {HTMLButtonElement | null} */ (document.getElementById("enviar-mensaje"));
         const cerrarChatBtn = /** @type {HTMLButtonElement | null} */ (document.getElementById("cerrar-chat"));
-    
+        const btnBorrar = document.getElementById("btn-borrar");
+
     let usuarioActivo = "";
     let conversaciones = /** @type {Record<string, { remitente: string, mensaje: string }[]>} */ (
         JSON.parse(localStorage.getItem(`conversaciones_${usuario.id}`) || "{}")
@@ -292,6 +293,22 @@ document.addEventListener("DOMContentLoaded", () => {
         guardarMensajes();
         actualizarMensajes(usuarioActivo);
     });
+    if (btnBorrar) {
+        btnBorrar.addEventListener("click", () => {
+            if (confirm("¿Estás seguro de que quieres borrar todas las secciones almacenadas? Esta acción no se puede deshacer.")) {
+                // 🔴 Elimina solo las claves relacionadas con las secciones
+                localStorage.removeItem("servicios");
+                localStorage.removeItem("favoritos");
+                localStorage.removeItem("mensajes");
+
+                console.log("Todas las secciones han sido eliminadas del almacenamiento.");
+                alert("Todas las secciones han sido eliminadas.");
+                
+                // Recargar la página para actualizar la interfaz
+                location.reload();
+            }
+        });
+    }
 
     /**
      * @param {string} chatId

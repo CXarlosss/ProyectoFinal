@@ -40,9 +40,7 @@ body {
   transition: transform 0.2s ease-in-out;
 }
 
-.seccion:hover {
-  transform: scale(1.02);
-}
+
 
 .seccion h2 {
   text-align: center;

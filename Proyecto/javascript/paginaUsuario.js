@@ -125,7 +125,7 @@ document.addEventListener("DOMContentLoaded", () => {
         favoritosList.innerHTML = "";
     
         /** @type {{ id: string, nombre: string }[]} */
-        const favoritos = JSON.parse(localStorage.getItem(`favoritos_${usuario.id}`) || "[]");
+        const favoritos = JSON.parse(localStorage.getItem(`favoritos_${usuario.id}`) || "[]").slice(0,5);
     
         if (favoritos.length === 0) {
             favoritosList.innerHTML = "<p>No tienes favoritos aún.</p>";

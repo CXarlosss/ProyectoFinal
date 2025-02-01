@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-     "lint": "eslint ."
+    "lint": "eslint ."
   },
   "repository": {
     "type": "git",
@@ -32,6 +32,7 @@
     "color-name": "^1.1.4",
     "concat-map": "^0.0.1",
     "cross-spawn": "^7.0.6",
+    "crypto": "^1.0.1",
     "debug": "^4.4.0",
     "deep-is": "^0.1.4",
     "escape-string-regexp": "^4.0.0",

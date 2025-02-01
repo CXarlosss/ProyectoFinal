@@ -257,6 +257,9 @@ inputBuscador?.addEventListener("keyup", (event) => {
       state.favoritos = favoritosGuardados
           ? JSON.parse(favoritosGuardados)
           : [];
+          console.log("📌 Favoritos cargados de favoritosCargados:", favoritosGuardados);
+          console.log("📌 Favoritos cargados de LocalStorage:", state.favoritos);
+          console.log("📌 UsuarioID cargado", usuario.id);
   }
   serviciosContainer.addEventListener("click", (e) => {
     const target = /** @type {HTMLElement} */ (e.target);

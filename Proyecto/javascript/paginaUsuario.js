@@ -11,6 +11,8 @@ document.addEventListener("DOMContentLoaded", () => {
         window.location.href = "registrar.html";
         return;
     }
+    
+
 
     /** @type {{ id: string, nombre: string }} */
     const usuario = JSON.parse(usuarioGuardado);

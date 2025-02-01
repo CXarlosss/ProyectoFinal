@@ -112,8 +112,10 @@ function renderServicios(serviciosFiltrados = getServiciosDesdeStore()) {
 
     try {
         cargarFavoritos();
+        
     } catch (error) {
         console.error("Error al cargar favoritos:", error);
+        
     }
 }
   // 📌 Mostrar modal de creación
@@ -169,24 +171,29 @@ function renderServicios(serviciosFiltrados = getServiciosDesdeStore()) {
    * @param {string} id 
    * @param {string} nombre 
    */
-  function toggleFavorito(id, nombre) {
-      const existe = state.favoritos.some((fav) => fav.id === id);
-      if (existe) {
-          state.favoritos = state.favoritos.filter((fav) => fav.id !== id);
-      } else {
-          state.favoritos.push({ id, nombre });
-      }
-      guardarFavoritos();
-      renderServicios();
-  }
-  serviciosContainer.addEventListener("click", (e) => {
-      const target = /** @type {HTMLElement} */ (e.target);
-      if (!target) return;
 
-      if (target.classList.contains("btn-favorito")) {
-          toggleFavorito(target.dataset.id || "", target.dataset.nombre || "");
-      }
-  });
+function toggleFavorito(id, nombre) {
+    if (!id) {
+        console.error("ID de servicio inválido.");
+        return;
+    }
+
+    const index = state.favoritos.findIndex((fav) => fav.id === id);
+
+    if (index !== -1) {
+        // Si ya es favorito, lo elimina
+        state.favoritos.splice(index, 1);
+    } else {
+        // Si no está en favoritos, lo añade
+        state.favoritos.push({ id, nombre });
+    }
+
+    // Guardar cambios en localStorage
+    guardarFavoritos();
+
+    // ✅ Volver a renderizar los servicios para reflejar el cambio
+    renderServicios();
+}
   btnFiltrarActividades?.addEventListener("click", () =>
       renderServicios(state.servicios.filter(({ categoria }) => categoria === "actividad"))
   );
@@ -197,31 +204,64 @@ function renderServicios(serviciosFiltrados = getServiciosDesdeStore()) {
       renderServicios(state.servicios);
   });
   function buscarServicios() {
-      const inputBuscadorValue = inputBuscador?.setAttribute("value",'') || "";
-      const terminoBusqueda = inputBuscadorValue.toLowerCase().trim();
-      if (!terminoBusqueda) {
-          renderServicios();
-          return;
-      }
+    const inputBuscador = /** @type {HTMLInputElement | null} */ (document.getElementById("buscador"));
+    
+    if (!inputBuscador) {
+        console.error("El campo de búsqueda no fue encontrado en el DOM.");
+        return;
+    }
 
-      const serviciosFiltrados = state.servicios.filter(servicio =>
-          servicio.nombre.toLowerCase().includes(terminoBusqueda) ||
-          servicio.descripcion.toLowerCase().includes(terminoBusqueda) ||
-          servicio.ubicacion.toLowerCase().includes(terminoBusqueda)
-      );
+    // Obtener el valor real del input, asegurando que no modifique el atributo 'value' de forma incorrecta
+    const terminoBusqueda = inputBuscador.value.trim().toLowerCase();
 
-      renderServicios(serviciosFiltrados);
-  }
-  btnBuscador?.addEventListener("click", buscarServicios);
-  inputBuscador?.addEventListener("keyup", (event) => {
-      if (event.key === "Enter") {
-          buscarServicios();
-      }
-  });
+    if (!terminoBusqueda) {
+        renderServicios(); // Si está vacío, mostrar todos los servicios
+        return;
+    }
+
+    try {
+        /** @type {Array<{ id: string, nombre: string, descripcion: string, ubicacion: string, valoracion: string, imagen: string, categoria: string }>} */
+        const serviciosFiltrados = state.servicios.filter(
+            (servicio) =>
+                servicio?.nombre?.toLowerCase()?.includes(terminoBusqueda) ||
+                servicio?.descripcion?.toLowerCase()?.includes(terminoBusqueda) ||
+                servicio?.ubicacion?.toLowerCase()?.includes(terminoBusqueda)
+        );
+
+        renderServicios(serviciosFiltrados);
+    } catch (error) {
+        console.error("Error al buscar servicios:", error);
+    }
+}
+
+// 📌 Eventos de búsqueda
+btnBuscador?.addEventListener("click", buscarServicios);
+inputBuscador?.addEventListener("keyup", (event) => {
+    if (event.key === "Enter") {
+        buscarServicios();
+    }
+});
   function cargarFavoritos() {
       const favoritosGuardados = localStorage.getItem(`favoritos_${usuario.id}`);
       state.favoritos = favoritosGuardados
           ? JSON.parse(favoritosGuardados)
           : [];
   }
+  serviciosContainer.addEventListener("click", (e) => {
+    const target = /** @type {HTMLElement} */ (e.target);
+
+    if (!target) return;
+
+    // 📌 Asegurar que el clic fue en un botón de favorito
+    if (target.classList.contains("btn-favorito")) {
+        const id = target.getAttribute("data-id");
+        const nombre = target.getAttribute("data-nombre");
+
+        if (id && nombre) {
+            toggleFavorito(id, nombre);
+        } else {
+            console.error("Error: ID o nombre del servicio no encontrado.");
+        }
+    }
+});
 });

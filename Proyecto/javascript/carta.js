@@ -32,21 +32,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
         /** @type {Array<{ id: string, nombre: string, descripcion: string, ubicacion: string, valoracion?: string, precio?: number, horarios?: string, metodoPago?: string, etiquetas?: string, emailUsuario?: string, imagen?: string }>} */
         const servicios = JSON.parse(serviciosString);
-
+        
         /** @type {typeof servicios[0] | undefined} */
-        const servicio = servicios.find(serv => serv.id === servicioId);
+        const servicio = servicios.find(serv => {
+            console.log(serv.id.toString());
+            return serv.id.toString() === servicioId;
+
+        });
+        console.log("📌 Servicio obtenido de LocalStorage:", servicios);
+        console.log("📌 Buscando servicio con ID:", servicioId);
+        console.log("📌 Servicio encontrado:", servicio);
 
         if (!servicio) {
-            servicioContainer.innerHTML = `
+            servicioContainer && (servicioContainer.innerHTML = `
                 <div class="error-message">
                     <p>❌ El servicio con ID <code>${servicioId}</code> no se encuentra en la lista de servicios.</p>
                     <p>Por favor, verifica el ID o vuelve a la lista de servicios.</p>
                 </div>
-            `;
+            `);
             return;
         }
 
-        servicioContainer.innerHTML = `
+        servicioContainer && (servicioContainer.innerHTML = `
             <div class="servicio-info">
                 <h2>${servicio.nombre}</h2>
                 <p><strong>Descripción:</strong> ${servicio.descripcion}</p>
@@ -63,7 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
             <div class="servicio-imagen">
                 <img src="${servicio.imagen || 'default.jpg'}" alt="Imagen del servicio">
             </div>
-        `;
+        `);
 
         
         const btnIrChat =/** @type {HTMLButtonElement | null} */ document.getElementById("btn-ir-chat");

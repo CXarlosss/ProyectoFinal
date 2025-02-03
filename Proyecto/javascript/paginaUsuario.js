@@ -40,6 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const urlParams = new URLSearchParams(window.location.search);
         const servicioId = urlParams.get("servicioId");
         const servicioNombre = decodeURIComponent(urlParams.get("servicioNombre") || "");
+
         if (servicioId && servicioNombre) {
             usuarioActivo = servicioId;
             if (chatTitulo) chatTitulo.textContent = `Conversación sobre ${servicioNombre}`;
@@ -56,23 +57,16 @@ document.addEventListener("DOMContentLoaded", () => {
      * @param {string} nombreChat
      */
     function abrirChat(chatId, nombreChat) {
-        if (!chatPopup || !chatTitulo || !chatMessages) {
-            console.error("No se encontraron los elementos del chat.");
-            return;
-        }
-    
-        // Intentamos encontrar el nombre real de la sección en favoritos
-        const favoritos = JSON.parse(localStorage.getItem(`favoritos_${usuario.id}`) || "[]");
-        const favoritoEncontrado = favoritos.find((/** @type {{ id: string; }} */ fav) => fav.id === chatId);
-    
-        // Si es una sección favorita, usamos su nombre; si no, usamos el `chatId` directamente
-        const nombreMostrar = favoritoEncontrado ? favoritoEncontrado.nombre : chatId;
-    
         usuarioActivo = chatId;
-        chatTitulo.textContent = `Conversación con ${nombreChat} `; // ✅ Ahora muestra el nombre correcto
-        chatPopup.classList.add("active"); // Muestra el chat
     
-        console.log("Chat abierto:", chatId, "Nombre mostrado:", nombreMostrar);
+        // 📌 Obtener el nombre real desde `localStorage`
+        const nombresServicios = JSON.parse(localStorage.getItem("nombresServicios") || "{}");
+        const nombreReal = nombresServicios[chatId] || nombreChat || `Chat con ID (${chatId})`; 
+    
+        if (chatTitulo) chatTitulo.textContent = `Conversación con ${nombreReal}`;
+        if (chatPopup) chatPopup.classList.add("active");
+    
+        console.log("Chat abierto:", chatId, "Nombre mostrado:", nombreReal);
     
         actualizarMensajes(chatId);
     }
@@ -85,11 +79,15 @@ document.addEventListener("DOMContentLoaded", () => {
      */
     
 
-   function guardarNombreChat(chatId, nombreChat) {
-       let nombresServicios = JSON.parse(localStorage.getItem("nombresServicios") || "{}");
-       nombresServicios[chatId] = nombreChat; // Asignar el nombre del servicio al chatId
-       localStorage.setItem("nombresServicios", JSON.stringify(nombresServicios));
-   }
+    function guardarNombreChat(chatId, nombreChat) {
+        let nombresServicios = JSON.parse(localStorage.getItem("nombresServicios") || "{}");
+
+        if (nombreChat && chatId) {
+            nombresServicios[chatId] = nombreChat;
+            localStorage.setItem("nombresServicios", JSON.stringify(nombresServicios));
+        }
+    }
+    
     
     btnCreateChat?.addEventListener("click", () => {
         const nombreChat = prompt("Introduce el nombre del usuario con quien quieres chatear:");
@@ -351,7 +349,23 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
-
+    btnCreateChat?.addEventListener("click", () => {
+        const nombreChat = prompt("Introduce el nombre del usuario con quien quieres chatear:");
+        if (!nombreChat) return;
+    
+        const chatId = nombreChat.toLowerCase().replace(/\s+/g, "-");
+    
+        if (!conversaciones[chatId]) {
+            conversaciones[chatId] = [];
+            guardarMensajes();
+            guardarNombreChat(chatId, nombreChat); // ✅ Ahora guardamos correctamente el nombre
+            cargarChats();
+            alert(`Chat con ${nombreChat} creado exitosamente.`);
+        } else {
+            alert("Ya tienes un chat con este usuario.");
+        }
+    });
+    
     /**
      * @param {string} chatId
      */

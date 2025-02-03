@@ -1,3 +1,84 @@
+header {
+  width: 100%;
+  text-align: center;
+  padding: 20px;
+  background: rgba(51, 20, 40, 0.8); /* 🔥 Fondo con glass effect */
+  backdrop-filter: blur(10px);
+  color: white;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* 🔥 Navbar con hover dinámico */
+nav ul {
+  list-style: none;
+  padding: 0;
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+nav ul li {
+  display: inline;
+}
+
+nav ul li a {
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+  font-size: 1.2rem;
+  padding: 10px;
+  transition: color 0.3s ease-in-out, transform 0.2s;
+  position: relative;
+}
+
+/* ✨ Efecto de subrayado animado */
+nav ul li a::after {
+  content: "";
+  width: 0;
+  height: 3px;
+  background: #ff4d7d;
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  transition: width 0.3s ease-in-out;
+}
+
+nav ul li a:hover {
+  color: #ff4d7d;
+  transform: scale(1.1);
+}
+
+nav ul li a:hover::after {
+  width: 100%;
+}
+
+/* 📌 Distribución de botones */
+.main-buttons {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  padding: 20px;
+}
+
+/* ✨ Botones con efecto glow */
+button {
+  font-size: 1rem;
+  color: #b2005e;
+  font-weight: bold;
+  text-decoration: none;
+  border: 2px solid #b2005e;
+  padding: 12px 20px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  background: #b2005e;
+  color: white;
+  box-shadow: 0px 4px 15px rgba(178, 0, 94, 0.5);
+}
 /* Estilos generales */
 body {
   font-family: 'Arial', sans-serif;

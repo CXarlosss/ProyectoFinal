@@ -84,7 +84,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 localStorage.setItem("servicioSeleccionado", JSON.stringify(servicio));
 
                 // 📌 Redirigir a la página del usuario con los datos
-                window.location.href = `paginadelusuario.html?servicioId=${encodeURIComponent(servicio.id)}&nombre=${encodeURIComponent(servicio.nombre)}`;
+                window.location.href = `paginadelusuario.html?servicioId=${encodeURIComponent(servicio.id)}&servicioNombre=${encodeURIComponent(servicio.nombre)}`;
             });
         }
 

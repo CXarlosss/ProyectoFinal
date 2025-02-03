@@ -1,19 +1,47 @@
-body {
-    font-family: Arial, sans-serif;
+/* Reset de estilos */
+* {
     margin: 0;
     padding: 0;
-    background-color: #f4f4f4;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+    scroll-behavior: smooth;
 }
 
+body {
+    background: linear-gradient(to right, #f4f4f4, #e0e0e0);
+    color: #333;
+    line-height: 1.6;
+}
+
+/* 🌟 NAVBAR MEJORADO */
 header {
-    background-color: #333;
-    padding: 1rem;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: rgba(51, 51, 51, 0.7); /* 🎭 Efecto Glassmorphism */
+    backdrop-filter: blur(10px);
+    padding: 10px 0;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    animation: slideDown 0.8s ease-in-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 nav ul {
     list-style: none;
     display: flex;
-    gap: 15px;
+    justify-content: center;
+    gap: 20px;
     padding: 0;
     margin: 0;
 }
@@ -26,45 +54,160 @@ nav ul li a {
     text-decoration: none;
     color: white;
     font-size: 1.2rem;
+    padding: 10px 15px;
+    border-radius: 5px;
+    position: relative;
+    transition: color 0.3s ease-in-out;
 }
 
+/* ✨ Efecto de subrayado animado */
+nav ul li a::after {
+    content: "";
+    display: block;
+    width: 0;
+    height: 3px;
+    background: #ffcc00; /* Amarillo vibrante */
+    transition: width 0.3s ease-in-out;
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+nav ul li a:hover::after {
+    width: 100%;
+}
+
+nav ul li a:hover {
+    color: #ffcc00;
+    transform: scale(1.1);
+}
+
+/* 📱 Menú responsivo */
+@media (max-width: 768px) {
+    nav ul {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+    }
+
+    nav ul li a {
+        font-size: 1rem;
+    }
+}
+
+/* 📌 Contenedor principal */
+main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80vh;
+    margin-top: 80px; /* Para evitar que el contenido se esconda debajo del nav */
+}
+
+/* 🏷️ Estilos para la carta */
 .servicio-detalle {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    margin: 40px auto;
-    max-width: 900px;
+    max-width: 800px;
     background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.15);
+    text-align: center;
+    animation: fadeIn 0.8s ease-in-out;
 }
 
-.servicio-info {
-    flex: 1;
-    padding: 20px;
+/* ✨ Animación de entrada */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .servicio-info h2 {
-    font-size: 2rem;
-    margin-bottom: 10px;
+    font-size: 2.2rem;
+    color: #333;
+    margin-bottom: 15px;
 }
 
 .servicio-info p {
     font-size: 1.1rem;
     margin: 5px 0;
-}
-
-.servicio-info strong {
-    font-weight: bold;
+    color: #666;
 }
 
 .servicio-imagen {
-    flex: 1;
-    text-align: right;
+    margin-top: 15px;
 }
 
 .servicio-imagen img {
     max-width: 100%;
-    border-radius: 10px;
+    border-radius: 12px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* 🛠️ Botones estilizados */
+button {
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.3s;
+    margin: 10px;
+}
+
+button:hover {
+    transform: scale(1.05);
+    box-shadow: 0px 5px 15px rgba(0, 123, 255, 0.3);
+}
+
+button#btn-volver {
+    background: linear-gradient(135deg, #ff4d4d, #b30000);
+}
+
+button#btn-volver:hover {
+    box-shadow: 0px 5px 15px rgba(255, 77, 77, 0.3);
+}
+
+/* 📱 Responsividad */
+@media (max-width: 768px) {
+    main {
+        height: auto;
+        padding: 20px;
+    }
+
+    .servicio-detalle {
+        max-width: 95%;
+    }
+
+    .servicio-info h2 {
+        font-size: 1.8rem;
+    }
+
+    button {
+        font-size: 0.9rem;
+        padding: 10px 15px;
+    }
+}
+
+/* 🏁 Footer */
+footer {
+    text-align: center;
+    padding: 10px;
+    background: #333;
+    color: white;
+    position: fixed;
+    width: 100%;
+    bottom: 0;
 }

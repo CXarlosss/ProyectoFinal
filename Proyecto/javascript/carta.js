@@ -80,11 +80,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (btnIrChat) {
             btnIrChat.addEventListener("click", () => {
-                // 📌 Guardamos el servicio actual en localStorage para que esté disponible en la página de usuario
+                // 📌 Guardar servicio en `localStorage`
                 localStorage.setItem("servicioSeleccionado", JSON.stringify(servicio));
 
-                // Redirigir a la página del usuario con el ID del servicio en la URL
-                window.location.href = `paginadelusuario.html?servicioId=${encodeURIComponent(servicio.id)}`;
+                // 📌 Redirigir a la página del usuario con los datos
+                window.location.href = `paginadelusuario.html?servicioId=${encodeURIComponent(servicio.id)}&nombre=${encodeURIComponent(servicio.nombre)}`;
             });
         }
 

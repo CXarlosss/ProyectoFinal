@@ -18,6 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const usuario = JSON.parse(usuarioGuardado);
 
         // Obtener elementos del DOM
+        
         const nombreElement = document.getElementById("nombre");
         const chatList = document.getElementById("chat-list");
         const btnCreateChat = /** @type {HTMLButtonElement | null} */ (document.getElementById("btn-create-chat"));
@@ -48,11 +49,42 @@ document.addEventListener("DOMContentLoaded", () => {
     // Mostrar el nombre del usuario
     if (nombreElement) nombreElement.textContent = usuario.nombre;
     
+    
+    
+    /**
+     * @param {string} chatId
+     * @param {string} nombreChat
+     */
+    function abrirChat(chatId, nombreChat) {
+        if (!chatPopup || !chatTitulo || !chatMessages) {
+            console.error("No se encontraron los elementos del chat.");
+            return;
+        }
+    
+        // Intentamos encontrar el nombre real de la sección en favoritos
+        const favoritos = JSON.parse(localStorage.getItem(`favoritos_${usuario.id}`) || "[]");
+        const favoritoEncontrado = favoritos.find((/** @type {{ id: string; }} */ fav) => fav.id === chatId);
+    
+        // Si es una sección favorita, usamos su nombre; si no, usamos el `chatId` directamente
+        const nombreMostrar = favoritoEncontrado ? favoritoEncontrado.nombre : chatId;
+    
+        usuarioActivo = chatId;
+        chatTitulo.textContent = `Conversación con ${nombreChat} `; // ✅ Ahora muestra el nombre correcto
+        chatPopup.classList.add("active"); // Muestra el chat
+    
+        console.log("Chat abierto:", chatId, "Nombre mostrado:", nombreMostrar);
+    
+        actualizarMensajes(chatId);
+    }
+    
+    
+    
     /**
      * @param {string} chatId
      * @param {string} nombreChat
      */
     
+
    function guardarNombreChat(chatId, nombreChat) {
        let nombresServicios = JSON.parse(localStorage.getItem("nombresServicios") || "{}");
        nombresServicios[chatId] = nombreChat; // Asignar el nombre del servicio al chatId
@@ -182,39 +214,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // 📌 Evitar abrir el chat si el clic viene de "❌"
         if (target.classList.contains("btn-eliminar-favorito")) return;
+        const nombreChat = target.textContent?.trim() || "Chat sin nombre"; // 📌 Extraer el nombre correcto
+
 
         const seccionId = target.getAttribute("data-id");
-        if (seccionId) abrirChat(seccionId);
+        if (seccionId) abrirChat(seccionId, nombreChat);
     });
 
     function guardarMensajes() {
         localStorage.setItem(`conversaciones_${usuario.id}`, JSON.stringify(conversaciones));
     }
 
-    /**
-     * @param {string} chatId
-     */
-    function abrirChat(chatId) {
-        if (!chatPopup || !chatTitulo || !chatMessages) {
-            console.error("No se encontraron los elementos del chat.");
-            return;
-        }
-    
-        // Intentamos encontrar el nombre real de la sección en favoritos
-        const favoritos = JSON.parse(localStorage.getItem(`favoritos_${usuario.id}`) || "[]");
-        const favoritoEncontrado = favoritos.find((/** @type {{ id: string; }} */ fav) => fav.id === chatId);
-    
-        // Si es una sección favorita, usamos su nombre; si no, usamos el `chatId` directamente
-        const nombreMostrar = favoritoEncontrado ? favoritoEncontrado.nombre : chatId;
-    
-        usuarioActivo = chatId;
-        chatTitulo.textContent = `Conversación con ${nombreMostrar}`; // ✅ Ahora muestra el nombre correcto
-        chatPopup.classList.add("active"); // Muestra el chat
-    
-        console.log("Chat abierto:", chatId, "Nombre mostrado:", nombreMostrar);
-    
-        actualizarMensajes(chatId);
-    }
     
 
     /**
@@ -238,7 +248,33 @@ document.addEventListener("DOMContentLoaded", () => {
         // Desplazar automáticamente al último mensaje
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }
+    if (enviarMensajeBtn) {
+        enviarMensajeBtn.addEventListener("click", () => {
+            if (!usuarioActivo || !mensajeInput || !chatMessages) return;
 
+            const mensaje = mensajeInput.value.trim();
+            if (mensaje === "") return;
+
+            if (!conversaciones[usuarioActivo]) {
+                conversaciones[usuarioActivo] = [];
+            }
+
+            conversaciones[usuarioActivo].push({
+                remitente: usuario.nombre,
+                mensaje: mensaje
+            });
+
+            mensajeInput.value = "";
+            localStorage.setItem(`conversaciones_${usuario.id}`, JSON.stringify(conversaciones));
+            actualizarMensajes(usuarioActivo);
+        });
+    }
+    if (cerrarChatBtn) {
+        cerrarChatBtn.addEventListener("click", () => {
+            chatPopup?.classList.remove("active");
+            usuarioActivo = "";
+        });
+    }
     chatList?.addEventListener("click", (e) => {
         const target = /** @type {HTMLElement} */ (e.target);
         if (!target) return;
@@ -252,7 +288,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Si es un chat, lo abrimos
         const chatId = target.closest(".chat-item")?.getAttribute("data-id");
-        if (chatId) abrirChat(chatId);
+        const nombreChat = target.closest(".chat-item")?.textContent?.trim() || "Chat sin nombre";
+
+        if (chatId) abrirChat(chatId, nombreChat);
     });
 
     btnCerrarSesion?.addEventListener("click", () => {
@@ -266,9 +304,11 @@ document.addEventListener("DOMContentLoaded", () => {
     favoritosList?.addEventListener("click", (e) => {
         const target = /** @type {HTMLElement} */ (e.target);
         if (!target) return;
-
+        if (target.classList.contains("btn-eliminar-favorito")) return;
         const seccionId = target.getAttribute("data-id");
-        if (seccionId) abrirChat(seccionId);
+        const nombreChat = target.textContent?.trim() || "Chat sin nombre"; 
+
+        if (seccionId) abrirChat(seccionId, nombreChat);
     });
 
     cerrarChatBtn?.addEventListener("click", () => {

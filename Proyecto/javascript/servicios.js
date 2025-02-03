@@ -1,12 +1,14 @@
 // @ts-check
 
- import { store, loadServicesFromAPI } from "../store/redux.js"
+ import { store } from "../store/redux.js"
+ import { apiConfig } from "../data/singleton.js";
+
 
 
  
 document.addEventListener("DOMContentLoaded", () => {
   console.log("DOM cargado correctamente.");
-  loadServicesFromAPI("./api/factory.json");
+  
 
   // 📌 Selección de elementos del DOM
   
@@ -44,34 +46,29 @@ document.addEventListener("DOMContentLoaded", () => {
   cargarFavoritos();
   // 📌 Cargar servicios desde JSON
   function cargarServicios() {
-    fetch("http://127.0.0.1:3000/servicios")
+    fetch(apiConfig.API_SERVICIOS_URL)
         .then((response) => {
+            console.log("🔎 Respuesta del servidor:", response);
             if (!response.ok) throw new Error(`❌ Error al cargar JSON: ${response.status}`);
             return response.json();
         })
         .then((data) => {
-            // Verificar que 'data' es un array en lugar de un objeto con 'servicios'
-            if (!data || !Array.isArray(data)) {
+            console.log("📌 Datos obtenidos del servidor:", data);
+    
+            // Intenta acceder directamente a los servicios
+            const servicios = Array.isArray(data) ? data : data.servicios;
+            console.log("🔎 Servicios extraídos del JSON:", servicios);
+    
+            if (!servicios || !Array.isArray(servicios) || servicios.length === 0) {
                 console.warn("⚠️ No se encontraron servicios válidos en el JSON.");
                 return;
             }
 
-            console.log("📌 Servicios obtenidos de la API:", data);
-
-            // Guardar los servicios en `localStorage`
-            localStorage.setItem("servicios", JSON.stringify(data));
-            console.log("✅ Servicios guardados en LocalStorage:", localStorage.getItem("servicios"));
-
-            // Verificar que el objeto `state` existe antes de modificarlo
-            if (typeof state !== "undefined" && state !== null) {
-                state.servicios = data;
-            } else {
-                console.warn("⚠️ La variable 'state' no está definida.");
-            }
-
-            // Llamar a la función de renderizado si está definida
+            state.servicios = servicios;
+            console.log("📌 Estado actualizado con servicios:", state.servicios);
+    
             if (typeof renderServicios === "function") {
-                renderServicios();
+                renderServicios(state.servicios);
             } else {
                 console.warn("⚠️ La función 'renderServicios' no está definida.");
             }
@@ -80,6 +77,7 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error("🚨 Error en la carga de servicios:", error);
         });
 }
+
 
 
 
@@ -97,22 +95,29 @@ document.addEventListener("DOMContentLoaded", () => {
  * Renderiza la lista de servicios en la interfaz.
  * @param {typeof state.servicios} [serviciosFiltrados]
  */
-function renderServicios(serviciosFiltrados = getServiciosDesdeStore()) {
+ function renderServicios(serviciosFiltrados = getServiciosDesdeStore()) {
+    console.log("🛠 Ejecutando renderServicios con:", serviciosFiltrados);
+
     if (!serviciosContainer) {
-        console.error("El contenedor de servicios no está disponible.");
+        console.error("🚨 ERROR: El contenedor de servicios no está disponible.");
         return;
     }
 
-    serviciosContainer.innerHTML = (serviciosFiltrados || [])
+    if (!serviciosFiltrados || serviciosFiltrados.length === 0) {
+        console.warn("⚠️ No hay servicios para mostrar.");
+        serviciosContainer.innerHTML = "<p>No hay servicios disponibles.</p>";
+        return;
+    }
+
+    serviciosContainer.innerHTML = serviciosFiltrados
         .slice(0, 8)
         .map((servicio) => {
-            if (!servicio) {
-                console.warn("Servicio no definido.");
-                return '';
+            if (!servicio || !servicio.id) {
+                console.warn("⚠️ Servicio no definido o sin ID:", servicio);
+                return "";
             }
-            const isFavorito = state.favoritos.some(
-                (fav) => fav.id === servicio.id
-            );
+            const isFavorito = state.favoritos.some((fav) => fav.id === servicio.id);
+
             return `
             <div class="card">
                 <img src="${servicio.imagen || 'default.jpg'}" alt="Imagen de ${servicio.nombre || 'Servicio'}" class="card-img" />
@@ -134,13 +139,7 @@ function renderServicios(serviciosFiltrados = getServiciosDesdeStore()) {
         })
         .join("");
 
-    try {
-        cargarFavoritos();
-        
-    } catch (error) {
-        console.error("Error al cargar favoritos:", error);
-        
-    }
+    console.log("✅ Servicios renderizados en la UI.");
 }
   // 📌 Mostrar modal de creación
   btnCrearServicio?.addEventListener("click", () => {
@@ -304,7 +303,7 @@ inputBuscador?.addEventListener("keyup", (event) => {
         return; // 🔴 IMPORTANTE: Evita que se siga ejecutando el resto del código
     }
 });
-console.log(localStorage.getItem("servicios"));
+
 
 });
 

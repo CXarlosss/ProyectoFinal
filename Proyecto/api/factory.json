@@ -1,5 +1,5 @@
-{
-  "servicios": [
+
+  [
     {
       "id": 1,
       "nombre": "Clase de Yoga",
@@ -301,7 +301,7 @@
       "emailUsuario": "SonArte@example.com"
     }
   ]
-}
+
 
   
     

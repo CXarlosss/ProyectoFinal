@@ -1,6 +1,10 @@
 // /server/server.js
 //@ts-nocheck
 /*eslint no-undef: "error"*/
+
+
+
+
 const articlesJSON = `[{
       "id": 1,
       "nombre": "Clase de Yoga",

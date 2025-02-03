@@ -51,6 +51,7 @@ export class Usuario {
      * @param {Array<string>} etiquetas
      * @param {number | string} usuarioId 
      * @param {string} emailUsuario
+     * @
      */
     constructor(id, nombre, descripcion, precio, valoracion, ubicacion, horarios, metodoPago, categoria, imagen, etiquetas = [], usuarioId, emailUsuario) {
       this.id = Number(id);

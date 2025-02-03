@@ -1,6 +1,6 @@
 {
   "include":["./javascript/**/*.js", "clases/clases.js", "store/store.js"],
-  
+  "exclude": ["./node_modules/**/*" ,"./server/**/*"],
   "compileOnSave": false,
   "compilerOptions": {
     /* Visit https://aka.ms/tsconfig to read more about this file */

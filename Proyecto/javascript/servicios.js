@@ -1,7 +1,7 @@
 // @ts-check
 
  import { store, loadServicesFromAPI } from "../store/redux.js"
- 
+
 
  
 document.addEventListener("DOMContentLoaded", () => {
@@ -44,28 +44,41 @@ document.addEventListener("DOMContentLoaded", () => {
   cargarFavoritos();
   // 📌 Cargar servicios desde JSON
   function cargarServicios() {
-    fetch("./api/factory.json")
+    fetch("http://127.0.0.1:3000/servicios")
         .then((response) => {
             if (!response.ok) throw new Error(`❌ Error al cargar JSON: ${response.status}`);
             return response.json();
         })
         .then((data) => {
-            console.log("📌 Servicios obtenidos de la API:", data.servicios);
-
-            if (!Array.isArray(data.servicios) || data.servicios.length === 0) {
-                console.warn("⚠️ No se encontraron servicios en el JSON.");
+            // Verificar que 'data' es un array en lugar de un objeto con 'servicios'
+            if (!data || !Array.isArray(data)) {
+                console.warn("⚠️ No se encontraron servicios válidos en el JSON.");
                 return;
             }
 
-            // 🔴 SOLUCIÓN: Guardar los servicios en `localStorage`
-            localStorage.setItem("servicios", JSON.stringify(data.servicios));
+            console.log("📌 Servicios obtenidos de la API:", data);
+
+            // Guardar los servicios en `localStorage`
+            localStorage.setItem("servicios", JSON.stringify(data));
             console.log("✅ Servicios guardados en LocalStorage:", localStorage.getItem("servicios"));
 
-            // Actualizar el estado y renderizar la interfaz
-            state.servicios = data.servicios;
-            renderServicios();
+            // Verificar que el objeto `state` existe antes de modificarlo
+            if (typeof state !== "undefined" && state !== null) {
+                state.servicios = data;
+            } else {
+                console.warn("⚠️ La variable 'state' no está definida.");
+            }
+
+            // Llamar a la función de renderizado si está definida
+            if (typeof renderServicios === "function") {
+                renderServicios();
+            } else {
+                console.warn("⚠️ La función 'renderServicios' no está definida.");
+            }
         })
-        .catch((error) => console.error("❌ Error al cargar los servicios:", error));
+        .catch((error) => {
+            console.error("🚨 Error en la carga de servicios:", error);
+        });
 }
 
 

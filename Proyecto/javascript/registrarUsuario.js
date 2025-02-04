@@ -3,9 +3,15 @@
 
 import { Usuario } from "../clases/class.js";
  import { store } from "../store/redux.js"; 
+ import { simpleFetch } from '../src/lib/simpleFetch.js';
+ import { HttpError } from '../src/classes/HttpError.js'
+
+
 
 
 document.addEventListener("DOMContentLoaded", () => {
+
+//Constantes uSER URL
   const formularioRegistro = /** @type {HTMLFormElement | null} */ (
     document.getElementById("usuario-form")
   );
@@ -37,8 +43,39 @@ document.addEventListener("DOMContentLoaded", () => {
     seccionRegistro.classList.add("hidden");
     seccionLogin.classList.remove("hidden");
   });
+  
+
+async function getAPIData(apiURL = 'api/get.articles.json') {
+  let apiData
+
+  try {
+    apiData = await simpleFetch(apiURL, {
+      // Si la petición tarda demasiado, la abortamos
+      signal: AbortSignal.timeout(3000),
+      headers: {
+        'Content-Type': 'application/json',
+        // Add cross-origin header
+        'Access-Control-Allow-Origin': '*',
+      },
+    });
+  } catch (/** @type {any | HttpError} */err) {
+    if (err.name === 'AbortError') {
+      console.error('Fetch abortado');
+    }
+    if (err instanceof HttpError) {
+      if (err.response.status === 404) {
+        console.error('Not found');
+      }
+      if (err.response.status === 500) {
+        console.error('Internal server error');
+      }
+    }
+  }
+
+  return apiData
+}
   // Evento para registrar usuario
-  formularioRegistro.addEventListener("submit", (e) => {
+  formularioRegistro.addEventListener("submit", async (e) => {
     e.preventDefault();
     const nombre = /** @type {HTMLInputElement} */ (document.getElementById("nombre-usuario")).value.trim();
     const email = /** @type {HTMLInputElement} */ (document.getElementById("email-usuario")).value.trim();
@@ -60,7 +97,14 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     // Crear usuario
     const nuevoUsuario = new Usuario(Date.now(), nombre, email, password, telefono, direccion);
-    usuariosGuardados.push(nuevoUsuario);
+    
+    // @ts-ignore
+    const searchParams = new URLSearchParams(nuevoUsuario).toString()
+    const apiData = await getAPIData(`http://${location.hostname}:1337/create/articles?${searchParams}`)
+
+
+    
+    usuariosGuardados.push(apiData);
     // Guardar en localStorage
     localStorage.setItem("usuarios", JSON.stringify(usuariosGuardados));
     localStorage.setItem("usuarioRegistrado", JSON.stringify(nuevoUsuario));
@@ -87,4 +131,6 @@ document.addEventListener("DOMContentLoaded", () => {
       alert("Email o contraseña incorrectos.");
     }
   });
-});
+})
+
+

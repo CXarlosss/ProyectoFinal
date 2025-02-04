@@ -30,35 +30,52 @@
 
     <section id="modal-crear-servicio" class="modal hidden">
       <div class="modal-content">
-        <h2>Crear Servicio</h2>
-        <form id="crear-servicio-form">
-          <label for="nombre-servicio">Nombre:</label>
-          <input type="text" id="nombre-servicio" required /><br/>
-
-          <label for="descripcion-servicio">Descripción:</label>
-          <textarea id="descripcion-servicio" required></textarea><br/>
-
-          <label for="ubicacion-servicio">Ubicación:</label>
-          <input type="text" id="ubicacion-servicio" required /><br/>
-
-          <label for="valoracion-servicio">Valoración:</label>
-          <input type="number" id="valoracion-servicio" min="1" max="5" required /><br/>
-
-          <label for="imagen-servicio">URL de Imagen:</label>
-          <input type="url" id="imagen-servicio" /><br/>
-
-          <label for="categoria-servicio">Categoría:</label>
-          <select id="categoria-servicio" required>
-            <option value="actividad">Actividad</option>
-            <option value="comercio">Comercio</option>
-          </select><br/>
-
-          <button type="submit">Guardar Servicio</button>
-          <button type="button" id="btn-cerrar-modal">Cancelar</button>
-        </form>
+          <h2>Crear Servicio</h2>
+          <form id="crear-servicio-form">
+              <label for="nombre-servicio">Nombre:</label>
+              <input type="text" id="nombre-servicio" required /><br/>
+  
+              <label for="descripcion-servicio">Descripción:</label>
+              <textarea id="descripcion-servicio" required></textarea><br/>
+  
+              <label for="ubicacion-servicio">Ubicación:</label>
+              <input type="text" id="ubicacion-servicio" required /><br/>
+  
+              <label for="valoracion-servicio">Valoración (1-5):</label>
+              <input type="number" id="valoracion-servicio" min="1" max="5" required /><br/>
+  
+              <label for="imagen-servicio">URL de Imagen:</label>
+              <input type="url" id="imagen-servicio" /><br/>
+  
+              <label for="categoria-servicio">Categoría:</label>
+              <select id="categoria-servicio" required>
+                  <option value="actividad">Actividad</option>
+                  <option value="comercio">Comercio</option>
+              </select><br/>
+  
+              <label for="precio-servicio">Precio:</label>
+              <input type="number" id="precio-servicio" required /><br/>
+  
+              <label for="horario-servicio">Horarios:</label>
+              <input type="text" id="horario-servicio" required /><br/>
+  
+              <label for="metodo-pago-servicio">Método de Pago:</label>
+              <input type="text" id="metodo-pago-servicio" required /><br/>
+  
+              <label for="etiquetas-servicio">Etiquetas (separadas por coma):</label>
+              <input type="text" id="etiquetas-servicio" required /><br/>
+  
+              <label for="usuario-id-servicio">ID de Usuario:</label>
+              <input type="number" id="usuario-id-servicio" required /><br/>
+  
+              <label for="email-usuario-servicio">Email de Usuario:</label>
+              <input type="email" id="email-usuario-servicio" required /><br/>
+  
+              <button type="submit">Guardar Servicio</button>
+              <button type="button" id="btn-cerrar-modal">Cancelar</button>
+          </form>
       </div>
-    </section>
-
+  </section>
     <div id="servicios-container" class="grid"></div>
   </main>
 

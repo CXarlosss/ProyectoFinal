@@ -5,7 +5,7 @@ import { filter } from './crud/filter.js';
 
 
 const USERS_URL = './server/BBDD/users.json'
-// const ARTICLES = './server/BBDD/articles.json'
+const SERVICIOS_URL = './server/BBDD/articles.json'
 
 // READ:
 // read(USERS, (data) => console.log('server', data));
@@ -18,4 +18,7 @@ export const crud = {
   read: (file = USERS_URL, callback) => read(file, callback),
   create: (file = USERS_URL, data, callback) => create(file, data, callback),
   filter: (file = USERS_URL, filterParams, callback) => filter(file, filterParams, callback),
+  createserver: (file = SERVICIOS_URL, data, callback) => create(file, data, callback),
+  readserver: (file = SERVICIOS_URL, callback) => read(file, callback),
+  
 }

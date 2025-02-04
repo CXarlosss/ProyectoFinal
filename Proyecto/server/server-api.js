@@ -17,7 +17,8 @@ const MIME_TYPES = {
 
 // const USERS_URL = './server/BBDD/users.json'
 const USERS_URL = './server/BBDD/users.json'
-
+//Const SERVICIOS_URL = './server/BBDD/servicios.json'
+const SERVICIOS_URL = './server/BBDD/servicios.json'
 http
   .createServer(async (request, response) => {
     const url = new URL(`http://${request.headers.host}${request.url}`);
@@ -39,16 +40,23 @@ http
     } 
 
     switch (url.pathname) {
-      case '/create/articles':
-        crud.create(USERS_URL, urlParams, (data) => {
+      case '/read/servicios':
+        crud.read(SERVICIOS_URL, (data) => {
+          console.log('server read servicios', data)
+          responseData = data
+          response.write(JSON.stringify(responseData));
+          response.end();
+      })
+        break;
+      case '/create/servicios':
+        crud.create(SERVICIOS_URL, urlParams, (data) => {
           console.log(`server ${data.name} creado`, data)
           responseData = data
-
           response.write(JSON.stringify(responseData));
           response.end();
         });
         break;
-      case '/read/articles':
+        case '/read/users':
         crud.read(USERS_URL, (data) => {
           console.log('server read articles', data)
           responseData = data
@@ -57,6 +65,16 @@ http
           response.end();
         });
         break;
+      case '/create/users':
+        crud.create(USERS_URL, urlParams, (data) => {
+          console.log(`server ${data.name} creado`, data)
+          responseData = data
+
+          response.write(JSON.stringify(responseData));
+          response.end();
+        });
+        break;
+      
       case '/filter/articles':
         crud.filter(USERS_URL, urlParams, (data) => {
           console.log('server filter articles', data)

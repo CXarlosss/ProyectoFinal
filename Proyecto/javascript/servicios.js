@@ -2,7 +2,8 @@
 
  import { store } from "../store/redux.js"
  import { apiConfig } from "../data/singleton.js";
-
+ import { simpleFetch } from '../src/lib/simpleFetch.js';
+ import { HttpError } from '../src/classes/HttpError.js'
 
 
  
@@ -23,6 +24,35 @@ document.addEventListener("DOMContentLoaded", () => {
   const inputBuscador = /** @type {HTMLInputElement | null} */ document.getElementById("buscador");
   const btnBuscador =/** @type {HTMLButtonElement | null} */ document.getElementById("btn-buscador");
 
+  async function getAPIData(apiURL = 'api/get.articles.json') {
+    let apiData
+  
+    try {
+      apiData = await simpleFetch(apiURL, {
+        // Si la petición tarda demasiado, la abortamos
+        signal: AbortSignal.timeout(3000),
+        headers: {
+          'Content-Type': 'application/json',
+          // Add cross-origin header
+          'Access-Control-Allow-Origin': '*',
+        },
+      });
+    } catch (/** @type {any | HttpError} */err) {
+      if (err.name === 'AbortError') {
+        console.error('Fetch abortado');
+      }
+      if (err instanceof HttpError) {
+        if (err.response.status === 404) {
+          console.error('Not found');
+        }
+        if (err.response.status === 500) {
+          console.error('Internal server error');
+        }
+      }
+    }
+  
+    return apiData
+  }
   if (!serviciosContainer) {
       console.error("No se encontró el contenedor de servicios.");
       return;
@@ -149,12 +179,9 @@ document.addEventListener("DOMContentLoaded", () => {
   btnCerrarModal?.addEventListener("click", () => {
       modalCrearServicio?.classList.add("hidden");
   });
-  function guardarServiciosEnJSON() {
-      localStorage.setItem("./api/factory.json", JSON.stringify(state.servicios));
-      console.log("Servicios guardados en LocalStorage.");
-  }
+
   // 📌 Crear nuevo servicio desde el formulario
-  formCrearServicio?.addEventListener("submit", (e) => {
+   formCrearServicio?.addEventListener("submit", async (e) => {
       e.preventDefault();
 
       const nuevoServicio = {
@@ -169,13 +196,21 @@ document.addEventListener("DOMContentLoaded", () => {
           horarios: /** @type {HTMLInputElement} */ (document.getElementById("horario-servicio")).value,
           metodoPago: /** @type {HTMLInputElement} */ (document.getElementById("metodo-pago-servicio")).value,
           etiquetas: /** @type {HTMLInputElement} */ (document.getElementById("etiquetas-servicio")).value,
-          usuarioId: Number((/** @type {HTMLInputElement} */ (document.getElementById("usuario-id-servicio"))).value),
+          usuarioId: usuario ? usuario.id : null,  
           emailUsuario: /** @type {HTMLInputElement} */ (document.getElementById("email-usuario-servicio")).value
       };
 
-      store.article.create(nuevoServicio);
+
+      // @ts-ignore
+      const searchParams = new URLSearchParams(nuevoServicio).toString()
+      const apiData = await getAPIData(`http://${location.hostname}:1337/create/servicios?${searchParams}`)
+
+
+
+
+      store.article.create(apiData);
       renderServicios();
-      guardarServiciosEnJSON();
+     
 
       modalCrearServicio?.classList.add("hidden");
       formCrearServicio?.setAttribute('reset' , '');

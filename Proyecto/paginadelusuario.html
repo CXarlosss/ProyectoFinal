@@ -1,64 +1,101 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Perfil del Usuario</title>
-    <link rel="stylesheet" href="./css/styles-usuario.css">
-</head>
-<body>
+    <link rel="stylesheet" href="./css/styles-usuario.css" /> 
+
+  </head>
+  <body>
     <header>
-        <nav class="nav">
+      <nav class="nav">
         <ul>
           <li><a href="index.html">Inicio</a></li>
           <li><a href="servicios.html">Servicios</a></li>
           <li><a href="paginadelusuario.html">Perfil</a></li>
-         
         </ul>
       </nav>
     </header>
     <!-- Encabezado de bienvenida -->
     <div class="bienvenida">¡Bienvenido, <span id="nombre"></span>!</div>
+    <!-- Botón para abrir el modal -->
+    <button class="btn-editar">Editar Usuario</button>
+
+    <!-- Modal de edición de usuario -->
+    <div id="modal-editar-usuario" class="modal hidden">
+      <div class="modal-content">
+        <h2>Editar Usuario</h2>
+        <form id="form-editar-usuario">
+          <label>Nombre</label>
+          <input type="text" id="editar-nombre" required />
+
+          <label>Email</label>
+          <input type="email" id="editar-email" required disabled />
+          <!-- No modificable -->
+
+          <label>Teléfono</label>
+          <input type="text" id="editar-telefono" required />
+
+          <label>Dirección</label>
+          <input type="text" id="editar-direccion" required />
+
+          <label>Contraseña</label>
+          <input type="password" id="editar-password" />
+
+          <button type="submit">Guardar Cambios</button>
+          <button type="button" id="cerrar-modal">Cancelar</button>
+        </form>
+      </div>
+    </div>
 
     <!-- Contenedor principal -->
     <div class="container">
-        <!-- Sección de Chats -->
-        <div class="seccion chats">
-            <h2>Chats</h2>
-            <div id="chat-list">
-                <p>No hay chats aún.</p>
-            </div>
-            <button id="btn-create-chat">Crear Chat</button>
-
-            <!-- Chat dentro de la sección de chats -->
-            <div id="chat-popup" class="hidden">
-                <div class="chat-header">
-                    <span id="chat-titulo">Chat</span>
-                    <button id="cerrar-chat" class="btn-cerrar">X</button>
-                </div>
-                <div id="chat-messages"></div>
-                <div class="chat-input">
-                    <input type="text" id="mensaje-input" placeholder="Escribe un mensaje...">
-                    <button id="enviar-mensaje">Enviar</button>
-                </div>
-            </div>
+      <!-- Sección de Chats -->
+      <div class="seccion chats">
+        <h2>Chats</h2>
+        <div id="chat-list">
+          <p>No hay chats aún.</p>
         </div>
+        <button id="btn-create-chat">Crear Chat</button>
 
-        <!-- Sección de Servicios y Favoritos -->
-        <div class="seccion servicios">
-            <h2>Secciones Favoritas</h2>
-            <button id= "btn-borrar">Borrar</button>
-            <div id="favoritos-list">
-                <p>No tienes favoritos aún.</p>
-            </div>
-            <button id="btn-ir-secciones">Ir a Secciones</button>
+        <!-- Chat dentro de la sección de chats -->
+        <div id="chat-popup" class="hidden">
+          <div class="chat-header">
+            <span id="chat-titulo">Chat</span>
+            <button id="cerrar-chat" class="btn-cerrar">X</button>
+          </div>
+          <div id="chat-messages"></div>
+          <div class="chat-input">
+            <input
+              type="text"
+              id="mensaje-input"
+              placeholder="Escribe un mensaje..."
+            />
+            <button id="enviar-mensaje">Enviar</button>
+          </div>
         </div>
+      </div>
+
+      <!-- Sección de Servicios y Favoritos -->
+      <div class="seccion servicios">
+        <h2>Secciones Favoritas</h2>
+        <button id="btn-borrar">Borrar</button>
+        <div id="favoritos-list">
+          <p>No tienes favoritos aún.</p>
+        </div>
+        <button id="btn-ir-secciones">Ir a Secciones</button>
+      </div>
     </div>
 
     <!-- Botón de Cerrar Sesión -->
-    <button id="btn-cerrar-sesion" class="btn-cerrar-sesion">Cerrar Sesión</button>
+    <button id="btn-cerrar-sesion" class="btn-cerrar-sesion">
+      Cerrar Sesión
+    </button>
 
     <!-- Vincular el script -->
-    <script src="./javascript/paginaUsuario.js"></script>
-</body>
+    <script type="module" src="./javascript/modificarUser.js"></script>
+     <script type="module" src="./javascript/paginaUsuario.js"></script>
+ -  
+  </body>
 </html>

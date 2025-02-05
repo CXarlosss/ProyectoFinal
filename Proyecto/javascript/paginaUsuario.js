@@ -32,6 +32,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const enviarMensajeBtn = /** @type {HTMLButtonElement | null} */ (document.getElementById("enviar-mensaje"));
         const cerrarChatBtn = /** @type {HTMLButtonElement | null} */ (document.getElementById("cerrar-chat"));
         const btnBorrar = document.getElementById("btn-borrar");
+     
+
 
     let usuarioActivo = "";
     let conversaciones = /** @type {Record<string, { remitente: string, mensaje: string }[]>} */ (
@@ -149,6 +151,7 @@ document.addEventListener("DOMContentLoaded", () => {
     
         console.log("📌 Chats cargados con nombres:", chats.map(chatId => nombresServicios[chatId] || chatId));
     }
+    
 
     function cargarFavoritos() {
         if (!favoritosList) return;
@@ -246,6 +249,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // Desplazar automáticamente al último mensaje
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }
+    
     if (enviarMensajeBtn) {
         enviarMensajeBtn.addEventListener("click", () => {
             if (!usuarioActivo || !mensajeInput || !chatMessages) return;
@@ -273,6 +277,7 @@ document.addEventListener("DOMContentLoaded", () => {
             usuarioActivo = "";
         });
     }
+    
     chatList?.addEventListener("click", (e) => {
         const target = /** @type {HTMLElement} */ (e.target);
         if (!target) return;

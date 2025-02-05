@@ -71,7 +71,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
   cargarServicios();
   cargarFavoritos();
-  async function getAPIData(apiURL = "api/get.articles.json") {
+  async function getAPIData(apiURL = "api/servicios.json") {
     let apiData;
 
     try {
@@ -102,39 +102,38 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // 📌 Cargar servicios desde JSON
-  function cargarServicios() {
-    fetch(apiConfig.API_SERVICIOS_URL)
-      .then((response) => {
-        console.log("🔎 Respuesta del servidor:", response);
-        if (!response.ok)
-          throw new Error(`❌ Error al cargar JSON: ${response.status}`);
-        return response.json();
-      })
-      .then((data) => {
-        console.log("📌 Datos obtenidos del servidor:", data);
+  async function cargarServicios() {
+    try {
+        console.log("🔄 Cargando servicios desde la API y JSON...");
 
-        // Intenta acceder directamente a los servicios
-        const servicios = Array.isArray(data) ? data : data.servicios;
-        console.log("🔎 Servicios extraídos del JSON:", servicios);
+        // 1️⃣ Obtener servicios del JSON local
+        const response = await fetch(apiConfig.API_SERVICIOS_URL);
+        if (!response.ok) throw new Error(`❌ Error al cargar JSON: ${response.status}`);
+        const data = await response.json();
+        const serviciosJSON = Array.isArray(data) ? data : data.servicios || [];
 
-        if (!servicios || !Array.isArray(servicios) || servicios.length === 0) {
-          console.warn("⚠️ No se encontraron servicios válidos en el JSON.");
-          return;
+        console.log("📌 Servicios cargados desde JSON:", serviciosJSON);
+
+        // 2️⃣ Obtener servicios de la API backend
+        const serviciosAPI = await getAPIData(`http://${location.hostname}:1337/read/servicios`);
+        if (!Array.isArray(serviciosAPI)) {
+            console.warn("⚠️ La API no devolvió un array válido de servicios.");
         }
 
-        state.servicios = servicios;
-        console.log("📌 Estado actualizado con servicios:", state.servicios);
+        console.log("📌 Servicios cargados desde la API:", serviciosAPI);
 
-        if (typeof renderServicios === "function") {
-          renderServicios(state.servicios);
-        } else {
-          console.warn("⚠️ La función 'renderServicios' no está definida.");
-        }
-      })
-      .catch((error) => {
+        // 3️⃣ Combinar ambos resultados
+        state.servicios = [...serviciosJSON, ...(Array.isArray(serviciosAPI) ? serviciosAPI : [])];
+
+        console.log("✅ Estado actualizado con todos los servicios:", state.servicios);
+
+        // 4️⃣ Renderizar los servicios
+        renderServicios(state.servicios);
+
+    } catch (error) {
         console.error("🚨 Error en la carga de servicios:", error);
-      });
-  }
+    }
+}
   /**
    * Renderiza la lista de servicios en la interfaz.
    * @param {typeof state.servicios} [serviciosFiltrados]

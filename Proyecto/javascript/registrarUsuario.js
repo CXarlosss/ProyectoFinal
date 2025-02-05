@@ -45,7 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
   
 
-async function getAPIData(apiURL = 'api/get.articles.json') {
+async function getAPIData(apiURL = 'api/users.json') {
   let apiData
 
   try {
@@ -100,7 +100,7 @@ async function getAPIData(apiURL = 'api/get.articles.json') {
     
     // @ts-ignore
     const searchParams = new URLSearchParams(nuevoUsuario).toString()
-    const apiData = await getAPIData(`http://${location.hostname}:1337/create/articles?${searchParams}`)
+    const apiData = await getAPIData(`http://${location.hostname}:1337/create/users?${searchParams}`)
 
 
     
@@ -115,7 +115,7 @@ async function getAPIData(apiURL = 'api/get.articles.json') {
   });
   
   // Evento para iniciar sesión
-  formularioLogin.addEventListener("submit", (e) => {
+  formularioLogin.addEventListener("submit",async (e) => {
     e.preventDefault();
 
     const email = /** @type {HTMLInputElement} */ (document.getElementById("email-login")).value.trim();
@@ -123,8 +123,11 @@ async function getAPIData(apiURL = 'api/get.articles.json') {
 
     const usuariosGuardados = /** @type {Usuario[]} */ (JSON.parse(localStorage.getItem("usuarios") || "[]"));
     const usuarioEncontrado = usuariosGuardados.find(user => user.email === email && user.password === password);
+    // @ts-ignore
+    const searchParams = new URLSearchParams(usuarioEncontrado).toString()
+    const apiData = await getAPIData(`http://${location.hostname}:1337/read/users?${searchParams}`)
 
-    if (usuarioEncontrado) {
+    if (apiData) {
       localStorage.setItem("usuarioRegistrado", JSON.stringify(usuarioEncontrado));
       window.location.href = "paginadelusuario.html";
     } else {

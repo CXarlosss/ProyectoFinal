@@ -178,10 +178,15 @@ serviciosContainer.addEventListener("click", async (e) => {
   const target = /** @type {HTMLElement} */ (e.target);
   if (!target) return;
 
-  // 📌 "Más detalles" redirige a carta.html con el ID del servicio
   if (target.classList.contains("btn-detalles")) {
     const id = target.getAttribute("data-id");
-    window.location.href = `carta.html?id=${id}`;
+    console.log("📌 ID del servicio seleccionado:", id);
+
+    if (id) {
+      window.location.href = `serviciosin.html?id=${encodeURIComponent(id)}`;
+    } else {
+      console.error("❌ Error: No se encontró el ID del servicio.");
+    }
   }
 
   // 📌 Añadir a Favoritos

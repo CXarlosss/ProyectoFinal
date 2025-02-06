@@ -10,14 +10,15 @@ document.addEventListener("DOMContentLoaded", () => {
         console.error("❌ No se encontró el contenedor de servicio en el DOM.");
         return;
     }
-
     const urlParams = new URLSearchParams(window.location.search);
     const servicioId = urlParams.get("id");
-
+    
+    console.log("📌 ID del servicio obtenido de la URL:", servicioId);
+    
     if (!servicioId) {
-        servicioContainer.innerHTML = "<p>❌ Servicio no encontrado.</p>";
-        return;
+        console.error("❌ No se encontró el ID del servicio en la URL.");
     }
+    
 
      async function getAPIData(apiURL = "api/servicios.json") {
         let apiData;

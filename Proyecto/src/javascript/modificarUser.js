@@ -147,7 +147,7 @@ btnCerrarModal?.addEventListener("click", () => {
  * @param {string | Record<string, string> | URLSearchParams | string[][] | undefined} [datosActualizados]
  */
 async function actualizarUsuario(userId, datosActualizados) {
-    const apiData = await getAPIData(`http://${location.hostname}:3333/update/users/${userId}`, 'PUT', datosActualizados);
+    const apiData = await getAPIData(`http://${location.hostname}:3001/update/users/${userId}`, 'PUT', datosActualizados);
     console.log('after update on API', apiData);
     
     if (!apiData) {

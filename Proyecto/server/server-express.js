@@ -15,26 +15,28 @@ const SERVICIOS_URL = "./server/BBDD/servicios.json";
 
 
 
-app.use(express.static('api'))
+app.use(express.static('src'))
 // for parsing application/json
 app.use(bodyParser.json())
 // for parsing application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }))
 
 app.get('/hello/:nombre', (req, res) => {
-  res.send(`Hola ${req.params.nombre}`)
-})
-// CRUD
+  res.send(`Hola ${req.params.nombre}`);
+});
+ 
+ // CRUD
 app.post('/create/servicios', (req, res) => {
-  crud.create(SERVICIOS_URL, req.body, (data) => {
+  crud.createS(SERVICIOS_URL, req.body, (data) => {
     res.json(data)
   });
-})
+}) 
 app.get('/read/servicios', (req, res) => {
   crud.readS(SERVICIOS_URL, (data) => {
-    res.json(data)
+    res.json(data);
   });
-})
+});
+
 app.put('/update/servicios/:id', (req, res) => {
   crud.updateS(SERVICIOS_URL, req.params.id, req.body, (data) => {
     res.json(data)
@@ -43,7 +45,7 @@ app.put('/update/servicios/:id', (req, res) => {
 app.delete('/delete/servicios/:id', async (req, res) => {
   await crud.deleteS(SERVICIOS_URL, req.params.id, (data) => {
     res.json(data)
-  });
+  }); 
 })
 app.post('/create/users', (req, res) => {
     crud.createU(USERS_URL, req.body, (data) => {

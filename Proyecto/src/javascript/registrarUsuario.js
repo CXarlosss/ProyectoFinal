@@ -2,9 +2,9 @@
 // @ts-check
 
 import { Usuario } from "../clases/class.js";
- import { store } from "../store/redux.js"; 
- import { simpleFetch } from '../src/lib/simpleFetch.js';
- import { HttpError } from '../src/classes/HttpError.js'
+ import { store } from "../store/redux.js";
+ import { simpleFetch } from '../lib/simpleFetch.js';
+ import { HttpError } from '../classes/HttpError.js'
 
 
 
@@ -51,7 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
  * @param {Object} [data]
 }
  */
-async function getAPIData(apiURL = 'api/get.servicios.json', method = 'GET', data) {
+async function getAPIData(apiURL = 'api/users.json', method = 'GET', data) {
   let apiData
 
   // console.log('getAPIData', method, data)

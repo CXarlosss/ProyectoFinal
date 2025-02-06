@@ -2,10 +2,10 @@
 
 import { store } from "../store/redux.js";
 
-import { simpleFetch } from "../src/lib/simpleFetch.js";
-import { HttpError } from "../src/classes/HttpError.js";
+import { simpleFetch } from "../lib/simpleFetch.js";
+import { HttpError } from "../clases/HttpError.js";
 
-const API_PORT = 3001
+const API_PORT =3001;
 
 document.addEventListener("DOMContentLoaded", () => {
   console.log("DOM cargado correctamente.");
@@ -80,14 +80,12 @@ document.addEventListener("DOMContentLoaded", () => {
  * @param {Object} [data]
  
  */
-async function getAPIData(apiURL = 'api/get.servicios.json', method = 'GET', data) {
+async function getAPIData(apiURL = 'api/servicios.json', method = 'GET', data) {
   let apiData
 
-  // console.log('getAPIData', method, data)
   try {
     let headers = new Headers()
-
-    headers.append('Content-Type', !data ? 'application/json' : 'application/x-www-form-urlencoded')
+    headers.append('Content-Type', 'application/json')
     headers.append('Access-Control-Allow-Origin', '*')
     if (data) {
       headers.append('Content-Length', String(JSON.stringify(data).length))
@@ -96,8 +94,7 @@ async function getAPIData(apiURL = 'api/get.servicios.json', method = 'GET', dat
       // Si la petición tarda demasiado, la abortamos
       signal: AbortSignal.timeout(3000),
       method: method,
-      // @ts-expect-error TODO
-      body: data ? new URLSearchParams(data) : undefined,
+      body: data ?? undefined,
       headers: headers
     });
   } catch (/** @type {any | HttpError} */err) {
@@ -116,6 +113,7 @@ async function getAPIData(apiURL = 'api/get.servicios.json', method = 'GET', dat
 
   return apiData
 }
+
 
   // 📌 Cargar servicios desde JSON
   async function cargarServicios() {

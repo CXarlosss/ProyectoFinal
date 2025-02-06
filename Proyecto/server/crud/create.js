@@ -1,35 +1,37 @@
 import fs from 'fs';
 import { read } from './read.js';
 
-export function create(file, data, callback) {
-  console.log('create', file, data)
+export async function create(file, data, callback) {
   if (!fs.existsSync(file)) {
     fs.appendFile(file, '[]', function (err) {
       if (err) {
         console.log('create', err);
-        return;
+        return err;
       }
     })
   }
-  insertData(file, data, callback);
+  return await insertData(file, data, callback);
 }
 
 async function insertData(file, data, callback) {
-  console.log('insertData', data, file);
   let parsedData = []
   await read(file, (readData) => {
     parsedData = [...readData];
-    console.log('insertData parsedData', parsedData);
+    if (!data.id) {
+      const timestamp = new Date()
+      data.id = String(timestamp.getTime())
+    }
     parsedData.push(data);
 
     fs.writeFile(file, JSON.stringify(parsedData), function (err) {
       if (err) {
         console.log('insertData', err);
-        return;
+        return err;
       }
       if (callback) {
-        callback(data);
+        return callback(data);
       }
     })
   });
+  return data;
 }

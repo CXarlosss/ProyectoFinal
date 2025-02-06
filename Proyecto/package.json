@@ -10,6 +10,12 @@
 
   "scripts": {
 
+    "server:express:start": "node --env-file=.env --watch server/server-express.js",
+
+    "server:statics:start": "node --env-file=.env --watch server/server-statics.js",
+
+    "server:api:start": "node --env-file=.env --watch server/server-api.js",
+
     "test": "echo \"Error: no test specified\" && exit 1",
 
     "lint": "eslint ."
@@ -66,6 +72,8 @@
 
     "concat-map": "^0.0.1",
 
+    "cors": "^2.8.5",
+
     "cross-spawn": "^7.0.6",
 
     "crypto": "^1.0.1",
@@ -91,6 +99,8 @@
     "estraverse": "^5.3.0",
 
     "esutils": "^2.0.3",
+
+    "express": "^4.21.2",
 
     "fast-deep-equal": "^3.1.3",
 

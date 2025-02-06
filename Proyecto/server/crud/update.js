@@ -1,6 +1,8 @@
 import fs from 'fs';
 
 export async function update(file, id, modifiedData, callback) {
+  console.log('update', id, modifiedData);
+  let updatedItem
   try {
     if (fs.existsSync(file)) {
       await fs.readFile(file, function (err, data) {
@@ -10,39 +12,41 @@ export async function update(file, id, modifiedData, callback) {
           if (item.id !== id) {
             return item
           } else {
-            return {
+            updatedItem = {
               ...item,
               ...modifiedData
             }
+            return updatedItem
           }
         });
 
         fs.writeFile(file, JSON.stringify(updatedData), function (err) {
           if (err) {
             console.log('update', err);
-            return;
+            return err;
           }
           if (callback) {
-            callback(updatedData);
+            return callback(updatedItem);
           }
         })
         // Return updated data
         if (err) {
           console.log('update', err);
-          return;
+          return err;
         }
-        if (callback && !err) {
-          callback(updatedData);
-          return;
-        }
+        // if (callback && !err) {
+        //   return callback(updatedItem);
+        // }
       });
     } else {
-      console.log('update', 'El fichero no existe');
+      // console.log('update', 'El fichero no existe');
       if (callback) {
-        callback('El fichero no existe');
+        return callback('El fichero no existe');
       }
     }
   } catch (err) {
     console.log('update', `Error: ${err}`);
+    return err;
   }
+  return modifiedData;
 }

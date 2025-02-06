@@ -1,9 +1,11 @@
 // @ts-check
 
 import { store } from "../store/redux.js";
-import { apiConfig } from "../data/singleton.js";
+
 import { simpleFetch } from "../src/lib/simpleFetch.js";
 import { HttpError } from "../src/classes/HttpError.js";
+
+const API_PORT = 3001
 
 document.addEventListener("DOMContentLoaded", () => {
   console.log("DOM cargado correctamente.");
@@ -71,69 +73,77 @@ document.addEventListener("DOMContentLoaded", () => {
   };
   cargarServicios();
   cargarFavoritos();
-  async function getAPIData(apiURL = "api/servicios.json") {
-    let apiData;
+/**
+ * Get data from API
+ * @param {string} apiURL
+ * @param {string} method
+ * @param {Object} [data]
+ 
+ */
+async function getAPIData(apiURL = 'api/get.servicios.json', method = 'GET', data) {
+  let apiData
 
-    try {
-      apiData = await simpleFetch(apiURL, {
-        // Si la petición tarda demasiado, la abortamos
-        signal: AbortSignal.timeout(3000),
-        headers: {
-          "Content-Type": "application/json",
-          // Add cross-origin header
-          "Access-Control-Allow-Origin": "*",
-        },
-      });
-    } catch (/** @type {any | HttpError} */ err) {
-      if (err.name === "AbortError") {
-        console.error("Fetch abortado");
+  // console.log('getAPIData', method, data)
+  try {
+    let headers = new Headers()
+
+    headers.append('Content-Type', !data ? 'application/json' : 'application/x-www-form-urlencoded')
+    headers.append('Access-Control-Allow-Origin', '*')
+    if (data) {
+      headers.append('Content-Length', String(JSON.stringify(data).length))
+    }
+    apiData = await simpleFetch(apiURL, {
+      // Si la petición tarda demasiado, la abortamos
+      signal: AbortSignal.timeout(3000),
+      method: method,
+      // @ts-expect-error TODO
+      body: data ? new URLSearchParams(data) : undefined,
+      headers: headers
+    });
+  } catch (/** @type {any | HttpError} */err) {
+    if (err.name === 'AbortError') {
+      console.error('Fetch abortado');
+    }
+    if (err instanceof HttpError) {
+      if (err.response.status === 404) {
+        console.error('Not found');
       }
-      if (err instanceof HttpError) {
-        if (err.response.status === 404) {
-          console.error("Not found");
-        }
-        if (err.response.status === 500) {
-          console.error("Internal server error");
-        }
+      if (err.response.status === 500) {
+        console.error('Internal server error');
       }
     }
-
-    return apiData;
   }
+
+  return apiData
+}
 
   // 📌 Cargar servicios desde JSON
   async function cargarServicios() {
     try {
-        console.log("🔄 Cargando servicios desde la API y JSON...");
+        console.log("🔄 Cargando servicios desde la API backend...");
 
-        // 1️⃣ Obtener servicios del JSON local
-        const response = await fetch(apiConfig.API_SERVICIOS_URL);
-        if (!response.ok) throw new Error(`❌ Error al cargar JSON: ${response.status}`);
-        const data = await response.json();
-        const serviciosJSON = Array.isArray(data) ? data : data.servicios || [];
-
-        console.log("📌 Servicios cargados desde JSON:", serviciosJSON);
-
-        // 2️⃣ Obtener servicios de la API backend
-        const serviciosAPI = await getAPIData(`http://${location.hostname}:1337/read/servicios`);
+        // ✅ Obtener servicios solo desde la API backend (Express)
+        const serviciosAPI = await getAPIData(`http://${location.hostname}:${API_PORT}/read/servicios`);
+        
         if (!Array.isArray(serviciosAPI)) {
-            console.warn("⚠️ La API no devolvió un array válido de servicios.");
+            throw new Error("⚠️ La API no devolvió un array válido de servicios.");
         }
 
         console.log("📌 Servicios cargados desde la API:", serviciosAPI);
 
-        // 3️⃣ Combinar ambos resultados
-        state.servicios = [...serviciosJSON, ...(Array.isArray(serviciosAPI) ? serviciosAPI : [])];
+        // ✅ Solo almacenar los servicios de la API en el estado
+        state.servicios = serviciosAPI;
 
-        console.log("✅ Estado actualizado con todos los servicios:", state.servicios);
+        console.log("✅ Estado actualizado con los servicios de la API:", state.servicios);
 
-        // 4️⃣ Renderizar los servicios
+        // Renderizar los servicios
         renderServicios(state.servicios);
 
     } catch (error) {
         console.error("🚨 Error en la carga de servicios:", error);
     }
 }
+
   /**
    * Renderiza la lista de servicios en la interfaz.
    * @param {typeof state.servicios} [serviciosFiltrados]
@@ -354,9 +364,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // @ts-ignore
     const searchParams = new URLSearchParams(nuevoServicio).toString();
-    const apiData = await getAPIData(
-      `http://${location.hostname}:1337/create/servicios?${searchParams}`
-    );
+    const apiData = await getAPIData(`http://${location.hostname}:${API_PORT}/create/servicios`, 'POST', searchParams)
 
     store.article.create(apiData);
     renderServicios();

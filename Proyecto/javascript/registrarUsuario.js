@@ -44,19 +44,32 @@ document.addEventListener("DOMContentLoaded", () => {
     seccionLogin.classList.remove("hidden");
   });
   
-
-async function getAPIData(apiURL = 'api/users.json') {
+/**
+ * Get data from API
+ * @param {string} apiURL
+ * @param {string} method
+ * @param {Object} [data]
+}
+ */
+async function getAPIData(apiURL = 'api/get.servicios.json', method = 'GET', data) {
   let apiData
 
+  // console.log('getAPIData', method, data)
   try {
+    let headers = new Headers()
+
+    headers.append('Content-Type', !data ? 'application/json' : 'application/x-www-form-urlencoded')
+    headers.append('Access-Control-Allow-Origin', '*')
+    if (data) {
+      headers.append('Content-Length', String(JSON.stringify(data).length))
+    }
     apiData = await simpleFetch(apiURL, {
       // Si la petición tarda demasiado, la abortamos
       signal: AbortSignal.timeout(3000),
-      headers: {
-        'Content-Type': 'application/json',
-        // Add cross-origin header
-        'Access-Control-Allow-Origin': '*',
-      },
+      method: method,
+      // @ts-expect-error TODO
+      body: data ? new URLSearchParams(data) : undefined,
+      headers: headers
     });
   } catch (/** @type {any | HttpError} */err) {
     if (err.name === 'AbortError') {
@@ -74,6 +87,7 @@ async function getAPIData(apiURL = 'api/users.json') {
 
   return apiData
 }
+
   // Evento para registrar usuario
   formularioRegistro.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -100,7 +114,7 @@ async function getAPIData(apiURL = 'api/users.json') {
     
     // @ts-ignore
     const searchParams = new URLSearchParams(nuevoUsuario).toString()
-    const apiData = await getAPIData(`http://${location.hostname}:1337/create/users?${searchParams}`)
+    const apiData = await getAPIData(`http://${location.hostname}:3001/create/users?${searchParams}`)
 
 
     
@@ -125,7 +139,7 @@ async function getAPIData(apiURL = 'api/users.json') {
     const usuarioEncontrado = usuariosGuardados.find(user => user.email === email && user.password === password);
     // @ts-ignore
     const searchParams = new URLSearchParams(usuarioEncontrado).toString()
-    const apiData = await getAPIData(`http://${location.hostname}:1337/read/users?${searchParams}`)
+    const apiData = await getAPIData(`http://${location.hostname}:3001/read/users?${searchParams}`)
 
     if (apiData) {
       localStorage.setItem("usuarioRegistrado", JSON.stringify(usuarioEncontrado));

@@ -3,9 +3,9 @@
 import { store } from "../store/redux.js";
 
 import { simpleFetch } from "../lib/simpleFetch.js";
-import { HttpError } from "../clases/HttpError.js";
 
-const API_PORT =3001;
+
+const API_PORT = 3001;
 
 document.addEventListener("DOMContentLoaded", () => {
   console.log("DOM cargado correctamente.");
@@ -13,43 +13,16 @@ document.addEventListener("DOMContentLoaded", () => {
   // 📌 Selección de elementos del DOM
 
   const serviciosContainer =
-    /** @type {HTMLDivElement | null} */ document.getElementById(
-      "servicios-container"
-    );
-  const btnFiltrarActividades =
-    /** @type {HTMLButtonElement | null} */ document.getElementById(
-      "btn-filtrar-actividades"
-    );
-  const btnFiltrarComercios =
-    /** @type {HTMLButtonElement | null} */ document.getElementById(
-      "btn-filtrar-comercios"
-    );
-  const btnMostrarTodos =
-    /** @type {HTMLButtonElement | null} */ document.getElementById(
-      "btn-mostrar-todos"
-    );
-  const btnCrearServicio =
-    /** @type {HTMLButtonElement | null} */ document.getElementById(
-      "btn-crear-servicio"
-    );
-  const modalCrearServicio =
-    /** @type {HTMLDivElement | null} */ document.getElementById(
-      "modal-crear-servicio"
-    );
-  const formCrearServicio =
-    /** @type {HTMLFormElement | null} */ document.getElementById(
-      "crear-servicio-form"
-    );
-  const btnCerrarModal =
-    /** @type {HTMLButtonElement | null} */ document.getElementById(
-      "btn-cerrar-modal"
-    );
-  const inputBuscador =
-    /** @type {HTMLInputElement | null} */ document.getElementById("buscador");
-  const btnBuscador =
-    /** @type {HTMLButtonElement | null} */ document.getElementById(
-      "btn-buscador"
-    );
+    /** @type {HTMLDivElement | null} */ document.getElementById( "servicios-container");
+  const btnFiltrarActividades =/** @type {HTMLButtonElement | null} */ document.getElementById( "btn-filtrar-actividades");
+  const btnFiltrarComercios = /** @type {HTMLButtonElement | null} */ document.getElementById("btn-filtrar-comercios");
+  const btnMostrarTodos =/** @type {HTMLButtonElement | null} */ document.getElementById("btn-mostrar-todos" );
+  const btnCrearServicio =/** @type {HTMLButtonElement | null} */ document.getElementById( "btn-crear-servicio");
+  const modalCrearServicio =/** @type {HTMLDivElement | null} */ document.getElementById( "modal-crear-servicio");
+  const formCrearServicio =/** @type {HTMLFormElement | null} */ document.getElementById("crear-servicio-form");
+  const btnCerrarModal = /** @type {HTMLButtonElement | null} */ document.getElementById(  "btn-cerrar-modal" );
+  const inputBuscador = /** @type {HTMLInputElement | null} */ document.getElementById("buscador");
+  const btnBuscador = /** @type {HTMLButtonElement | null} */ document.getElementById( "btn-buscador" );
 
   if (!serviciosContainer) {
     console.error("No se encontró el contenedor de servicios.");
@@ -57,14 +30,18 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   // 📌 Verificar usuario registrado
   const usuarioGuardado = localStorage.getItem("usuarioRegistrado");
-  if (!usuarioGuardado) {
-    alert("No hay usuario registrado.");
-    window.location.href = "registrar.html";
-    return;
-  }
 
-  /** @type {{ id: string }} */
-  const usuario = JSON.parse(usuarioGuardado);
+if (!usuarioGuardado) {
+  alert("No hay usuario registrado.");
+  window.location.href = "registrar.html";
+  return;
+}
+
+/** @type {{ id: string, email: string }} */
+const usuario = JSON.parse(usuarioGuardado);
+
+console.log("📌 Usuario cargado desde localStorage:", usuario);
+
 
   /** @type {{ servicios: { id: string, nombre: string, descripcion: string, ubicacion: string, valoracion: string, imagen: string, categoria: string }[], favoritos: { id: string, nombre: string }[] }} */
   const state = {
@@ -73,132 +50,251 @@ document.addEventListener("DOMContentLoaded", () => {
   };
   cargarServicios();
   cargarFavoritos();
-/**
- * Get data from API
- * @param {string} apiURL
- * @param {string} method
- * @param {Object} [data]
- 
- */
-async function getAPIData(apiURL = 'api/servicios.json', method = 'GET', data) {
-  let apiData
 
-  try {
-    let headers = new Headers()
-    headers.append('Content-Type', 'application/json')
-    headers.append('Access-Control-Allow-Origin', '*')
-    if (data) {
-      headers.append('Content-Length', String(JSON.stringify(data).length))
+
+   // 📌 Cargar servicios desde la API
+   async function cargarServicios() {
+    try {
+      console.log("🔄 Cargando servicios desde la API backend...");
+  
+      const serviciosAPI = await simpleFetch(`http://${location.hostname}:${API_PORT}/read/servicios`, {
+        signal: AbortSignal.timeout(3000),
+        method: "GET",
+      });
+  
+      if (!Array.isArray(serviciosAPI)) throw new Error("⚠️ La API no devolvió un array válido de servicios.");
+  
+      console.log("📌 Servicios cargados desde la API:", serviciosAPI);
+  
+      // ✅ Verificar si los servicios contienen `emailUsuario`
+      serviciosAPI.forEach(servicio => {
+        if (!servicio.emailUsuario) {
+          console.warn(`⚠️ El servicio con ID ${servicio.id} no tiene emailUsuario.`);
+        }
+      });
+  
+      state.servicios = serviciosAPI;
+      renderServicios(state.servicios);
+    } catch (error) {
+      console.error("🚨 Error en la carga de servicios:", error);
     }
-    apiData = await simpleFetch(apiURL, {
-      // Si la petición tarda demasiado, la abortamos
-      signal: AbortSignal.timeout(3000),
-      method: method,
-      body: data ?? undefined,
-      headers: headers
-    });
-  } catch (/** @type {any | HttpError} */err) {
-    if (err.name === 'AbortError') {
-      console.error('Fetch abortado');
+  }
+  
+  // 📌 Evento para escuchar clics en botones de editar y eliminar
+serviciosContainer.addEventListener("click", async (e) => {
+  const target = /** @type {HTMLElement} */ (e.target);
+  if (!target) return;
+
+  // 📌 Editar servicio
+  if (target.classList.contains("btn-editar")) {
+    const id = target.getAttribute("data-id");
+    const servicio = state.servicios.find((s) => s.id === id);
+
+    if (!servicio) {
+      console.error("Error: No se encontró el servicio a editar.");
+      return;
     }
-    if (err instanceof HttpError) {
-      if (err.response.status === 404) {
-        console.error('Not found');
-      }
-      if (err.response.status === 500) {
-        console.error('Internal server error');
-      }
+
+    // 📌 Aquí puedes abrir un modal o directamente editarlo en la UI
+    const nuevoNombre = prompt("Nuevo nombre del servicio:", servicio.nombre);
+    if (!nuevoNombre) return;
+
+    const datosActualizados = { ...servicio, nombre: nuevoNombre };
+
+    await actualizarServicio(id, datosActualizados);
+  }
+
+  // 📌 Eliminar servicio
+  if (target.classList.contains("btn-eliminar")) {
+    const id = target.getAttribute("data-id");
+    if (!id) return;
+
+    const confirmacion = confirm("¿Estás seguro de que quieres eliminar este servicio?");
+    if (confirmacion) {
+      await eliminarServicio(id);
+    }
+  }
+});
+
+
+/**
+ * Renderiza la lista de servicios en la UI.
+ * @param {typeof state.servicios} [serviciosFiltrados]
+ */
+function renderServicios(serviciosFiltrados = getServiciosDesdeStore()) {
+  console.log("🛠 Ejecutando renderServicios con:", serviciosFiltrados);
+
+  if (!serviciosContainer) {
+    console.error("🚨 ERROR: El contenedor de servicios no está disponible.");
+    return;
+  }
+
+  if (!serviciosFiltrados || serviciosFiltrados.length === 0) {
+    serviciosContainer.innerHTML = "<p>No hay servicios disponibles.</p>";
+    return;
+  }
+
+  serviciosContainer.innerHTML = serviciosFiltrados
+  .slice(0, 7) // ✅ Mostrar solo 7 servicios
+    .map((servicio) => {
+      
+      if (!servicio || !servicio.id) return "";
+      let esPropietario = false;
+      
+      if (typeof usuario === "object" && usuario !== null && "email" in usuario &&
+        typeof servicio === "object" && servicio !== null && "emailUsuario" in servicio) {
+      esPropietario = usuario.email === servicio.emailUsuario;
+    }
+
+      return `
+       <div class="card">
+              <img src="${servicio.imagen || "default.jpg"}" alt="Imagen de ${servicio.nombre || "Servicio"}" class="card-img" />
+              <h3>${servicio.nombre || "Nombre no disponible"}</h3>
+              <p>${servicio.descripcion || "Descripción no disponible"}</p>
+              <p><strong>Ubicación:</strong> ${servicio.ubicacion || "Ubicación no disponible"}</p>
+              <p><strong>Valoración:</strong> ${servicio.valoracion || "No valorado"}</p>
+              
+              <!-- BOTÓN "MÁS DETALLES" -->
+              <button class="btn-detalles" data-id="${servicio.id}">📜 Más Detalles</button>
+
+              <!-- BOTÓN "AÑADIR A FAVORITOS" -->
+              <button class="btn-favorito ${state.favoritos.some(fav => fav.id === servicio.id) ? "favorito" : ""}" data-id="${servicio.id}" data-nombre="${servicio.nombre || ""}">
+                ${state.favoritos.some(fav => fav.id === servicio.id) ? "★ Favorito" : "☆ Añadir a Favoritos"}
+              </button>
+
+              <!-- BOTÓN EDITAR (SOLO SI EL USUARIO ES EL PROPIETARIO) -->
+              ${esPropietario ? `<button class="btn-editar" data-id="${servicio.id}">✏️ Editar</button>` : ""}
+
+              <!-- BOTÓN ELIMINAR (SOLO SI EL USUARIO ES EL PROPIETARIO) -->
+              ${esPropietario ? `<button class="btn-eliminar" data-id="${servicio.id}">🗑 Eliminar</button>` : ""}
+          </div>
+    `;
+  })
+  .join("");
+
+  console.log("✅ Servicios renderizados en la UI.");
+}
+serviciosContainer.addEventListener("click", async (e) => {
+  const target = /** @type {HTMLElement} */ (e.target);
+  if (!target) return;
+
+  // 📌 "Más detalles" redirige a carta.html con el ID del servicio
+  if (target.classList.contains("btn-detalles")) {
+    const id = target.getAttribute("data-id");
+    window.location.href = `carta.html?id=${id}`;
+  }
+
+  // 📌 Añadir a Favoritos
+  if (target.classList.contains("btn-favorito")) {
+    const id = target.getAttribute("data-id");
+    const nombre = target.getAttribute("data-nombre");
+
+    if (id && nombre) {  // ✅ Asegurar que no son null
+      toggleFavorito(id, nombre);
+    } else {
+      console.error("🚨 Error: ID o nombre inválido en el botón de favoritos.");
     }
   }
 
-  return apiData
-}
+  // 📌 Editar servicio (Solo si el usuario es el propietario)
+  if (target.classList.contains("btn-editar")) {
+    const id = target.getAttribute("data-id");
+    const servicio = state.servicios.find((s) => s.id === id);
 
-
-  // 📌 Cargar servicios desde JSON
-  async function cargarServicios() {
-    try {
-        console.log("🔄 Cargando servicios desde la API backend...");
-
-        // ✅ Obtener servicios solo desde la API backend (Express)
-        const serviciosAPI = await getAPIData(`http://${location.hostname}:${API_PORT}/read/servicios`);
-        
-        if (!Array.isArray(serviciosAPI)) {
-            throw new Error("⚠️ La API no devolvió un array válido de servicios.");
-        }
-
-        console.log("📌 Servicios cargados desde la API:", serviciosAPI);
-
-        // ✅ Solo almacenar los servicios de la API en el estado
-        state.servicios = serviciosAPI;
-
-        console.log("✅ Estado actualizado con los servicios de la API:", state.servicios);
-
-        // Renderizar los servicios
-        renderServicios(state.servicios);
-
-    } catch (error) {
-        console.error("🚨 Error en la carga de servicios:", error);
+    if (!servicio) {
+      console.error("Error: No se encontró el servicio a editar.");
+      return;
     }
+
+    const nuevoNombre = prompt("Nuevo nombre del servicio:", servicio.nombre);
+    if (!nuevoNombre) return;
+
+    const datosActualizados = { ...servicio, nombre: nuevoNombre };
+
+    await actualizarServicio(id, datosActualizados);
+  }
+
+  // 📌 Eliminar servicio (Solo si el usuario es el propietario)
+  if (target.classList.contains("btn-eliminar")) {
+    const id = target.getAttribute("data-id");
+    if (!id) return;
+
+    const confirmacion = confirm("¿Estás seguro de que quieres eliminar este servicio?");
+    if (confirmacion) {
+      await eliminarServicio(id);
+    }
+  }
+});
+
+/**
+ * Añadir o quitar un servicio de favoritos
+ * @param {string} id
+ * @param {string} nombre
+ */
+function toggleFavorito(id, nombre) {
+  const index = state.favoritos.findIndex((fav) => fav.id === id);
+
+  if (index !== -1) {
+    state.favoritos.splice(index, 1);
+  } else {
+    state.favoritos.push({ id, nombre });
+  }
+
+  guardarFavoritos();
+  renderServicios();
 }
 
+function guardarFavoritos() {
+  localStorage.setItem(`favoritos_${usuario.id}`, JSON.stringify(state.favoritos));
+}
+
+function cargarFavoritos() {
+  const favoritosGuardados = localStorage.getItem(`favoritos_${usuario.id}`);
+  state.favoritos = favoritosGuardados ? JSON.parse(favoritosGuardados) : [];
+}
   /**
-   * Renderiza la lista de servicios en la interfaz.
-   * @param {typeof state.servicios} [serviciosFiltrados]
+   * @param {any} id
+   * @param {any} datosActualizados
    */
-  function renderServicios(serviciosFiltrados = getServiciosDesdeStore()) {
-    console.log("🛠 Ejecutando renderServicios con:", serviciosFiltrados);
+   // 📌 Función para actualizar un servicio
+   async function actualizarServicio(id, datosActualizados) {
+    try {
+      console.log(`📌 Actualizando servicio con ID ${id}:`, datosActualizados);
 
-    if (!serviciosContainer) {
-      console.error("🚨 ERROR: El contenedor de servicios no está disponible.");
-      return;
+      const response = await fetch(`http://${location.hostname}:${API_PORT}/update/servicios/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(datosActualizados),
+      });
+
+      if (!response.ok) throw new Error(`Error en la actualización: ${response.statusText}`);
+
+      console.log(`✅ Servicio con ID ${id} actualizado correctamente.`);
+      cargarServicios(); // Recargar la UI
+    } catch (error) {
+      console.error("🚨 Error al actualizar el servicio:", error);
     }
+  }
 
-    if (!serviciosFiltrados || serviciosFiltrados.length === 0) {
-      console.warn("⚠️ No hay servicios para mostrar.");
-      serviciosContainer.innerHTML = "<p>No hay servicios disponibles.</p>";
-      return;
+  // 📌 Función para eliminar un servicio
+  /**
+   * @param {any} id
+   */
+  async function eliminarServicio(id) {
+    try {
+      console.log(`📌 Eliminando servicio con ID ${id}...`);
+
+      const response = await fetch(`http://${location.hostname}:${API_PORT}/delete/servicios/${id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) throw new Error(`Error en la eliminación: ${response.statusText}`);
+
+      console.log(`✅ Servicio con ID ${id} eliminado correctamente.`);
+      cargarServicios(); // Recargar la UI
+    } catch (error) {
+      console.error("🚨 Error al eliminar el servicio:", error);
     }
-
-    serviciosContainer.innerHTML = serviciosFiltrados
-      .slice(0, 8)
-      .map((servicio) => {
-        if (!servicio || !servicio.id) {
-          console.warn("⚠️ Servicio no definido o sin ID:", servicio);
-          return "";
-        }
-        const isFavorito = state.favoritos.some(
-          (fav) => fav.id === servicio.id
-        );
-
-        return `
-            <div class="card">
-                <img src="${servicio.imagen || "default.jpg"}" alt="Imagen de ${
-          servicio.nombre || "Servicio"
-        }" class="card-img" />
-                <h3>${servicio.nombre || "Nombre no disponible"}</h3>
-                <p>${servicio.descripcion || "Descripción no disponible"}</p>
-                <p><strong>Ubicación:</strong> ${
-                  servicio.ubicacion || "Ubicación no disponible"
-                }</p>
-                <p><strong>Valoración:</strong> ${
-                  servicio.valoracion || "No valorado"
-                }</p>
-                <button class="btn-favorito ${isFavorito ? "favorito" : ""}" 
-                    data-id="${servicio.id}" 
-                    data-nombre="${servicio.nombre || ""}">
-                    ${isFavorito ? "★ Favorito" : "☆ Añadir a Favoritos"}
-                </button>
-                <button class="btn-detalles" data-id="${servicio.id}" 
-                    data-nombre="${encodeURIComponent(servicio.nombre || "")}">
-                    Detalles
-                </button>
-            </div>
-        `;
-      })
-      .join("");
-
-    console.log("✅ Servicios renderizados en la UI.");
   }
 
   function buscarServicios() {
@@ -237,52 +333,8 @@ async function getAPIData(apiURL = 'api/servicios.json', method = 'GET', data) {
   function getServiciosDesdeStore() {
     return store.getState().servicios;
   }
-
-  function guardarFavoritos() {
-    localStorage.setItem(
-      `favoritos_${usuario.id}`,
-      JSON.stringify(state.favoritos)
-    );
-  }
-
-  /**
-   * Alterna el estado de un servicio en la lista de favoritos.
-   * @param {string} id
-   * @param {string} nombre
-   */
-
-  function toggleFavorito(id, nombre) {
-    if (!id) {
-      console.error("ID de servicio inválido.");
-      return;
-    }
-
-    const index = state.favoritos.findIndex((fav) => fav.id === id);
-
-    if (index !== -1) {
-      // Si ya es favorito, lo elimina
-      state.favoritos.splice(index, 1);
-    } else {
-      // Si no está en favoritos, lo añade
-      state.favoritos.push({ id, nombre });
-    }
-
-    // Guardar cambios en localStorage
-    guardarFavoritos();
-
-    // ✅ Volver a renderizar los servicios para reflejar el cambio
-    renderServicios();
-  }
-  function cargarFavoritos() {
-    const favoritosGuardados = localStorage.getItem(`favoritos_${usuario.id}`);
-    state.favoritos = favoritosGuardados ? JSON.parse(favoritosGuardados) : [];
-    console.log(
-      "📌 Favoritos cargados de favoritosCargados:",
-      favoritosGuardados
-    );
-    console.log("📌 Favoritos cargados de LocalStorage:", state.favoritos);
-    console.log("📌 UsuarioID cargado", usuario.id);
-  }
+  
+ 
   // 📌 Mostrar modal de creación
   btnCrearServicio?.addEventListener("click", () => {
     modalCrearServicio?.classList.remove("hidden");
@@ -329,7 +381,7 @@ async function getAPIData(apiURL = 'api/servicios.json', method = 'GET', data) {
         document.getElementById("ubicacion-servicio")
       ).value,
       valoracion: Number(
-        /** @type {HTMLInputElement} */ (
+        /** @type {HTMLInputElement} */(
           document.getElementById("valoracion-servicio")
         ).value
       ),
@@ -341,7 +393,7 @@ async function getAPIData(apiURL = 'api/servicios.json', method = 'GET', data) {
         document.getElementById("categoria-servicio")
       ).value,
       precio: Number(
-        /** @type {HTMLInputElement} */ (
+        /** @type {HTMLInputElement} */(
           document.getElementById("precio-servicio")
         ).value
       ),
@@ -355,58 +407,68 @@ async function getAPIData(apiURL = 'api/servicios.json', method = 'GET', data) {
         document.getElementById("etiquetas-servicio")
       ).value,
       usuarioId: usuario ? usuario.id : null,
-      emailUsuario: /** @type {HTMLInputElement} */ (
-        document.getElementById("email-usuario-servicio")
-      ).value,
+      emailUsuario: usuario ? usuario.email : null
     };
 
-    // @ts-ignore
-    const searchParams = new URLSearchParams(nuevoServicio).toString();
-    const apiData = await getAPIData(`http://${location.hostname}:${API_PORT}/create/servicios`, 'POST', searchParams)
-
-    store.article.create(apiData);
-    renderServicios();
-
-    modalCrearServicio?.classList.add("hidden");
-    formCrearServicio?.setAttribute("reset", "");
-
-    // 📌 Escuchar cambios en el estado global
-    window.addEventListener("stateChanged", () => {
-      renderServicios();
-    });
-
-    // 📌 Renderizar servicios al cargar
-
-    renderServicios();
-  });
+    try {
+      console.log("📌 Enviando nuevo servicio a la API:", nuevoServicio);
+  
+      const response = await fetch(`http://${location.hostname}:${API_PORT}/create/servicios`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json", // Enviar como JSON
+        },
+        body: JSON.stringify(nuevoServicio), // Convertir a JSON
+      });
+  
+      if (!response.ok) {
+        throw new Error(`Error en la solicitud: ${response.statusText}`);
+      }
+  
+      const apiData = await response.json();
+      console.log("✅ Servicio creado correctamente:", apiData);
+  
+      // Actualizar la UI
+      cargarServicios(); // Recargar servicios desde la API
+      modalCrearServicio?.classList.add("hidden");
+      formCrearServicio?.setAttribute("reset", "");
+  
+    } catch (error) {
+      console.error("🚨 Error al crear el servicio:", error);
+    }
+  })
+  // 📌 Evento para escuchar clics en botones de editar y eliminar
   serviciosContainer.addEventListener("click", (e) => {
     const target = /** @type {HTMLElement} */ (e.target);
     if (!target) return;
 
-    // 📌 Manejar clic en el botón de favorito
-    if (target.classList.contains("btn-favorito")) {
+    // 📌 Editar servicio
+    if (target.classList.contains("btn-editar")) {
       const id = target.getAttribute("data-id");
-      const nombre = target.getAttribute("data-nombre");
+      const servicio = state.servicios.find((s) => s.id === id);
 
-      if (id && nombre) {
-        toggleFavorito(id, nombre);
-      } else {
-        console.error("Error: ID o nombre del servicio no encontrado.");
+      if (!servicio) {
+        console.error("Error: No se encontró el servicio a editar.");
+        return;
       }
-      return; // 🔴 IMPORTANTE: Evita que se siga ejecutando el resto del código
+
+      // 📌 Aquí abrirías un modal con los datos del servicio a editar
+      const datosActualizados = { ...servicio, nombre: "Nuevo Nombre" }; // Simulación de edición
+      actualizarServicio(id, datosActualizados);
     }
 
-    // 📌 Manejar clic en el botón de detalles
-    if (target.classList.contains("btn-detalles")) {
-      const servicioId = target.getAttribute("data-id");
+    // 📌 Eliminar servicio
+    if (target.classList.contains("btn-eliminar")) {
+      const id = target.getAttribute("data-id");
+      if (!id) return;
 
-      if (servicioId) {
-        console.log("Redirigiendo a detalles del servicio:", servicioId);
-        window.location.href = `serviciosin.html?id=${servicioId}`;
-      } else {
-        console.error("Error: No se encontró el ID del servicio.");
+      const confirmacion = confirm("¿Estás seguro de que quieres eliminar este servicio?");
+      if (confirmacion) {
+        eliminarServicio(id);
       }
-      return; // 🔴 IMPORTANTE: Evita que se siga ejecutando el resto del código
     }
   });
+
+  // 📌 Cargar servicios al inicio
+  cargarServicios();
 });

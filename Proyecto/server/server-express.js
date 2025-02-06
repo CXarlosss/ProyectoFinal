@@ -27,7 +27,9 @@ app.get('/hello/:nombre', (req, res) => {
  
  // CRUD
 app.post('/create/servicios', (req, res) => {
+  console.log("📌 Servicio recibido:", req.body);
   crud.createS(SERVICIOS_URL, req.body, (data) => {
+    
     res.json(data)
   });
 }) 
@@ -38,11 +40,15 @@ app.get('/read/servicios', (req, res) => {
 });
 
 app.put('/update/servicios/:id', (req, res) => {
+  console.log(`📌 Recibiendo actualización para servicio ID: ${req.params.id}`, req.body);
+
   crud.updateS(SERVICIOS_URL, req.params.id, req.body, (data) => {
     res.json(data)
   });
 })
 app.delete('/delete/servicios/:id', async (req, res) => {
+  console.log(`📌 Eliminando servicio con ID: ${req.params.id}`);
+
   await crud.deleteS(SERVICIOS_URL, req.params.id, (data) => {
     res.json(data)
   }); 

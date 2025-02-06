@@ -2,7 +2,7 @@
 // @ts-check
 
 import { Usuario } from "../clases/class.js";
- import { store } from "../store/redux.js";
+
  import { simpleFetch } from '../lib/simpleFetch.js';
  import { HttpError } from '../classes/HttpError.js'
 
@@ -51,7 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
  * @param {Object} [data]
 }
  */
-async function getAPIData(apiURL = 'api/users.json', method = 'GET', data) {
+async function getAPIData(apiURL , method = 'GET', data) {
   let apiData
 
   // console.log('getAPIData', method, data)
@@ -88,66 +88,75 @@ async function getAPIData(apiURL = 'api/users.json', method = 'GET', data) {
   return apiData
 }
 
-  // Evento para registrar usuario
-  formularioRegistro.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const nombre = /** @type {HTMLInputElement} */ (document.getElementById("nombre-usuario")).value.trim();
-    const email = /** @type {HTMLInputElement} */ (document.getElementById("email-usuario")).value.trim();
-    const telefono = /** @type {HTMLInputElement} */ (document.getElementById("telefono-usuario")).value.trim();
-    const direccion = /** @type {HTMLInputElement} */ (document.getElementById("direccion-usuario")).value.trim();
-    const password = /** @type {HTMLInputElement} */ (document.getElementById("password-usuario")).value.trim();
+formularioRegistro.addEventListener("submit", async (e) => {
+  e.preventDefault();
 
-    if (!nombre || !email || !telefono || !direccion || !password) {
-      alert("Todos los campos son obligatorios.");
-      return;
-    }
-    // Comprobar si el usuario ya existe
-    const usuariosGuardados = /** @type {Usuario[]} */ (JSON.parse(localStorage.getItem("usuarios") || "[]"));
-    const usuarioExistente = usuariosGuardados.find(user => user.email === email);
+  const nombre = /** @type {HTMLInputElement} */ (document.getElementById("nombre-usuario")).value.trim();
+  const email = /** @type {HTMLInputElement} */ (document.getElementById("email-usuario")).value.trim();
+  const telefono = /** @type {HTMLInputElement} */ (document.getElementById("telefono-usuario")).value.trim();
+  const direccion = /** @type {HTMLInputElement} */ (document.getElementById("direccion-usuario")).value.trim();
+  const password = /** @type {HTMLInputElement} */ (document.getElementById("password-usuario")).value.trim();
 
-    if (usuarioExistente) {
-      alert("Este email ya está registrado. Inicia sesión.");
-      return;
-    }
-    // Crear usuario
-    const nuevoUsuario = new Usuario(Date.now(), nombre, email, password, telefono, direccion);
-    
-    // @ts-ignore
-    const searchParams = new URLSearchParams(nuevoUsuario).toString()
-    const apiData = await getAPIData(`http://${location.hostname}:3001/create/users?${searchParams}`)
+  if (!nombre || !email || !telefono || !direccion || !password) {
+    alert("❌ Todos los campos son obligatorios.");
+    return;
+  }
+
+  // 📌 Consultar usuarios en la API (asegurando que devuelve un array)
+  const usuariosAPI = (await getAPIData(`http://${location.hostname}:3001/read/users`)) || [];
+// Asegurar que usuariosAPI es un array antes de usar .find()
+const usuarioExistente = Array.isArray(usuariosAPI) 
+  ? usuariosAPI.find(user => user && typeof user === 'object' && "email" in user && user.email === email)
+  : null;
 
 
-    
-    usuariosGuardados.push(apiData);
-    // Guardar en localStorage
-    localStorage.setItem("usuarios", JSON.stringify(usuariosGuardados));
-    localStorage.setItem("usuarioRegistrado", JSON.stringify(nuevoUsuario));
-     store.user.login(nuevoUsuario);
-     console.log("Usuario registrado:", nuevoUsuario);
-    // Redirigir a la página de usuario
+  if (usuarioExistente) {
+    alert("⚠️ Este email ya está registrado. Inicia sesión.");
+    return;
+  }
+
+  // 📌 Crear usuario
+  const nuevoUsuario = new Usuario(Date.now(), nombre, email, password, telefono, direccion);
+  const apiResponse = await getAPIData(`http://${location.hostname}:3001/create/users`, 'POST', nuevoUsuario);
+
+  if (apiResponse) {
+    console.log("✅ Usuario registrado:", apiResponse);
+    localStorage.setItem("usuarioRegistrado", JSON.stringify(apiResponse));
     window.location.href = "paginadelusuario.html";
-  });
+  } else {
+    alert("❌ Error al registrar usuario.");
+  }
+});
+
+ 
   
-  // Evento para iniciar sesión
-  formularioLogin.addEventListener("submit",async (e) => {
+  // 📌 Evento para iniciar sesión
+  formularioLogin.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const email = /** @type {HTMLInputElement} */ (document.getElementById("email-login")).value.trim();
     const password = /** @type {HTMLInputElement} */ (document.getElementById("password-login")).value.trim();
 
-    const usuariosGuardados = /** @type {Usuario[]} */ (JSON.parse(localStorage.getItem("usuarios") || "[]"));
-    const usuarioEncontrado = usuariosGuardados.find(user => user.email === email && user.password === password);
-    // @ts-ignore
-    const searchParams = new URLSearchParams(usuarioEncontrado).toString()
-    const apiData = await getAPIData(`http://${location.hostname}:3001/read/users?${searchParams}`)
+    if (!email || !password) {
+      alert("❌ Email y contraseña son obligatorios.");
+      return;
+    }
 
-    if (apiData) {
+    // 📌 Consultar usuarios en la API
+    const usuariosAPI = (await getAPIData(`http://${location.hostname}:3001/read/users`)) || [];
+
+    // 📌 Buscar el usuario en la lista obtenida
+    const usuarioEncontrado = Array.isArray(usuariosAPI) ? usuariosAPI.find(user => user.email === email && user.password === password) : null;
+
+    if (usuarioEncontrado) {
+      console.log("✅ Usuario autenticado:", usuarioEncontrado);
       localStorage.setItem("usuarioRegistrado", JSON.stringify(usuarioEncontrado));
       window.location.href = "paginadelusuario.html";
     } else {
-      alert("Email o contraseña incorrectos.");
+      alert("⚠️ Email o contraseña incorrectos.");
     }
   });
-})
+
+});
 
 

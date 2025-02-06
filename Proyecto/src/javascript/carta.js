@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
           console.log("🔄 Cargando servicio desde la API backend...");
   
           // ✅ Obtener servicios solo desde la API backend (Express)
-          const serviciosAPI = await getAPIData(`http://${location.hostname}:3333/read/servicios`);
+          const serviciosAPI = await getAPIData(`http://${location.hostname}:3001/read/servicios`);
   
           if (!Array.isArray(serviciosAPI)) {
               throw new Error("⚠️ La API no devolvió un array válido de servicios.");

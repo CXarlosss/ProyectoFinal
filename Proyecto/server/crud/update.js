@@ -8,10 +8,16 @@ export async function update(file, id, modifiedData, callback) {
       await fs.readFile(file, function (err, data) {
         const parsedData = JSON.parse(data.toString());
         // Filter by filterParams
+        console.log("update ParsedData")
         const updatedData = parsedData.map((item) => {
-          if (item.id !== id) {
+         
+          if (String(item.id) !== String(id)) { 
+            
             return item
+            
           } else {
+            console.log(item.id, id)
+            console.log('update', item, modifiedData);
             updatedItem = {
               ...item,
               ...modifiedData
@@ -26,6 +32,7 @@ export async function update(file, id, modifiedData, callback) {
             return err;
           }
           if (callback) {
+            console.log("callback", updatedItem)
             return callback(updatedItem);
           }
         })

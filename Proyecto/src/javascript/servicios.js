@@ -1,6 +1,7 @@
 // @ts-check
 
 import { store } from "../store/redux.js";
+import { HttpError } from '../classes/HttpError.js'
 
 import { simpleFetch } from "../lib/simpleFetch.js";
 
@@ -43,6 +44,13 @@ const usuario = JSON.parse(usuarioGuardado);
 console.log("📌 Usuario cargado desde localStorage:", usuario);
 
 
+
+
+
+
+
+
+
   /** @type {{ servicios: { id: string, nombre: string, descripcion: string, ubicacion: string, valoracion: string, imagen: string, categoria: string }[], favoritos: { id: string, nombre: string }[] }} */
   const state = {
     servicios: [],
@@ -66,15 +74,8 @@ console.log("📌 Usuario cargado desde localStorage:", usuario);
   
       console.log("📌 Servicios cargados desde la API:", serviciosAPI);
   
-      // ✅ Verificar si los servicios contienen `emailUsuario`
-      serviciosAPI.forEach(servicio => {
-        if (!servicio.emailUsuario) {
-          console.warn(`⚠️ El servicio con ID ${servicio.id} no tiene emailUsuario.`);
-        }
-      });
-  
-      state.servicios = serviciosAPI;
-      renderServicios(state.servicios);
+      state.servicios = serviciosAPI; // ✅ Actualizamos `state.servicios`
+      renderServicios(state.servicios); // ✅ Volvemos a renderizar la UI
     } catch (error) {
       console.error("🚨 Error en la carga de servicios:", error);
     }
@@ -118,9 +119,45 @@ serviciosContainer.addEventListener("click", async (e) => {
 
 
 /**
- * Renderiza la lista de servicios en la UI.
- * @param {typeof state.servicios} [serviciosFiltrados]
+ * Get data from API
+ * @param {string} apiURL
+ * @param {string} method
+ * @param {Object} [data]
+
  */
+async function getAPIData(apiURL = 'api/servicios.json', method = 'GET', data) {
+  let apiData
+
+  try {
+    let headers = new Headers()
+    headers.append('Content-Type', 'application/json')
+    headers.append('Access-Control-Allow-Origin', '*')
+    if (data) {
+      headers.append('Content-Length', String(JSON.stringify(data).length))
+    }
+    apiData = await simpleFetch(apiURL, {
+      // Si la petición tarda demasiado, la abortamos
+      signal: AbortSignal.timeout(3000),
+      method: method,
+      body: data ?? undefined,
+      headers: headers
+    });
+  } catch (/** @type {any | HttpError} */err) {
+    if (err.name === 'AbortError') {
+      console.error('Fetch abortado');
+    }
+    if (err instanceof HttpError) {
+      if (err.response.status === 404) {
+        console.error('Not found');
+      }
+      if (err.response.status === 500) {
+        console.error('Internal server error');
+      }
+    }
+  }
+
+  return apiData
+} 
 function renderServicios(serviciosFiltrados = getServiciosDesdeStore()) {
   console.log("🛠 Ejecutando renderServicios con:", serviciosFiltrados);
 
@@ -129,55 +166,84 @@ function renderServicios(serviciosFiltrados = getServiciosDesdeStore()) {
     return;
   }
 
+  if (!usuario || !usuario.email) {
+    console.error("🚨 ERROR: El usuario no está definido o no tiene email.", usuario);
+    return;
+  }
+
   if (!serviciosFiltrados || serviciosFiltrados.length === 0) {
+    console.warn("⚠ No hay servicios disponibles.");
     serviciosContainer.innerHTML = "<p>No hay servicios disponibles.</p>";
     return;
   }
 
-  serviciosContainer.innerHTML = serviciosFiltrados
-  .slice(0, 7) // ✅ Mostrar solo 7 servicios
-    .map((servicio) => {
-      
-      if (!servicio || !servicio.id) return "";
-      let esPropietario = false;
-      
-      if (typeof usuario === "object" && usuario !== null && "email" in usuario &&
-        typeof servicio === "object" && servicio !== null && "emailUsuario" in servicio) {
-      esPropietario = usuario.email === servicio.emailUsuario;
+  console.log("📌 Usuario actual:", usuario);
+
+  serviciosFiltrados.forEach((/** @type {{ emailUsuario: string; nombre: any; }} */ servicio) => {
+    console.log("📌 Revisando servicio:", servicio);
+    console.log("📧 Comparando emails:", servicio.emailUsuario, usuario.email);
+
+    if (!servicio.emailUsuario) {
+      console.warn("⚠ El servicio no tiene emailUsuario definido:", servicio);
     }
 
+    if (servicio.emailUsuario?.trim().toLowerCase() === usuario.email?.trim().toLowerCase()) {
+      console.log("✅ Es propietario del servicio:", servicio.nombre);
+    } else {
+      console.log("❌ No es propietario");
+    }
+  });
+
+  console.log("📌 Servicios filtrados:", serviciosFiltrados);
+
+  serviciosContainer.innerHTML = serviciosFiltrados
+    .slice(0, 7) // ✅ Mostrar solo 7 servicios
+    .map((/** @type {{ id: string; emailUsuario: string; imagen: any; nombre: any; descripcion: any; ubicacion: any; valoracion: any; }} */ servicio) => {
+      if (!servicio || !servicio.id) return "";
+      let esPropietario = false;
+
+      console.log("📌 Servicio:", servicio);
+
+      if (servicio.emailUsuario?.trim().toLowerCase() === usuario.email?.trim().toLowerCase()) {
+        esPropietario = true;
+      }
+
       return `
-       <div class="card">
-              <img src="${servicio.imagen || "default.jpg"}" alt="Imagen de ${servicio.nombre || "Servicio"}" class="card-img" />
-              <h3>${servicio.nombre || "Nombre no disponible"}</h3>
-              <p>${servicio.descripcion || "Descripción no disponible"}</p>
-              <p><strong>Ubicación:</strong> ${servicio.ubicacion || "Ubicación no disponible"}</p>
-              <p><strong>Valoración:</strong> ${servicio.valoracion || "No valorado"}</p>
-              
-              <!-- BOTÓN "MÁS DETALLES" -->
-              <button class="btn-detalles" data-id="${servicio.id}">📜 Más Detalles</button>
+        <div class="card">
+          <img src="${servicio.imagen || "default.jpg"}" alt="Imagen de ${servicio.nombre || "Servicio"}" class="card-img" />
+          <h3>${servicio.nombre || "Nombre no disponible"}</h3>
+          <p>${servicio.descripcion || "Descripción no disponible"}</p>
+          <p><strong>Ubicación:</strong> ${servicio.ubicacion || "Ubicación no disponible"}</p>
+          <p><strong>Valoración:</strong> ${servicio.valoracion || "No valorado"}</p>
+          
+          <!-- BOTÓN "MÁS DETALLES" -->
+          <button class="btn-detalles" data-id="${servicio.id}">📜 Más Detalles</button>
 
-              <!-- BOTÓN "AÑADIR A FAVORITOS" -->
-              <button class="btn-favorito ${state.favoritos.some(fav => fav.id === servicio.id) ? "favorito" : ""}" data-id="${servicio.id}" data-nombre="${servicio.nombre || ""}">
-                ${state.favoritos.some(fav => fav.id === servicio.id) ? "★ Favorito" : "☆ Añadir a Favoritos"}
-              </button>
+          <!-- BOTÓN "AÑADIR A FAVORITOS" -->
+          <button class="btn-favorito ${state.favoritos.some(fav => fav.id === servicio.id) ? "favorito" : ""}" 
+                  data-id="${servicio.id}" 
+                  data-nombre="${servicio.nombre || ""}">
+            ${state.favoritos.some(fav => fav.id === servicio.id) ? "★ Favorito" : "☆ Añadir a Favoritos"}
+          </button>
 
-              <!-- BOTÓN EDITAR (SOLO SI EL USUARIO ES EL PROPIETARIO) -->
-              ${esPropietario ? `<button class="btn-editar" data-id="${servicio.id}">✏️ Editar</button>` : ""}
+          <!-- BOTÓN EDITAR (SOLO SI EL USUARIO ES EL PROPIETARIO) -->
+          ${esPropietario ? `<button class="btn-editar" data-id="${String(servicio.id)}">✏️ Editar</button>` : ""}
 
-              <!-- BOTÓN ELIMINAR (SOLO SI EL USUARIO ES EL PROPIETARIO) -->
-              ${esPropietario ? `<button class="btn-eliminar" data-id="${servicio.id}">🗑 Eliminar</button>` : ""}
-          </div>
-    `;
-  })
-  .join("");
+    
+          <!-- BOTÓN ELIMINAR (SOLO SI EL USUARIO ES EL PROPIETARIO) -->
+          ${esPropietario ? `<button class="btn-eliminar" data-id="${servicio.id}">🗑 Eliminar</button>` : ""}
+        </div>
+      `;
+    })
+    .join("");
 
   console.log("✅ Servicios renderizados en la UI.");
 }
+
 serviciosContainer.addEventListener("click", async (e) => {
   const target = /** @type {HTMLElement} */ (e.target);
   if (!target) return;
-
+    console.log("🛠 Clic detectado en:", target); //  Debugging
   if (target.classList.contains("btn-detalles")) {
     const id = target.getAttribute("data-id");
     console.log("📌 ID del servicio seleccionado:", id);
@@ -198,16 +264,26 @@ serviciosContainer.addEventListener("click", async (e) => {
       toggleFavorito(id, nombre);
     } else {
       console.error("🚨 Error: ID o nombre inválido en el botón de favoritos.");
-    }
+    }console.log("📌 ID del servicio a editar:", id);
   }
 
-  // 📌 Editar servicio (Solo si el usuario es el propietario)
-  if (target.classList.contains("btn-editar")) {
-    const id = target.getAttribute("data-id");
-    const servicio = state.servicios.find((s) => s.id === id);
+   // 📌 EDITAR SERVICIO
+   if (target.classList.contains("btn-editar")) {
+    console.log("🔍 Botón de editar detectado.");
+    
+    const id = Number(target.getAttribute("data-id"));
+    console.log("📌 ID del servicio a editar:", id);
+
+    if (!id) {
+      console.error("❌ ERROR: No se encontró el ID en el botón.");
+      return;
+    }
+
+    const servicio = state.servicios.find((s) => Number(s.id) === id);
+    console.log("🔍 Servicio encontrado:", servicio);
 
     if (!servicio) {
-      console.error("Error: No se encontró el servicio a editar.");
+      console.error("❌ ERROR: No se encontró el servicio en el estado.");
       return;
     }
 
@@ -215,9 +291,21 @@ serviciosContainer.addEventListener("click", async (e) => {
     if (!nuevoNombre) return;
 
     const datosActualizados = { ...servicio, nombre: nuevoNombre };
+    console.log("📌 Datos actualizados:", datosActualizados);
+    try {
+      const resultado = await actualizarServicio(id, datosActualizados);
+      console.log("✅ Resultado de actualización:", resultado);
 
-    await actualizarServicio(id, datosActualizados);
+      if (resultado) {
+        await cargarServicios(); // Recargar la lista después de actualizar
+      } else {
+        console.error("❌ No se pudo actualizar el servicio.");
+      }
+    } catch (error) {
+      console.error("❌ Error en la actualización del servicio:", error);
+    }
   }
+
 
   // 📌 Eliminar servicio (Solo si el usuario es el propietario)
   if (target.classList.contains("btn-eliminar")) {
@@ -264,23 +352,33 @@ function cargarFavoritos() {
    // 📌 Función para actualizar un servicio
    async function actualizarServicio(id, datosActualizados) {
     try {
-      console.log(`📌 Actualizando servicio con ID ${id}:`, datosActualizados);
-
+      console.log(`📌 Enviando actualización para el servicio con ID ${id}:`, datosActualizados);
+  
+    
       const response = await fetch(`http://${location.hostname}:${API_PORT}/update/servicios/${id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify(datosActualizados),
       });
-
-      if (!response.ok) throw new Error(`Error en la actualización: ${response.statusText}`);
-
+  
+      if (!response.ok) {
+        throw new Error(`Error en la actualización: ${response.statusText}`);
+      }
+  
       console.log(`✅ Servicio con ID ${id} actualizado correctamente.`);
-      cargarServicios(); // Recargar la UI
+  
+      // 🔄 Recargar la lista de servicios después de actualizar
+      await cargarServicios(); // ✅ Esto actualizará `state.servicios` con los datos más recientes
+  
+      return true; // Devuelve `true` para indicar que la actualización fue exitosa
     } catch (error) {
       console.error("🚨 Error al actualizar el servicio:", error);
+      return false;
     }
   }
-
+  
   // 📌 Función para eliminar un servicio
   /**
    * @param {any} id

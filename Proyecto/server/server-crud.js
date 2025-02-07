@@ -5,8 +5,8 @@ import { update } from './crud/update.js';
 import { deleteById } from './crud/delete.js';
 import { filter } from './crud/filter.js';
 
-const USERS_URL = './server/BBDD/users.json'
-const SERVICIOS_URL = './server/BBDD/articles.json'
+const USERS_URL = './BBDD/users.json'
+const SERVICIOS_URL = './BBDD/servicios.json'
 
 // READ:
 // read(USERS, (data) => console.log('server', data));

@@ -41,7 +41,7 @@ app.get('/read/servicios', (req, res) => {
 
 app.put('/update/servicios/:id', (req, res) => {
   console.log(`📌 Recibiendo actualización para servicio ID: ${req.params.id}`, req.body);
-
+  
   crud.updateS(SERVICIOS_URL, req.params.id, req.body, (data) => {
     res.json(data)
   });
@@ -64,10 +64,20 @@ app.get('/read/users', (req, res) => {
     });
   })
 app.put('/update/users/:id', (req, res) => {
+    console.log("📌 Recibida actualización para usuario ID:", req.params.id);
+    console.log("📩 Datos recibidos:", req.body);
+
     crud.updateU(USERS_URL, req.params.id, req.body, (data) => {
-      res.json(data)
+        if (!data) {
+            console.error("❌ Error: No se pudo actualizar el usuario.");
+            return res.status(500).json({ error: "No se pudo actualizar el usuario." });
+        }
+        console.log("✅ Usuario actualizado en la base de datos:", data);
+        res.json(data);
     });
-  })
+});
+
+
 app.delete('/delete/users/:id', async (req, res) => {
     await crud.deleteU(USERS_URL, req.params.id, (data) => {
       res.json(data)

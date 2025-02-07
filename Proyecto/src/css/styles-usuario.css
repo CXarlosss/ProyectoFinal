@@ -343,9 +343,8 @@ body {
   align-items: center;
   z-index: 1000;
 }
-#modal-editar-usuario {
-  display: block !important;
-}
+
+
 
 .modal-content {
   background: white;
@@ -395,7 +394,12 @@ body {
   width: 300px;
   text-align: center;
 }
-
-.hidden {
-  display: none;
+/* #modal-editar-usuario {
+  display: none ; /* Asegurar que inicia oculto 
 }
+ 
+*/
+/* .hidden {
+  display: none !important; /* Asegurar que la clase oculta el modal 
+}
+ */

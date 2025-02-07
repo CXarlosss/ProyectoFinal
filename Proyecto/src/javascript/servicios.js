@@ -387,9 +387,10 @@ function cargarFavoritos() {
     try {
       console.log(`📌 Eliminando servicio con ID ${id}...`);
 
-      const response = await fetch(`http://${location.hostname}:${API_PORT}/delete/servicios/${id}`, {
+      const response = await fetch(`http://${location.hostname}:3001/delete/servicios/${id}`, {
         method: "DELETE",
       });
+      
 
       if (!response.ok) throw new Error(`Error en la eliminación: ${response.statusText}`);
 

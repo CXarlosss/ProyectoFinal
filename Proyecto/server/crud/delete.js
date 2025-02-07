@@ -9,8 +9,9 @@ export async function deleteById(file, id, callback) {
         const parsedData = JSON.parse(data.toString());
         // Filter by filterParams
         updatedData = parsedData.filter((item) => {
-          return item.id !== id
+          return item.id !== Number(id); // Convertir `id` a número antes de compararlo
         });
+        
 
         fs.writeFile(file, JSON.stringify(updatedData), function (err) {
           if (err) {

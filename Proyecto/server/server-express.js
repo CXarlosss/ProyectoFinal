@@ -48,11 +48,15 @@ app.put('/update/servicios/:id', (req, res) => {
 })
 app.delete('/delete/servicios/:id', async (req, res) => {
   console.log(`📌 Eliminando servicio con ID: ${req.params.id}`);
-
+  
   await crud.deleteS(SERVICIOS_URL, req.params.id, (data) => {
-    res.json(data)
+    if (!data) {
+      return res.status(404).json({ error: "Servicio no encontrado" });
+    }
+    res.json({ message: "✅ Servicio eliminado", servicios: data });
   }); 
-})
+});
+
 app.post('/create/users', (req, res) => {
     crud.createU(USERS_URL, req.body, (data) => {
       res.json(data)

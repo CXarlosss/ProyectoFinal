@@ -2,6 +2,8 @@
 
 document.addEventListener("DOMContentLoaded", () => {
   console.log("✅ DOM cargado correctamente.");
+ 
+  
 
   // 📌 Verificar si hay un usuario registrado en LocalStorage
   let usuarioRegistrado = localStorage.getItem("usuarioRegistrado");
@@ -42,8 +44,12 @@ document.addEventListener("DOMContentLoaded", () => {
   btnEditarUsuario?.addEventListener("click", () => {
       if (!usuario) return;
       
-      // Mostrar modal
-      modalEditarUsuario?.classList.remove("hidden");
+      if (modalEditarUsuario) {
+        
+        modalEditarUsuario.style.display = "block"; // Asegurar visibilidad
+    }
+
+
       
       // Rellenar datos
       if (inputNombre) inputNombre.value = usuario.nombre;
@@ -55,6 +61,8 @@ document.addEventListener("DOMContentLoaded", () => {
           inputCorreo.disabled = true; // Deshabilitar la edición del correo
       }
   });
+  console.log("📌 Enviando actualización para el usuario ID:", usuario.id);
+
 
   /**
    * 📌 Guardar cambios al hacer submit en el formulario
@@ -120,8 +128,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /**
    * 📌 Cerrar modal sin guardar cambios
-   */
-  btnCerrarModal?.addEventListener("click", () => {
-      modalEditarUsuario?.classList.add("hidden"); // Ocultar modal
-  });
+   */    /**
+     * 📌 Función para cerrar el modal
+     */
+    function cerrarModal() {
+        if (modalEditarUsuario) {
+            modalEditarUsuario.classList.remove("active");
+            modalEditarUsuario.style.display = "none";
+        }
+    }
+
+    /**
+     * 📌 Cerrar modal sin guardar cambios
+     */
+    btnCerrarModal?.addEventListener("click", cerrarModal);
 });

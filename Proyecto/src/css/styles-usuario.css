@@ -343,9 +343,8 @@ body {
   align-items: center;
   z-index: 1000;
 }
-
-.modal.hidden {
-  display: none;
+#modal-editar-usuario {
+  display: block !important;
 }
 
 .modal-content {

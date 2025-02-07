@@ -58,17 +58,16 @@ document.addEventListener("DOMContentLoaded", () => {
      * @param {string} chatId
      * @param {string} nombreChat
      */
-    function abrirChat(chatId, nombreChat) {
+    function abrirChat(chatId, nombreChat = "") {
         usuarioActivo = chatId;
     
-        // 📌 Obtener el nombre real desde `localStorage`
         const nombresServicios = JSON.parse(localStorage.getItem("nombresServicios") || "{}");
-        const nombreReal = nombresServicios[chatId] || nombreChat || `Chat con ID (${chatId})`; 
+        const nombreReal = nombresServicios[chatId] || nombreChat || `Conversación sin nombre (${chatId})`;
     
         if (chatTitulo) chatTitulo.textContent = `Conversación con ${nombreReal}`;
         if (chatPopup) chatPopup.classList.add("active");
     
-        console.log("Chat abierto:", chatId, "Nombre mostrado:", nombreReal);
+        console.log("📌 Chat abierto:", chatId, "Nombre mostrado:", nombreReal);
     
         actualizarMensajes(chatId);
     }
@@ -82,32 +81,37 @@ document.addEventListener("DOMContentLoaded", () => {
     
 
     function guardarNombreChat(chatId, nombreChat) {
-        let nombresServicios = JSON.parse(localStorage.getItem("nombresServicios") || "{}");
-
-        if (nombreChat && chatId) {
-            nombresServicios[chatId] = nombreChat;
-            localStorage.setItem("nombresServicios", JSON.stringify(nombresServicios));
-        }
-    }
+        if (!chatId || !nombreChat) return;
     
+        let nombresServicios = JSON.parse(localStorage.getItem("nombresServicios") || "{}");
+    
+        nombresServicios[chatId] = nombreChat; // 📌 Asignar correctamente el nombre al chat
+    
+        localStorage.setItem("nombresServicios", JSON.stringify(nombresServicios));
+    
+        console.log("📌 Nombre del chat guardado correctamente en localStorage:", nombresServicios);
+    }
     
     btnCreateChat?.addEventListener("click", () => {
         const nombreChat = prompt("Introduce el nombre del usuario con quien quieres chatear:");
         if (!nombreChat) return;
     
-        const chatId = nombreChat.toLowerCase().replace(/\s+/g, "-");
+        const chatId = `chat-${Date.now()}`; // 📌 Generar un ID único
     
         if (!conversaciones[chatId]) {
             conversaciones[chatId] = [];
+            guardarNombreChat(chatId, nombreChat); // ✅ Guardamos correctamente el nombre
             guardarMensajes();
-            guardarNombreChat(chatId, nombreChat); // ✅ Guardar el nombre real del servicio
             cargarChats();
             alert(`Chat con ${nombreChat} creado exitosamente.`);
         } else {
             alert("Ya tienes un chat con este usuario.");
         }
     });
-    // ✅ Modificar `cargarChats()` para asegurarnos de mostrar el nombre correcto
+    
+    
+    
+    
     function cargarChats() {
         if (!chatList) return;
         chatList.innerHTML = "";
@@ -118,25 +122,17 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
     
-        // 📌 Obtener los nombres guardados de los chats
+        // 📌 Obtener nombres guardados desde `localStorage`
         const nombresServicios = JSON.parse(localStorage.getItem("nombresServicios") || "{}");
     
-        console.log("📌 Verificando nombres guardados en `localStorage`:", nombresServicios);
+        console.log("📌 Nombres de chats guardados en localStorage:", nombresServicios);
     
         chats.forEach(chatId => {
-            // 📌 Intentar obtener el nombre del servicio desde localStorage
             let nombreChat = nombresServicios[chatId];
     
-            // 📌 Si no lo encuentra, buscar en la lista de favoritos
             if (!nombreChat) {
-                const favoritos = JSON.parse(localStorage.getItem(`favoritos_${usuario.id}`) || "[]");
-                const favoritoEncontrado = favoritos.find((/** @type {{ id: string; }} */ fav) => fav.id === chatId);
-                nombreChat = favoritoEncontrado ? favoritoEncontrado.nombre : null;
-            }
-    
-            // 📌 Si sigue sin nombre, usar texto genérico
-            if (!nombreChat) {
-                nombreChat = `Conversación sin nombre (${chatId})`;
+                console.warn(`🚨 Nombre no encontrado en nombresServicios para chatId: ${chatId}`);
+                nombreChat = `Conversación sin nombre (${chatId})`; // 📌 Evitar mostrar solo el ID
             }
     
             const chatItem = document.createElement("div");
@@ -148,10 +144,9 @@ document.addEventListener("DOMContentLoaded", () => {
             `;
             chatList.appendChild(chatItem);
         });
-    
-        console.log("📌 Chats cargados con nombres:", chats.map(chatId => nombresServicios[chatId] || chatId));
     }
     
+    cargarChats();
 
     function cargarFavoritos() {
         if (!favoritosList) return;
@@ -304,40 +299,9 @@ document.addEventListener("DOMContentLoaded", () => {
     btnIrSecciones?.addEventListener("click", () => {
         window.location.href = "servicios.html";
     });
-    favoritosList?.addEventListener("click", (e) => {
-        const target = /** @type {HTMLElement} */ (e.target);
-        if (!target) return;
-        if (target.classList.contains("btn-eliminar-favorito")) return;
-        const seccionId = target.getAttribute("data-id");
-        const nombreChat = target.textContent?.trim() || "Chat sin nombre"; 
+    
 
-        if (seccionId) abrirChat(seccionId, nombreChat);
-    });
-
-    cerrarChatBtn?.addEventListener("click", () => {
-        chatPopup?.classList.remove("active");
-        usuarioActivo = "";
-    });
-
-    enviarMensajeBtn?.addEventListener("click", () => {
-        if (!usuarioActivo || !mensajeInput || !chatMessages) return;
-
-        const mensaje = mensajeInput.value.trim();
-        if (mensaje === "") return;
-
-        if (!conversaciones[usuarioActivo]) {
-            conversaciones[usuarioActivo] = [];
-        }
-
-        conversaciones[usuarioActivo].push({
-            remitente: usuario.nombre,
-            mensaje: mensaje
-        });
-
-        mensajeInput.value = "";
-        guardarMensajes();
-        actualizarMensajes(usuarioActivo);
-    });
+ 
     if (btnBorrar) {
         btnBorrar.addEventListener("click", () => {
             if (confirm("¿Estás seguro de que quieres borrar todas las secciones almacenadas? Esta acción no se puede deshacer.")) {
@@ -354,22 +318,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
-    btnCreateChat?.addEventListener("click", () => {
-        const nombreChat = prompt("Introduce el nombre del usuario con quien quieres chatear:");
-        if (!nombreChat) return;
     
-        const chatId = nombreChat.toLowerCase().replace(/\s+/g, "-");
-    
-        if (!conversaciones[chatId]) {
-            conversaciones[chatId] = [];
-            guardarMensajes();
-            guardarNombreChat(chatId, nombreChat); // ✅ Ahora guardamos correctamente el nombre
-            cargarChats();
-            alert(`Chat con ${nombreChat} creado exitosamente.`);
-        } else {
-            alert("Ya tienes un chat con este usuario.");
-        }
-    });
     
     /**
      * @param {string} chatId

@@ -1,4 +1,4 @@
-/* Reset de estilos */
+/* 🌟 Reset de estilos */
 * {
     margin: 0;
     padding: 0;
@@ -8,9 +8,12 @@
 }
 
 body {
-    background: linear-gradient(to right, #f4f4f4, #e0e0e0);
+    background: linear-gradient(135deg, #f4f4f4, #e0e0e0);
     color: #333;
     line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 /* 🌟 NAVBAR MEJORADO */
@@ -18,9 +21,9 @@ header {
     position: fixed;
     top: 0;
     width: 100%;
-    background: rgba(51, 51, 51, 0.7); /* 🎭 Efecto Glassmorphism */
+    background: rgba(51, 51, 51, 0.8); /* 🎭 Efecto Glassmorphism */
     backdrop-filter: blur(10px);
-    padding: 10px 0;
+    padding: 15px 0;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     z-index: 1000;
     animation: slideDown 0.8s ease-in-out;
@@ -42,12 +45,6 @@ nav ul {
     display: flex;
     justify-content: center;
     gap: 20px;
-    padding: 0;
-    margin: 0;
-}
-
-nav ul li {
-    display: inline;
 }
 
 nav ul li a {
@@ -83,41 +80,33 @@ nav ul li a:hover {
     transform: scale(1.1);
 }
 
-/* 📱 Menú responsivo */
-@media (max-width: 768px) {
-    nav ul {
-        flex-direction: column;
-        text-align: center;
-        gap: 10px;
-    }
-
-    nav ul li a {
-        font-size: 1rem;
-    }
-}
-
 /* 📌 Contenedor principal */
 main {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 80vh;
-    margin-top: 80px; /* Para evitar que el contenido se esconda debajo del nav */
+    min-height: 90vh;
+    margin-top: 80px;
 }
 
-/* 🏷️ Estilos para la carta */
+/* 🏷️ Estilos para la carta (NEOMORFISMO) */
 .servicio-detalle {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    max-width: 800px;
-    background: white;
-    padding: 25px;
-    border-radius: 15px;
-    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.15);
+    max-width: 850px;
+    background: #e0e0e0;
+    padding: 60px;
+    border-radius: 20px;
+    box-shadow: 8px 8px 20px #b3b3b3, -8px -8px 20px #ffffff;
     text-align: center;
     animation: fadeIn 0.8s ease-in-out;
+    transition: all 0.3s ease-in-out;
+}
+
+.servicio-detalle:hover {
+    box-shadow: 10px 10px 25px #b3b3b3, -10px -10px 25px #ffffff;
 }
 
 /* ✨ Animación de entrada */
@@ -133,71 +122,107 @@ main {
 }
 
 .servicio-info h2 {
-    font-size: 2.2rem;
-    color: #333;
-    margin-bottom: 15px;
+    font-size: 2.5rem;
+    color: #222;
+    margin-bottom: 20px;
 }
 
 .servicio-info p {
-    font-size: 1.1rem;
-    margin: 5px 0;
-    color: #666;
+    font-size: 1.2rem;
+    margin: 10px 0;
+    color: #555;
 }
 
+/* 📸 Imagen del servicio */
 .servicio-imagen {
-    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-top: 50px; /* Más separación con el navbar */
 }
 
 .servicio-imagen img {
-    max-width: 100%;
-    border-radius: 12px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
+    width: 300px; /* Tamaño fijo más estilizado */
+    height: 300px; /* Mantiene la simetría */
+    object-fit: cover; /* Recorta la imagen sin deformarla */
+    border-radius: 50%; /* 🔵 Ahora la imagen es redonda */
+    border: 8px solid rgba(255, 255, 255, 0.2); /* Marco sutil */
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.15); /* Efecto flotante */
+    background: linear-gradient(135deg, #e0e0e0, #c2c2c2); /* Fondo con degradado */
+    padding: 5px; /* Un pequeño espacio alrededor */
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 }
 
-/* 🛠️ Botones estilizados */
+/* ✨ Efecto hover para dar más dinamismo */
+.servicio-imagen img:hover {
+    transform: scale(1.1); /* Se agranda ligeramente */
+    box-shadow: 0px 15px 25px rgba(0, 0, 0, 0.25);
+}
+
+/* 📱 Ajuste para móviles */
+@media (max-width: 768px) {
+    .servicio-imagen img {
+        width: 250px; /* Un poco más pequeño en pantallas pequeñas */
+        height: 250px;
+    }
+}
+
+
+/* 🛠️ Botones con efecto NEOMORFISMO */
 button {
     background: linear-gradient(135deg, #007bff, #0056b3);
     color: white;
-    padding: 12px 20px;
+    padding: 14px 25px;
     border: none;
-    border-radius: 8px;
-    font-size: 1rem;
+    border-radius: 10px;
+    font-size: 1.2rem;
     cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.3s;
-    margin: 10px;
+    transition: all 0.3s ease-in-out;
+    margin: 15px;
+    box-shadow: 6px 6px 12px #b3b3b3, -6px -6px 12px #ffffff;
 }
 
 button:hover {
     transform: scale(1.05);
-    box-shadow: 0px 5px 15px rgba(0, 123, 255, 0.3);
+    box-shadow: 8px 8px 15px rgba(0, 123, 255, 0.3);
 }
 
+button:active {
+    transform: scale(0.98);
+}
+
+/* 🔙 Botón de volver */
 button#btn-volver {
     background: linear-gradient(135deg, #ff4d4d, #b30000);
 }
 
 button#btn-volver:hover {
-    box-shadow: 0px 5px 15px rgba(255, 77, 77, 0.3);
+    box-shadow: 8px 8px 15px rgba(255, 77, 77, 0.3);
 }
 
 /* 📱 Responsividad */
 @media (max-width: 768px) {
     main {
-        height: auto;
         padding: 20px;
     }
 
     .servicio-detalle {
         max-width: 95%;
+        padding: 40px;
     }
 
     .servicio-info h2 {
-        font-size: 1.8rem;
+        font-size: 2rem;
+    }
+
+    .servicio-info p {
+        font-size: 1rem;
     }
 
     button {
-        font-size: 0.9rem;
-        padding: 10px 15px;
+        font-size: 1rem;
+        padding: 12px 18px;
     }
 }
 

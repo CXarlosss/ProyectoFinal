@@ -9,6 +9,7 @@
   "main": "index.js",
 
   "scripts": {
+    "start": "node server/server-express.js",
 
     "server:express:start": "node --env-file=.env --watch server/server-express.js",
 

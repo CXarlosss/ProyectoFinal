@@ -1,7 +1,6 @@
 // @ts-nocheck
 import express from 'express';
 import bodyParser from 'body-parser';
-import { db } from "./server-mongodb.js";
 
 import { crud } from "./server-crud.js";
 
@@ -25,10 +24,7 @@ app.get('/hello/:nombre', (req, res) => {
   res.send(`Hola ${req.params.nombre}`);
 });
  
-app.get('/check/:nombre', async(req,res)=>{
-  const usuarios = await db.users.readU(USERS_URL);
-  res.send(`Hola ${req.params.nombre}, hay ${usuarios} usarios`); 
-})
+
  // CRUD
 app.post('/create/servicios', (req, res) => {
   console.log("📌 Servicio recibido:", req.body);

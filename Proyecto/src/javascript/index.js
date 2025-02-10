@@ -7,23 +7,37 @@ document.addEventListener("DOMContentLoaded", () => {
     const nextBtnServicios = document.querySelector(".next");
 
     let indexServicios = 0;
-    const totalCardsServicios = document.querySelectorAll(".business-card").length;
-    const visibleCardsServicios = 3; // Mostrar 3 tarjetas
-    const cardWidthServicios = document.querySelector(".business-card").offsetWidth + 16; // Ancho de tarjeta + margen
+    let cardWidthServicios;
+    let totalCardsServicios;
+    let visibleCardsServicios;
 
-    nextBtnServicios.addEventListener("click", () => {
-        if (indexServicios < totalCardsServicios - visibleCardsServicios) {
-            indexServicios++;
-            sliderServicios.style.transform = `translateX(-${indexServicios * cardWidthServicios}px)`;
-        }
-    });
+    setTimeout(() => {
+        const businessCards = document.querySelectorAll(".business-card");
 
-    prevBtnServicios.addEventListener("click", () => {
-        if (indexServicios > 0) {
-            indexServicios--;
-            sliderServicios.style.transform = `translateX(-${indexServicios * cardWidthServicios}px)`;
-        }
-    });
+        if (businessCards.length === 0) return; // Evita errores si no hay tarjetas
+
+        const cardStyles = window.getComputedStyle(businessCards[0]);
+        const cardMargin = parseFloat(cardStyles.marginRight) + parseFloat(cardStyles.marginLeft);
+        cardWidthServicios = businessCards[0].offsetWidth + cardMargin;
+
+        totalCardsServicios = businessCards.length;
+        visibleCardsServicios = Math.floor(sliderServicios.offsetWidth / cardWidthServicios);
+
+        nextBtnServicios.addEventListener("click", () => {
+            if (indexServicios < totalCardsServicios - visibleCardsServicios) {
+                indexServicios++;
+                sliderServicios.style.transform = `translateX(-${indexServicios * cardWidthServicios}px)`;
+            }
+        });
+
+        prevBtnServicios.addEventListener("click", () => {
+            if (indexServicios > 0) {
+                indexServicios--;
+                sliderServicios.style.transform = `translateX(-${indexServicios * cardWidthServicios}px)`;
+            }
+        });
+    }, 300); // Pequeño retraso para que cargue correctamente
+});
 
     
     /* ==========================
@@ -79,4 +93,3 @@ document.addEventListener("DOMContentLoaded", () => {
         indexTestimonios = (indexTestimonios + 1) % totalSlidesTestimonios;
         moveSlideTestimonios();
     }, 7000);
-});

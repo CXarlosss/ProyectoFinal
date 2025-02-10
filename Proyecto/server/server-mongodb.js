@@ -5,9 +5,9 @@ const URI = "mongodb://127.0.0.1:27017";
 const client = new MongoClient(URI);
 const dbName = "LocalMarket";
 
-/**
- * 🔄 Conecta a la base de datos (se ejecuta solo una vez)
- */
+
+
+
 async function connectDB() {
     // @ts-ignore
     if (!client.topology || !client.topology.isConnected()) {
@@ -17,6 +17,45 @@ async function connectDB() {
     return client.db(dbName);
 }
 
+/**
+ * 🔄 Función para probar la conexión a MongoDB
+ */
+async function testMongoConnection() {
+    try {
+        console.log("🔄 Intentando conectar a MongoDB...");
+        
+        await client.connect();
+        console.log("✅ Conectado a MongoDB correctamente");
+
+        const db = client.db(dbName);
+        console.log(`🔍 Bases de datos disponibles:`);
+        const databases = await client.db().admin().listDatabases();
+        console.table(databases.databases);
+
+        // 📌 Verifica si la colección "servicios" existe
+        const collections = await db.listCollections().toArray();
+        const collectionNames = collections.map(col => col.name);
+        console.log("📂 Colecciones en la base de datos:", collectionNames);
+
+        // 📌 Prueba insertando un dato de prueba
+        const testCollection = db.collection("test");
+        const result = await testCollection.insertOne({ mensaje: "Prueba de conexión", fecha: new Date() });
+        console.log("✅ Documento de prueba insertado con ID:", result.insertedId);
+
+        // 📌 Elimina el documento de prueba
+        await testCollection.deleteOne({ _id: result.insertedId });
+        console.log("🗑️ Documento de prueba eliminado correctamente");
+
+    } catch (error) {
+        console.error("❌ Error conectando a MongoDB:", error);
+    } finally {
+        await client.close();
+        console.log("🔌 Conexión cerrada");
+    }
+}
+
+// 📌 Ejecutar la prueba
+testMongoConnection();
 // 📌 Módulo de base de datos
 export const db = {
     servicios: {
@@ -46,7 +85,7 @@ async function getServicios(filter = {}) {
 /**
  * 📌 Crear un nuevo servicio
  * @param {object} servicio - Datos del servicio a insertar.
- * @returns {Promise<object>} - Servicio insertado con su `_id`.
+ * @returns {Promise<object>} - Servicio insertado con su _id.
  */
 async function createServicios(servicio) {
     const db = await connectDB();
@@ -93,7 +132,7 @@ async function getUsers(filter = {}) {
 /**
  * 📌 Crear un nuevo usuario
  * @param {object} user - Datos del usuario a insertar.
- * @returns {Promise<object>} - Usuario insertado con su `_id`.
+ * @returns {Promise<object>} - Usuario insertado con su _id.
  */
 async function createUser(user) {
     const db = await connectDB();

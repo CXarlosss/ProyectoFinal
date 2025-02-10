@@ -1,7 +1,7 @@
 import fs from 'fs';
 
-export async function deleteById(file, id, callback) {
-  console.log('delete', id);
+export async function deleteById(file, _id, callback) {
+  console.log('delete', _id);
   let updatedData = [];
   try {
     if (fs.existsSync(file)) {
@@ -9,7 +9,7 @@ export async function deleteById(file, id, callback) {
         const parsedData = JSON.parse(data.toString());
         // Filter by filterParams
         updatedData = parsedData.filter((item) => {
-          return item.id !== Number(id); // Convertir `id` a número antes de compararlo
+          return item._id !== Number(_id); // Convertir `_id` a número antes de compararlo
         });
         
 

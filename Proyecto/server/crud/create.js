@@ -17,9 +17,9 @@ async function insertData(file, data, callback) {
   let parsedData = []
   await read(file, (readData) => {
     parsedData = [...readData];
-    if (!data.id) {
+    if (!data._id) {
       const timestamp = new Date()
-      data.id = String(timestamp.getTime())
+      data._id = String(timestamp.getTime())
     }
     parsedData.push(data);
 

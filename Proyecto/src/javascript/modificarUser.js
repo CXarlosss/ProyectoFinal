@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
   /** @type {import("../clases/class.js").Usuario | null} */
   const usuario = usuarioRegistrado ? JSON.parse(usuarioRegistrado) : null;
 
-  if (!usuario || typeof usuario !== "object" || !("id" in usuario)) {
+  if (!usuario || typeof usuario !== "object" || !("_id" in usuario)) {
       console.warn("⚠️ El usuario registrado en localStorage no es válido.");
       alert("No hay usuario registrado.");
       window.location.href = "registrar.html";
@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
           inputCorreo.disabled = true; // Deshabilitar la edición del correo
       }
   });
-  console.log("📌 Enviando actualización para el usuario ID:", usuario.id);
+  console.log("📌 Enviando actualización para el usuario _id:", usuario._id);
 
 
   /**
@@ -70,9 +70,9 @@ document.addEventListener("DOMContentLoaded", () => {
   formEditarUsuario?.addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      if (!usuario || !usuario.id) {
-          console.error("❌ ERROR: El ID del usuario es inválido o no está definido.");
-          alert("No se puede actualizar el usuario porque su ID no es válido.");
+      if (!usuario || !usuario._id) {
+          console.error("❌ ERROR: El _id del usuario es inválido o no está definido.");
+          alert("No se puede actualizar el usuario porque su _id no es válido.");
           return;
       }
 
@@ -84,11 +84,11 @@ document.addEventListener("DOMContentLoaded", () => {
           password: inputPassword?.value.trim() || usuario.password
       };
 
-      console.log("📌 Enviando actualización para el usuario ID:", usuario.id);
+      console.log("📌 Enviando actualización para el usuario _id:", usuario._id);
       console.log("📩 Datos enviados al backend:", datosActualizados);
 
       try {
-          const resultado = await fetch(`http://${location.hostname}:3001/update/users/${usuario.id}`, {
+          const resultado = await fetch(`http://${location.hostname}:3001/update/users/${usuario._id}`, {
               method: "PUT",
               headers: {
                   "Content-Type": "application/json",

@@ -1,7 +1,7 @@
 import fs from 'fs';
 
-export async function update(file, id, modifiedData, callback) {
-  console.log('update', id, modifiedData);
+export async function update(file, _id, modifiedData, callback) {
+  console.log('update', _id, modifiedData);
   let updatedItem
   try {
     if (fs.existsSync(file)) {
@@ -11,12 +11,12 @@ export async function update(file, id, modifiedData, callback) {
         console.log("update ParsedData")
         const updatedData = parsedData.map((item) => {
          
-          if (String(item.id) !== String(id)) { 
+          if (String(item._id) !== String(_id)) { 
             
             return item
             
           } else {
-            console.log(item.id, id)
+            console.log(item._id, _id)
             console.log('update', item, modifiedData);
             updatedItem = {
               ...item,

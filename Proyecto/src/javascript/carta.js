@@ -11,12 +11,12 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
     const urlParams = new URLSearchParams(window.location.search);
-    const servicioId = urlParams.get("id");
+    const servicioId = urlParams.get("_id");
     
-    console.log("📌 ID del servicio obtenido de la URL:", servicioId);
+    console.log("📌 _id del servicio obtenido de la URL:", servicioId);
     
     if (!servicioId) {
-        console.error("❌ No se encontró el ID del servicio en la URL.");
+        console.error("❌ No se encontró el _id del servicio en la URL.");
     }
     
 
@@ -66,26 +66,26 @@ document.addEventListener("DOMContentLoaded", () => {
   
           console.log("📌 Servicios cargados desde la API:", serviciosAPI);
   
-          // ✅ Buscar el servicio con el ID de la URL
+          // ✅ Buscar el servicio con el _id de la URL
           const urlParams = new URLSearchParams(window.location.search);
-          const servicioId = urlParams.get("id");
+          const servicioId = urlParams.get("_id");
   
           if (!servicioId) {
-              console.error("❌ No se encontró el ID del servicio en la URL.");
+              console.error("❌ No se encontró el _id del servicio en la URL.");
               return;
           }
   
           /** @type {typeof serviciosAPI[0] | undefined} */
-          const servicio = serviciosAPI.find(serv => serv.id.toString() === servicioId);
+          const servicio = serviciosAPI.find(serv => serv._id.toString() === servicioId);
   
-          console.log("📌 Buscando servicio con ID:", servicioId);
+          console.log("📌 Buscando servicio con _id:", servicioId);
           console.log("📌 Servicio encontrado:", servicio);
   
           if (!servicio) {
               servicioContainer && (servicioContainer.innerHTML = `
                   <div class="error-message">
-                      <p>❌ El servicio con ID <code>${servicioId}</code> no se encuentra en la lista de servicios.</p>
-                      <p>Por favor, verifica el ID o vuelve a la lista de servicios.</p>
+                      <p>❌ El servicio con _id <code>${servicioId}</code> no se encuentra en la lista de servicios.</p>
+                      <p>Por favor, verifica el _id o vuelve a la lista de servicios.</p>
                   </div>
               `);
               return;
@@ -103,8 +103,8 @@ document.addEventListener("DOMContentLoaded", () => {
                   <p><strong>Método de Pago:</strong> ${servicio.metodoPago || "No especificado"}</p>
                   <p><strong>Etiquetas:</strong> ${servicio.etiquetas || "No definidas"}</p>
                   <p><strong>Contacto:</strong> <a href="mailto:${servicio.emailUsuario}">${servicio.emailUsuario || "No disponible"}</a></p>
-                  <button id="btn-ir-chat">Enviar Mensaje</button>
-                  <button id="btn-volver">⬅️ Volver a Servicios</button>
+                  <button _id="btn-ir-chat">Enviar Mensaje</button>
+                  <button _id="btn-volver">⬅️ Volver a Servicios</button>
               </div>
               <div class="servicio-imagen">
                   <img src="${servicio.imagen || 'default.jpg'}" alt="Imagen del servicio">
@@ -118,7 +118,7 @@ document.addEventListener("DOMContentLoaded", () => {
           if (btnIrChat) {
               btnIrChat.addEventListener("click", () => {
                   localStorage.setItem("servicioSeleccionado", JSON.stringify(servicio));
-                  window.location.href = `paginadelusuario.html?servicioId=${encodeURIComponent(servicio.id)}&servicioNombre=${encodeURIComponent(servicio.nombre)}`;
+                  window.location.href = `paginadelusuario.html?servicioId=${encodeURIComponent(servicio._id)}&servicioNombre=${encodeURIComponent(servicio.nombre)}`;
               });
           }
   

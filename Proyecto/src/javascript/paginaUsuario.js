@@ -61,16 +61,33 @@ document.addEventListener("DOMContentLoaded", () => {
     function abrirChat(chatId, nombreChat = "") {
         usuarioActivo = chatId;
     
-        const nombresServicios = JSON.parse(localStorage.getItem("nombresServicios") || "{}");
-        const nombreReal = nombresServicios[chatId] || nombreChat || `Conversación sin nombre (${chatId})`;
+        let nombresServicios = JSON.parse(localStorage.getItem("nombresServicios") || "{}");
+    
+        console.log("📌 [abrirChat] Intentando abrir chat con ID:", chatId);
+        console.log("📌 [abrirChat] Estado actual de nombresServicios en localStorage:", nombresServicios);
+    
+        // Verificar si el nombre está en favoritos antes de asignar otro por defecto
+        let favoritos = JSON.parse(localStorage.getItem(`favoritos_${usuario.id}`) || "[]");
+        let favorito = favoritos.find((/** @type {{ id: string; }} */ fav) => fav.id === chatId);
+    
+        let nombreReal = nombresServicios[chatId] || nombreChat || (favorito ? favorito.nombre : `Conversación sin nombre (${chatId})`);
+    
+        // Si el nombre no existe en nombresServicios pero sí en favoritos, lo guardamos correctamente
+        if (!nombresServicios[chatId] && favorito) {
+            nombresServicios[chatId] = favorito.nombre;
+            localStorage.setItem("nombresServicios", JSON.stringify(nombresServicios));
+            console.log("✅ [abrirChat] Nombre corregido desde favoritos:", favorito.nombre);
+        }
     
         if (chatTitulo) chatTitulo.textContent = `Conversación con ${nombreReal}`;
         if (chatPopup) chatPopup.classList.add("active");
     
-        console.log("📌 Chat abierto:", chatId, "Nombre mostrado:", nombreReal);
+        console.log("📌 [abrirChat] Nombre mostrado en la interfaz:", nombreReal);
     
         actualizarMensajes(chatId);
     }
+    
+    
     
     
     
@@ -81,15 +98,16 @@ document.addEventListener("DOMContentLoaded", () => {
     
 
     function guardarNombreChat(chatId, nombreChat) {
-        if (!chatId || !nombreChat) return;
+        if (!chatId || !nombreChat.trim()) return;
     
         let nombresServicios = JSON.parse(localStorage.getItem("nombresServicios") || "{}");
     
-        nombresServicios[chatId] = nombreChat; // 📌 Asignar correctamente el nombre al chat
+        nombresServicios[chatId] = nombreChat.trim(); 
     
         localStorage.setItem("nombresServicios", JSON.stringify(nombresServicios));
     
-        console.log("📌 Nombre del chat guardado correctamente en localStorage:", nombresServicios);
+        console.log("✅ [guardarNombreChat] Guardado correctamente:", chatId, nombreChat);
+        console.log("📌 Estado actual de nombresServicios en localStorage:", nombresServicios);
     }
     
     btnCreateChat?.addEventListener("click", () => {
@@ -100,7 +118,10 @@ document.addEventListener("DOMContentLoaded", () => {
     
         if (!conversaciones[chatId]) {
             conversaciones[chatId] = [];
-            guardarNombreChat(chatId, nombreChat); // ✅ Guardamos correctamente el nombre
+            
+            // 📌 Guardar el nombre correctamente
+            guardarNombreChat(chatId, nombreChat);
+    
             guardarMensajes();
             cargarChats();
             alert(`Chat con ${nombreChat} creado exitosamente.`);
@@ -122,18 +143,32 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
     
-        // 📌 Obtener nombres guardados desde `localStorage`
-        const nombresServicios = JSON.parse(localStorage.getItem("nombresServicios") || "{}");
+        let nombresServicios = JSON.parse(localStorage.getItem("nombresServicios") || "{}");
+        let favoritos = JSON.parse(localStorage.getItem(`favoritos_${usuario.id}`) || "[]");
     
-        console.log("📌 Nombres de chats guardados en localStorage:", nombresServicios);
+        console.log("📌 [cargarChats] Estado actual de nombresServicios en localStorage:", nombresServicios);
+        console.log("📌 [cargarChats] Chats detectados en conversaciones:", chats);
     
         chats.forEach(chatId => {
             let nombreChat = nombresServicios[chatId];
     
-            if (!nombreChat) {
-                console.warn(`🚨 Nombre no encontrado en nombresServicios para chatId: ${chatId}`);
-                nombreChat = `Conversación sin nombre (${chatId})`; // 📌 Evitar mostrar solo el ID
+            // Si el chat está en favoritos, aseguramos que mantiene ese nombre
+            let favorito = favoritos.find((/** @type {{ id: string; }} */ fav) => fav.id === chatId);
+            if (favorito && favorito.nombre) {
+                console.log(`✅ [cargarChats] Corrigiendo nombre de ${chatId} a ${favorito.nombre} desde favoritos.`);
+                nombreChat = favorito.nombre;
+                nombresServicios[chatId] = favorito.nombre;
+                localStorage.setItem("nombresServicios", JSON.stringify(nombresServicios));
             }
+    
+            if (!nombreChat || nombreChat.startsWith("Conversación sin nombre")) {
+                console.warn(`🚨 [cargarChats] Nombre no encontrado para chatId: ${chatId}, asignando nombre automático.`);
+                nombreChat = `Chat ${Object.keys(nombresServicios).length + 1}`;
+                nombresServicios[chatId] = nombreChat;
+                localStorage.setItem("nombresServicios", JSON.stringify(nombresServicios));
+            }
+    
+            console.log(`✅ [cargarChats] Chat ${chatId} asignado con nombre: ${nombreChat}`);
     
             const chatItem = document.createElement("div");
             chatItem.classList.add("chat-item");
@@ -145,6 +180,9 @@ document.addEventListener("DOMContentLoaded", () => {
             chatList.appendChild(chatItem);
         });
     }
+    
+    
+    cargarFavoritos();    
     
     cargarChats();
 
@@ -336,3 +374,4 @@ document.addEventListener("DOMContentLoaded", () => {
     cargarChats();
     cargarFavoritos();
 });
+

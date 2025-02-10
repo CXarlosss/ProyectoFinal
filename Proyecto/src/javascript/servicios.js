@@ -1,7 +1,7 @@
 // @ts-check
 
 import { store } from "../store/redux.js";
-import { HttpError } from '../classes/HttpError.js'
+
 
 import { simpleFetch } from "../lib/simpleFetch.js";
 
@@ -38,7 +38,7 @@ if (!usuarioGuardado) {
   return;
 }
 
-/** @type {{ id: string, email: string }} */
+/** @type {{ _id: string, email: string }} */
 const usuario = JSON.parse(usuarioGuardado);
 
 console.log("📌 Usuario cargado desde localStorage:", usuario);
@@ -51,7 +51,7 @@ console.log("📌 Usuario cargado desde localStorage:", usuario);
 
 
 
-  /** @type {{ servicios: { id: string, nombre: string, descripcion: string, ubicacion: string, valoracion: string, imagen: string, categoria: string }[], favoritos: { id: string, nombre: string }[] }} */
+  /** @type {{ servicios: { _id: string, nombre: string, descripcion: string, ubicacion: string, valoracion: string, imagen: string, categoria: string }[], favoritos: { _id: string, nombre: string }[] }} */
   const state = {
     servicios: [],
     favoritos: [],
@@ -88,8 +88,8 @@ serviciosContainer.addEventListener("click", async (e) => {
 
   // 📌 Editar servicio
   if (target.classList.contains("btn-editar")) {
-    const id = target.getAttribute("data-id");
-    const servicio = state.servicios.find((s) => s.id === id);
+    const _id = target.getAttribute("data-_id");
+    const servicio = state.servicios.find((s) => s._id === _id);
 
     if (!servicio) {
       console.error("Error: No se encontró el servicio a editar.");
@@ -102,62 +102,22 @@ serviciosContainer.addEventListener("click", async (e) => {
 
     const datosActualizados = { ...servicio, nombre: nuevoNombre };
 
-    await actualizarServicio(id, datosActualizados);
+    await actualizarServicio(_id, datosActualizados);
   }
 
   // 📌 Eliminar servicio
   if (target.classList.contains("btn-eliminar")) {
-    const id = target.getAttribute("data-id");
-    if (!id) return;
+    const _id = target.getAttribute("data-_id");
+    if (!_id) return;
 
     const confirmacion = confirm("¿Estás seguro de que quieres eliminar este servicio?");
     if (confirmacion) {
-      await eliminarServicio(id);
+      await eliminarServicio(_id);
     }
   }
 });
 
 
-/**
- * Get data from API
- * @param {string} apiURL
- * @param {string} method
- * @param {Object} [data]
-
- */
-async function getAPIData(apiURL = 'api/servicios.json', method = 'GET', data) {
-  let apiData
-
-  try {
-    let headers = new Headers()
-    headers.append('Content-Type', 'application/json')
-    headers.append('Access-Control-Allow-Origin', '*')
-    if (data) {
-      headers.append('Content-Length', String(JSON.stringify(data).length))
-    }
-    apiData = await simpleFetch(apiURL, {
-      // Si la petición tarda demasiado, la abortamos
-      signal: AbortSignal.timeout(3000),
-      method: method,
-      body: data ?? undefined,
-      headers: headers
-    });
-  } catch (/** @type {any | HttpError} */err) {
-    if (err.name === 'AbortError') {
-      console.error('Fetch abortado');
-    }
-    if (err instanceof HttpError) {
-      if (err.response.status === 404) {
-        console.error('Not found');
-      }
-      if (err.response.status === 500) {
-        console.error('Internal server error');
-      }
-    }
-  }
-
-  return apiData
-} 
 function renderServicios(serviciosFiltrados = getServiciosDesdeStore()) {
   console.log("🛠 Ejecutando renderServicios con:", serviciosFiltrados);
 
@@ -198,8 +158,8 @@ function renderServicios(serviciosFiltrados = getServiciosDesdeStore()) {
 
   serviciosContainer.innerHTML = serviciosFiltrados
     .slice(0, 7) // ✅ Mostrar solo 7 servicios
-    .map((/** @type {{ id: string; emailUsuario: string; imagen: any; nombre: any; descripcion: any; ubicacion: any; valoracion: any; }} */ servicio) => {
-      if (!servicio || !servicio.id) return "";
+    .map((/** @type {{ _id: string; emailUsuario: string; imagen: any; nombre: any; descripcion: any; ubicacion: any; valoracion: any; }} */ servicio) => {
+      if (!servicio || !servicio._id) return "";
       let esPropietario = false;
 
       console.log("📌 Servicio:", servicio);
@@ -217,27 +177,28 @@ function renderServicios(serviciosFiltrados = getServiciosDesdeStore()) {
           <p><strong>Valoración:</strong> ${servicio.valoracion || "No valorado"}</p>
           
           <!-- BOTÓN "MÁS DETALLES" -->
-          <button class="btn-detalles" data-id="${servicio.id}">📜 Más Detalles</button>
+          <button class="btn-detalles" data-_id="${servicio._id}">📜 Más Detalles</button>
 
           <!-- BOTÓN "AÑADIR A FAVORITOS" -->
-          <button class="btn-favorito ${state.favoritos.some(fav => fav.id === servicio.id) ? "favorito" : ""}" 
-                  data-id="${servicio.id}" 
+          <button class="btn-favorito ${state.favoritos.some(fav => fav._id === servicio._id) ? "favorito" : ""}" 
+                  data-_id="${servicio._id}" 
                   data-nombre="${servicio.nombre || ""}">
-            ${state.favoritos.some(fav => fav.id === servicio.id) ? "★ Favorito" : "☆ Añadir a Favoritos"}
+            ${state.favoritos.some(fav => fav._id === servicio._id) ? "★ Favorito" : "☆ Añadir a Favoritos"}
           </button>
 
           <!-- BOTÓN EDITAR (SOLO SI EL USUARIO ES EL PROPIETARIO) -->
-          ${esPropietario ? `<button class="btn-editar" data-id="${String(servicio.id)}">✏️ Editar</button>` : ""}
+          ${esPropietario ? `<button class="btn-editar" data-_id="${String(servicio._id)}">✏️ Editar</button>` : ""}
 
     
           <!-- BOTÓN ELIMINAR (SOLO SI EL USUARIO ES EL PROPIETARIO) -->
-          ${esPropietario ? `<button class="btn-eliminar" data-id="${servicio.id}">🗑 Eliminar</button>` : ""}
+          ${esPropietario ? `<button class="btn-eliminar" data-_id="${servicio._id}">🗑 Eliminar</button>` : ""}
         </div>
       `;
     })
     .join("");
 
-  console.log("✅ Servicios renderizados en la UI.");
+    console.log("✅ Contenido final en serviciosContainer:");
+
 }
 
 serviciosContainer.addEventListener("click", async (e) => {
@@ -245,41 +206,41 @@ serviciosContainer.addEventListener("click", async (e) => {
   if (!target) return;
     console.log("🛠 Clic detectado en:", target); //  Debugging
   if (target.classList.contains("btn-detalles")) {
-    const id = target.getAttribute("data-id");
-    console.log("📌 ID del servicio seleccionado:", id);
+    const _id = target.getAttribute("data-_id");
+    console.log("📌 _id del servicio seleccionado:", _id);
 
-    if (id) {
-      window.location.href = `serviciosin.html?id=${encodeURIComponent(id)}`;
+    if (_id) {
+      window.location.href = `serviciosin.html?_id=${encodeURIComponent(_id)}`;
     } else {
-      console.error("❌ Error: No se encontró el ID del servicio.");
+      console.error("❌ Error: No se encontró el _id del servicio.");
     }
   }
 
   // 📌 Añadir a Favoritos
   if (target.classList.contains("btn-favorito")) {
-    const id = target.getAttribute("data-id");
+    const _id = target.getAttribute("data-_id");
     const nombre = target.getAttribute("data-nombre");
 
-    if (id && nombre) {  // ✅ Asegurar que no son null
-      toggleFavorito(id, nombre);
+    if (_id && nombre) {  // ✅ Asegurar que no son null
+      toggleFavorito(_id, nombre);
     } else {
-      console.error("🚨 Error: ID o nombre inválido en el botón de favoritos.");
-    }console.log("📌 ID del servicio a editar:", id);
+      console.error("🚨 Error: _id o nombre inválido en el botón de favoritos.");
+    }console.log("📌 _id del servicio a editar:", _id);
   }
 
    // 📌 EDITAR SERVICIO
    if (target.classList.contains("btn-editar")) {
     console.log("🔍 Botón de editar detectado.");
     
-    const id = Number(target.getAttribute("data-id"));
-    console.log("📌 ID del servicio a editar:", id);
+    const _id = Number(target.getAttribute("data-_id"));
+    console.log("📌 _id del servicio a editar:", _id);
 
-    if (!id) {
-      console.error("❌ ERROR: No se encontró el ID en el botón.");
+    if (!_id) {
+      console.error("❌ ERROR: No se encontró el _id en el botón.");
       return;
     }
 
-    const servicio = state.servicios.find((s) => Number(s.id) === id);
+    const servicio = state.servicios.find((s) => Number(s._id) === _id);
     console.log("🔍 Servicio encontrado:", servicio);
 
     if (!servicio) {
@@ -293,7 +254,7 @@ serviciosContainer.addEventListener("click", async (e) => {
     const datosActualizados = { ...servicio, nombre: nuevoNombre };
     console.log("📌 Datos actualizados:", datosActualizados);
     try {
-      const resultado = await actualizarServicio(id, datosActualizados);
+      const resultado = await actualizarServicio(_id, datosActualizados);
       console.log("✅ Resultado de actualización:", resultado);
 
       if (resultado) {
@@ -309,28 +270,28 @@ serviciosContainer.addEventListener("click", async (e) => {
 
   // 📌 Eliminar servicio (Solo si el usuario es el propietario)
   if (target.classList.contains("btn-eliminar")) {
-    const id = target.getAttribute("data-id");
-    if (!id) return;
+    const _id = target.getAttribute("data-_id");
+    if (!_id) return;
 
     const confirmacion = confirm("¿Estás seguro de que quieres eliminar este servicio?");
     if (confirmacion) {
-      await eliminarServicio(id);
+      await eliminarServicio(_id);
     }
   }
 });
 
 /**
  * Añadir o quitar un servicio de favoritos
- * @param {string} id
+ * @param {string} _id
  * @param {string} nombre
  */
-function toggleFavorito(id, nombre) {
-  const index = state.favoritos.findIndex((fav) => fav.id === id);
+function toggleFavorito(_id, nombre) {
+  const index = state.favoritos.findIndex((fav) => fav._id === _id);
 
   if (index !== -1) {
     state.favoritos.splice(index, 1);
   } else {
-    state.favoritos.push({ id, nombre });
+    state.favoritos.push({ _id, nombre });
   }
 
   guardarFavoritos();
@@ -338,24 +299,24 @@ function toggleFavorito(id, nombre) {
 }
 
 function guardarFavoritos() {
-  localStorage.setItem(`favoritos_${usuario.id}`, JSON.stringify(state.favoritos));
+  localStorage.setItem(`favoritos_${usuario._id}`, JSON.stringify(state.favoritos));
 }
 
 function cargarFavoritos() {
-  const favoritosGuardados = localStorage.getItem(`favoritos_${usuario.id}`);
+  const favoritosGuardados = localStorage.getItem(`favoritos_${usuario._id}`);
   state.favoritos = favoritosGuardados ? JSON.parse(favoritosGuardados) : [];
 }
   /**
-   * @param {any} id
+   * @param {any} _id
    * @param {any} datosActualizados
    */
    // 📌 Función para actualizar un servicio
-   async function actualizarServicio(id, datosActualizados) {
+   async function actualizarServicio(_id, datosActualizados) {
     try {
-      console.log(`📌 Enviando actualización para el servicio con ID ${id}:`, datosActualizados);
+      console.log(`📌 Enviando actualización para el servicio con _id ${_id}:`, datosActualizados);
   
     
-      const response = await fetch(`http://${location.hostname}:${API_PORT}/update/servicios/${id}`, {
+      const response = await fetch(`http://${location.hostname}:${API_PORT}/update/servicios/${_id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -367,7 +328,7 @@ function cargarFavoritos() {
         throw new Error(`Error en la actualización: ${response.statusText}`);
       }
   
-      console.log(`✅ Servicio con ID ${id} actualizado correctamente.`);
+      console.log(`✅ Servicio con _id ${_id} actualizado correctamente.`);
   
       // 🔄 Recargar la lista de servicios después de actualizar
       await cargarServicios(); // ✅ Esto actualizará `state.servicios` con los datos más recientes
@@ -381,20 +342,20 @@ function cargarFavoritos() {
   
   // 📌 Función para eliminar un servicio
   /**
-   * @param {any} id
+   * @param {any} _id
    */
-  async function eliminarServicio(id) {
+  async function eliminarServicio(_id) {
     try {
-      console.log(`📌 Eliminando servicio con ID ${id}...`);
+      console.log(`📌 Eliminando servicio con _id ${_id}...`);
 
-      const response = await fetch(`http://${location.hostname}:3001/delete/servicios/${id}`, {
+      const response = await fetch(`http://${location.hostname}:3001/delete/servicios/${_id}`, {
         method: "DELETE",
       });
       
 
       if (!response.ok) throw new Error(`Error en la eliminación: ${response.statusText}`);
 
-      console.log(`✅ Servicio con ID ${id} eliminado correctamente.`);
+      console.log(`✅ Servicio con _id ${_id} eliminado correctamente.`);
       cargarServicios(); // Recargar la UI
     } catch (error) {
       console.error("🚨 Error al eliminar el servicio:", error);
@@ -420,7 +381,7 @@ function cargarFavoritos() {
     }
 
     try {
-      /** @type {Array<{ id: string, nombre: string, descripcion: string, ubicacion: string, valoracion: string, imagen: string, categoria: string }>} */
+      /** @type {Array<{ _id: string, nombre: string, descripcion: string, ubicacion: string, valoracion: string, imagen: string, categoria: string }>} */
       const serviciosFiltrados = state.servicios.filter(
         (servicio) =>
           servicio?.nombre?.toLowerCase()?.includes(terminoBusqueda) ||
@@ -474,7 +435,7 @@ function cargarFavoritos() {
     e.preventDefault();
 
     const nuevoServicio = {
-      id: Number(Date.now().toString()),
+      _id: Number(Date.now().toString()),
       nombre: /** @type {HTMLInputElement} */ (
         document.getElementById("nombre-servicio")
       ).value,
@@ -510,7 +471,7 @@ function cargarFavoritos() {
       etiquetas: /** @type {HTMLInputElement} */ (
         document.getElementById("etiquetas-servicio")
       ).value,
-      usuarioId: usuario ? usuario.id : null,
+      usuarioId: usuario ? usuario._id : null,
       emailUsuario: usuario ? usuario.email : null
     };
 
@@ -548,8 +509,8 @@ function cargarFavoritos() {
 
     // 📌 Editar servicio
     if (target.classList.contains("btn-editar")) {
-      const id = target.getAttribute("data-id");
-      const servicio = state.servicios.find((s) => s.id === id);
+      const _id = target.getAttribute("data-_id");
+      const servicio = state.servicios.find((s) => s._id === _id);
 
       if (!servicio) {
         console.error("Error: No se encontró el servicio a editar.");
@@ -558,17 +519,17 @@ function cargarFavoritos() {
 
       // 📌 Aquí abrirías un modal con los datos del servicio a editar
       const datosActualizados = { ...servicio, nombre: "Nuevo Nombre" }; // Simulación de edición
-      actualizarServicio(id, datosActualizados);
+      actualizarServicio(_id, datosActualizados);
     }
 
     // 📌 Eliminar servicio
     if (target.classList.contains("btn-eliminar")) {
-      const id = target.getAttribute("data-id");
-      if (!id) return;
+      const _id = target.getAttribute("data-_id");
+      if (!_id) return;
 
       const confirmacion = confirm("¿Estás seguro de que quieres eliminar este servicio?");
       if (confirmacion) {
-        eliminarServicio(id);
+        eliminarServicio(_id);
       }
     }
   });

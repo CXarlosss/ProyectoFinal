@@ -18,12 +18,12 @@ const SERVICIOS_URL = './BBDD/servicios.json'
 export const crud = {
   createU: (file = USERS_URL, data, callback) => create(file, data, callback),
   readU: (file = USERS_URL, callback) => read(file, callback),
-  updateU: (file = USERS_URL, id, data, callback) => update(file, id, data, callback),
-  deleteU: (file = USERS_URL, id, callback) => deleteById(file, id, callback),
+  updateU: (file = USERS_URL, _id, data, callback) => update(file, _id, data, callback),
+  deleteU: (file = USERS_URL, _id, callback) => deleteById(file, _id, callback),
   filterU: (file = USERS_URL, filterParams, callback) => filter(file, filterParams, callback),
   createS: (file = SERVICIOS_URL, data, callback) => create(file, data, callback),
   readS: (file = SERVICIOS_URL, callback) => read(file, callback),
-  updateS: (file = SERVICIOS_URL, id, data, callback) => update(file, id, data, callback),
-  deleteS: (file = SERVICIOS_URL, id, callback) => deleteById(file, id, callback),
+  updateS: (file = SERVICIOS_URL, _id, data, callback) => update(file, _id, data, callback),
+  deleteS: (file = SERVICIOS_URL, _id, callback) => deleteById(file, _id, callback),
   filterS: (file = SERVICIOS_URL, filterParams, callback) => filter(file, filterParams, callback),
 };

@@ -65,7 +65,7 @@ export const appReducer = (state = INITIAL_STATE, action) => {
       if (typeof action.payload === "number") {
         return {
           ...state,
-          usuarios: state.usuarios.filter((/** @type {{ id: string | number | Usuario | Servicio | null | undefined; }} */ usuario) => usuario.id !== action.payload),
+          usuarios: state.usuarios.filter((/** @type {{ _id: string | number | Usuario | Servicio | null | undefined; }} */ usuario) => usuario._id !== action.payload),
           servicios: state.servicios.filter((/** @type {{ usuarioId: string | number | Usuario | Servicio | null | undefined; }} */ servicio) => servicio.usuarioId !== action.payload),
         };
       }
@@ -76,7 +76,7 @@ export const appReducer = (state = INITIAL_STATE, action) => {
       if (typeof action.payload === "number") {
         return {
           ...state,
-          servicios: state.servicios.filter((/** @type {{ id: string | number | Usuario | Servicio | null | undefined; }} */ servicio) => servicio.id !== action.payload),
+          servicios: state.servicios.filter((/** @type {{ _id: string | number | Usuario | Servicio | null | undefined; }} */ servicio) => servicio._id !== action.payload),
         };
       }
       console.error("Payload inválido para REMOVE_SERVICE");
@@ -99,7 +99,7 @@ export const appReducer = (state = INITIAL_STATE, action) => {
       if (typeof action.payload === "number") {
         return {
           ...state,
-          servicioMostrado: state.servicios.find((/** @type {{ id: string | number | Usuario | Servicio | null | undefined; }} */ servicio) => servicio.id === action.payload) || null,
+          servicioMostrado: state.servicios.find((/** @type {{ _id: string | number | Usuario | Servicio | null | undefined; }} */ servicio) => servicio._id === action.payload) || null,
         };
       }
       console.error("SHOW_SERVICE recibió un payload no válido:", action.payload);
@@ -216,8 +216,8 @@ const _getDifferences = (previousValue, currentValue) => {
   const article = {
     create: (/** @type {any} */ servicio) => _dispatch({ type: "ADD_SERVICE", payload: servicio }),
     update: (/** @type {any} */ servicio) => _dispatch({ type: "UPDATE_SERVICE", payload: servicio }),
-    delete: (/** @type {any} */ id) => _dispatch({ type: "REMOVE_SERVICE", payload: id }),
-    getById: (/** @type {any} */ id) => currentState.servicios.find((/** @type {{ id: any; }} */ servicio) => servicio.id === id),
+    delete: (/** @type {any} */ _id) => _dispatch({ type: "REMOVE_SERVICE", payload: _id }),
+    getById: (/** @type {any} */ _id) => currentState.servicios.find((/** @type {{ _id: any; }} */ servicio) => servicio._id === _id),
     getAll: () => currentState.servicios,
     deleteAll: () => _dispatch({ type: "DELETE_ALL_SERVICES" }),
     loadServices: (/** @type {any} */ servicios) => _dispatch({ type: "LOAD_SERVICES", payload: servicios }),
@@ -242,7 +242,7 @@ const _getDifferences = (previousValue, currentValue) => {
       }
     },
 
-    read: (/** @type {any} */ id) => currentState.servicios.find((/** @type {{ id: any; }} */ servicio) => servicio.id === id),
+    read: (/** @type {any} */ _id) => currentState.servicios.find((/** @type {{ _id: any; }} */ servicio) => servicio._id === _id),
   };
 
   /** @type {PublicUser} */

@@ -193,60 +193,59 @@ serviciosContainer.addEventListener("click", async (e) => {
   }
 
    // 📌 EDITAR SERVICIO
-
-if (target.classList.contains("btn-editar")) {
-  console.log("🔍 Botón de editar detectado.");
+   if (target.classList.contains("btn-editar")) {
+    console.log("🔍 Botón de editar detectado.");
+    
+    let _id = target.getAttribute("data-_id");
+    console.log("📌 _id del servicio a editar:", _id);
   
-  let _id = target.getAttribute("data-_id");
-  console.log("📌 _id del servicio a editar:", _id);
-
-  if (!_id || _id.length !== 24) {
-      console.error("❌ ERROR: ID inválido para MongoDB:", _id);
-      return;
+    if (!_id || _id.length !== 24) {
+        console.error("❌ ERROR: ID inválido para MongoDB:", _id);
+        return;
+    }
+  
+    _id = String(_id);
+  
+    const servicio = state.servicios.find((s) => String(s._id) === _id);
+  
+    console.log("🔍 Servicio encontrado:", servicio);
+  
+    if (!servicio) {
+        console.error("❌ ERROR: No se encontró el servicio en el estado.");
+        return;
+    }
+  
+    // 🔥 Evitar múltiples clics en paralelo
+    if (target.hasAttribute("disabled")) return;
+    target.setAttribute("disabled", "");
+  
+    const nuevoNombre = prompt("Nuevo nombre del servicio:", servicio.nombre);
+    if (!nuevoNombre) {
+        target.removeAttribute("disabled"); // Re-enable the button if no edit
+        return;
+    }
+  
+    const { _id: id, ...updates } = servicio;
+    updates.nombre = nuevoNombre;
+  
+    try {
+        console.log("📌 Enviando actualización:", updates);
+        
+        const resultado = await actualizarServicio(id, updates);
+  
+        if (resultado) {
+            console.log("✅ Servicio actualizado correctamente.");
+            await cargarServicios();
+        } else {
+            console.error("❌ No se pudo actualizar el servicio.");
+        }
+    } catch (error) {
+        console.error("❌ Error en la actualización del servicio:", error);
+    } finally {
+        target.removeAttribute("disabled"); // Habilitar el botón después de la actualización
+    }
   }
-
-  _id = String(_id);
-
-  const servicio = state.servicios.find((s) => String(s._id) === _id);
-
-  console.log("🔍 Servicio encontrado:", servicio);
-
-  if (!servicio) {
-      console.error("❌ ERROR: No se encontró el servicio en el estado.");
-      return;
-  }
-
-  // 🔥 Evitar múltiples clics en paralelo
-  if (target.hasAttribute("disabled")) return;
-  target.setAttribute("disabled", "");
-
-  const nuevoNombre = prompt("Nuevo nombre del servicio:", servicio.nombre);
-  if (!nuevoNombre) {
-      target.removeAttribute("disabled"); // Re-enable the button if no edit
-      return;
-  }
-
-  const { _id: id, ...updates } = servicio;
-  updates.nombre = nuevoNombre;
-
-  try {
-      console.log("📌 Enviando actualización:", updates);
-      
-      const resultado = await actualizarServicio(id, updates);
-
-      if (resultado) {
-          console.log("✅ Servicio actualizado correctamente.");
-          await cargarServicios();
-      } else {
-          console.error("❌ No se pudo actualizar el servicio.");
-      }
-  } catch (error) {
-      console.error("❌ Error en la actualización del servicio:", error);
-  } finally {
-      target.removeAttribute("disabled"); // Habilitar el botón después de la actualización
-  }
-}
-
+  
 
   // 📌 Eliminar servicio (Solo si el usuario es el propietario)
   if (target.classList.contains("btn-eliminar")) {
@@ -301,6 +300,11 @@ function cargarFavoritos() {
         }
 
         console.log(`📌 Enviando actualización para el servicio con _id ${_id}:`, datosActualizados);
+
+        // 🚀 Eliminar `_id` de los datos antes de enviarlos
+        if (datosActualizados._id) {
+            delete datosActualizados._id;
+        }
 
         const response = await fetch(`http://${location.hostname}:3001/update/servicios/${_id}`, {
             method: "PUT",

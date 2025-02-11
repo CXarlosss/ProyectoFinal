@@ -38,7 +38,7 @@ app.put('/update/servicios/:_id', async (req, res) => {
     console.log(`📌 Recibiendo actualización para servicio _id: ${_id}`, req.body);
 
     // ✅ Validar que el _id sea un ObjectId válido
-    if (!_id || _id.length !== 24 || !ObjectId.isValid(_id)) {
+    if (!_id || !ObjectId.isValid(_id)) {
       console.error("❌ ERROR: ID inválido en la actualización:", _id);
       return res.status(400).json({ error: "ID inválido para MongoDB" });
     }
@@ -46,7 +46,7 @@ app.put('/update/servicios/:_id', async (req, res) => {
     // ✅ Convertir el _id a ObjectId
     const objectId = new ObjectId(_id);
 
-    // ✅ Eliminar `_id` del cuerpo si viene incluido para evitar modificarlo
+    // ✅ Eliminar `_id` del cuerpo si viene incluido
     if (req.body._id) {
       delete req.body._id;
     }

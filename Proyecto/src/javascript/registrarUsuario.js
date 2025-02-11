@@ -116,7 +116,14 @@ const usuarioExistente = Array.isArray(usuariosAPI)
   }
 
   // 📌 Crear usuario
-  const nuevoUsuario = new Usuario(Date.now(), nombre, email, password, telefono, direccion);
+  const nuevoUsuario = new Usuario(
+    Date.now().toString(),
+    nombre,
+    email,
+    password,
+    telefono,
+    direccion
+  );
   const apiResponse = await getAPIData(`http://${location.hostname}:3001/create/users`, 'POST', nuevoUsuario);
 
   if (apiResponse) {

@@ -1,7 +1,7 @@
 import { MongoClient, ObjectId } from "mongodb";
 
 // 📌 URI de conexión a MongoDB (Asegúrate de cambiarla si es necesario)
-const URI = "mongodb://127.0.0.1:27017"; 
+const URI = "mongodb://127.0.0.1:27017/"; 
 const client = new MongoClient(URI);
 const dbName = "LocalMarket";
 

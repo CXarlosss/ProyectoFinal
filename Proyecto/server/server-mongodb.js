@@ -79,7 +79,7 @@ export const db = {
  */
 async function getServicios(filter = {}) {
     const db = await connectDB();
-    return await db.collection("servicios").find(filter).toArray();
+    return await db.collection("Servicios").find(filter).toArray();
 }
 
 /**
@@ -89,7 +89,7 @@ async function getServicios(filter = {}) {
  */
 async function createServicios(servicio) {
     const db = await connectDB();
-    const result = await db.collection("servicios").insertOne(servicio);
+    const result = await db.collection("Servicios").insertOne(servicio);
     console.log("✅ Servicio creado:", result.insertedId);
     return { ...servicio, _id: result.insertedId };
 }
@@ -102,7 +102,7 @@ async function createServicios(servicio) {
  */
 async function updateServicios(id, updates) {
     const db = await connectDB();
-    const result = await db.collection("servicios").updateOne({ _id: new ObjectId(id) }, { $set: updates });
+    const result = await db.collection("Servicios").updateOne({ _id: new ObjectId(id) }, { $set: updates });
     console.log("✅ Servicio actualizado:", result.modifiedCount);
     return result;
 }
@@ -114,7 +114,7 @@ async function updateServicios(id, updates) {
  */
 async function deleteServicios(id) {
     const db = await connectDB();
-    const result = await db.collection("servicios").deleteOne({ _id: new ObjectId(id) });
+    const result = await db.collection("Servicios").deleteOne({ _id: new ObjectId(id) });
     console.log("✅ Servicio eliminado:", result.deletedCount);
     return id;
 }
@@ -126,7 +126,7 @@ async function deleteServicios(id) {
  */
 async function getUsers(filter = {}) {
     const db = await connectDB();
-    return await db.collection("users").find(filter).toArray();
+    return await db.collection("Users").find(filter).toArray();
 }
 
 /**
@@ -136,7 +136,7 @@ async function getUsers(filter = {}) {
  */
 async function createUser(user) {
     const db = await connectDB();
-    const result = await db.collection("users").insertOne(user);
+    const result = await db.collection("Users").insertOne(user);
     console.log("✅ Usuario creado:", result.insertedId);
     return { ...user, _id: result.insertedId };
 }

@@ -229,43 +229,52 @@ serviciosContainer.addEventListener("click", async (e) => {
   }
 
    // 📌 EDITAR SERVICIO
-   if (target.classList.contains("btn-editar")) {
-    console.log("🔍 Botón de editar detectado.");
-    
-    const _id = Number(target.getAttribute("data-_id"));
-    console.log("📌 _id del servicio a editar:", _id);
+// 📌 EDITAR SERVICIO
+if (target.classList.contains("btn-editar")) {
+  console.log("🔍 Botón de editar detectado.");
+  
+  let _id = target.getAttribute("data-_id"); // Capturamos el _id
+  console.log("📌 _id del servicio a editar:", _id);
 
-    if (!_id) {
-      console.error("❌ ERROR: No se encontró el _id en el botón.");
+  if (!_id || _id.length !== 24) {  // ✅ Validamos si el _id tiene la estructura correcta
+      console.error("❌ ERROR: ID inválido para MongoDB:", _id);
       return;
-    }
+  }
 
-    const servicio = state.servicios.find((s) => Number(s._id) === _id);
-    console.log("🔍 Servicio encontrado:", servicio);
+  _id = String(_id); // ✅ Convertir el _id a String para evitar errores
 
-    if (!servicio) {
+  const servicio = state.servicios.find((s) => String(s._id) === _id);
+
+  console.log("🔍 Servicio encontrado:", servicio);
+
+  if (!servicio) {
       console.error("❌ ERROR: No se encontró el servicio en el estado.");
       return;
-    }
+  }
 
-    const nuevoNombre = prompt("Nuevo nombre del servicio:", servicio.nombre);
-    if (!nuevoNombre) return;
+  const nuevoNombre = prompt("Nuevo nombre del servicio:", servicio.nombre);
+  if (!nuevoNombre) return;
 
-    const datosActualizados = { ...servicio, nombre: nuevoNombre };
-    console.log("📌 Datos actualizados:", datosActualizados);
-    try {
-      const resultado = await actualizarServicio(_id, datosActualizados);
-      console.log("✅ Resultado de actualización:", resultado);
+  // Extraemos _id y dejamos solo los datos a actualizar
+  const { _id: id, ...updates } = servicio;
+  updates.nombre = nuevoNombre;
+
+  try {
+      console.log("📌 Enviando actualización:", updates);
+      
+      const resultado = await actualizarServicio(id, updates);
 
       if (resultado) {
-        await cargarServicios(); // Recargar la lista después de actualizar
+          console.log("✅ Servicio actualizado correctamente.");
+          await cargarServicios(); // Recargar la lista después de actualizar
       } else {
-        console.error("❌ No se pudo actualizar el servicio.");
+          console.error("❌ No se pudo actualizar el servicio.");
       }
-    } catch (error) {
+  } catch (error) {
       console.error("❌ Error en la actualización del servicio:", error);
-    }
   }
+}
+
 
 
   // 📌 Eliminar servicio (Solo si el usuario es el propietario)
@@ -313,32 +322,31 @@ function cargarFavoritos() {
    // 📌 Función para actualizar un servicio
    async function actualizarServicio(_id, datosActualizados) {
     try {
-      console.log(`📌 Enviando actualización para el servicio con _id ${_id}:`, datosActualizados);
-  
-    
-      const response = await fetch(`http://${location.hostname}:${API_PORT}/update/servicios/${_id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(datosActualizados),
-      });
-  
-      if (!response.ok) {
-        throw new Error(`Error en la actualización: ${response.statusText}`);
-      }
-  
-      console.log(`✅ Servicio con _id ${_id} actualizado correctamente.`);
-  
-      // 🔄 Recargar la lista de servicios después de actualizar
-      await cargarServicios(); // ✅ Esto actualizará `state.servicios` con los datos más recientes
-  
-      return true; // Devuelve `true` para indicar que la actualización fue exitosa
+        _id = String(_id).trim();  // Asegurar que sea un string válido
+
+        console.log(`📌 Enviando actualización para el servicio con _id ${_id}:`, datosActualizados);
+
+        const response = await fetch(`http://${location.hostname}:${API_PORT}/update/servicios/${_id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(datosActualizados),
+        });
+
+        if (!response.ok) {
+            throw new Error(`Error en la actualización: ${response.statusText}`);
+        }
+
+        console.log(`✅ Servicio con _id ${_id} actualizado correctamente.`);
+        await cargarServicios(); // Recargar la lista después de actualizar
+
+        return true;
     } catch (error) {
-      console.error("🚨 Error al actualizar el servicio:", error);
-      return false;
+        console.error("🚨 Error al actualizar el servicio:", error);
+        return false;
     }
-  }
+}
+
+
   
   // 📌 Función para eliminar un servicio
   /**
@@ -347,20 +355,26 @@ function cargarFavoritos() {
   async function eliminarServicio(_id) {
     try {
       console.log(`📌 Eliminando servicio con _id ${_id}...`);
-
-      const response = await fetch(`http://${location.hostname}:3001/delete/servicios/${_id}`, {
+  
+      if (!_id || _id.length !== 24) {
+        console.error("❌ ERROR: ID inválido para MongoDB:", _id);
+        return;
+      }
+  
+      const response = await fetch(`http://${location.hostname}:${API_PORT}/delete/servicios/${_id}`, {
         method: "DELETE",
       });
-      
-
+  
       if (!response.ok) throw new Error(`Error en la eliminación: ${response.statusText}`);
-
+  
       console.log(`✅ Servicio con _id ${_id} eliminado correctamente.`);
-      cargarServicios(); // Recargar la UI
+      await cargarServicios(); // Recargar la UI después de eliminar
     } catch (error) {
       console.error("🚨 Error al eliminar el servicio:", error);
     }
   }
+  
+
 
   function buscarServicios() {
     const inputBuscador = /** @type {HTMLInputElement | null} */ (
@@ -435,7 +449,7 @@ function cargarFavoritos() {
     e.preventDefault();
 
     const nuevoServicio = {
-      _id: Number(Date.now().toString()),
+      
       nombre: /** @type {HTMLInputElement} */ (
         document.getElementById("nombre-servicio")
       ).value,

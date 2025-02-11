@@ -48,10 +48,7 @@ async function testMongoConnection() {
 
     } catch (error) {
         console.error("❌ Error conectando a MongoDB:", error);
-    } finally {
-        await client.close();
-        console.log("🔌 Conexión cerrada");
-    }
+    } 
 }
 
 // 📌 Ejecutar la prueba
@@ -89,10 +86,17 @@ async function getServicios(filter = {}) {
  */
 async function createServicios(servicio) {
     const db = await connectDB();
+
+    // Elimina cualquier `_id` manual para que MongoDB lo genere automáticamente
+    if (servicio._id) {
+        delete servicio._id;
+    }
+
     const result = await db.collection("Servicios").insertOne(servicio);
     console.log("✅ Servicio creado:", result.insertedId);
     return { ...servicio, _id: result.insertedId };
 }
+
 
 /**
  * 📌 Actualizar un servicio existente
@@ -102,10 +106,28 @@ async function createServicios(servicio) {
  */
 async function updateServicios(id, updates) {
     const db = await connectDB();
-    const result = await db.collection("Servicios").updateOne({ _id: new ObjectId(id) }, { $set: updates });
-    console.log("✅ Servicio actualizado:", result.modifiedCount);
+
+    // ✅ Verificar que el _id sea válido
+    if (!ObjectId.isValid(id)) {
+        console.error(`❌ ERROR: ID inválido para MongoDB: ${id}`);
+        throw new Error("ID inválido para MongoDB");
+    }
+
+    const objectId = new ObjectId(id); // ✅ Convertir a ObjectId
+
+    const result = await db.collection("Servicios").updateOne(
+        { _id: objectId },
+        { $set: updates }
+    );
+
+    console.log(`✅ Servicio ${id} actualizado correctamente:`, result.modifiedCount);
     return result;
 }
+
+
+
+
+
 
 /**
  * 📌 Eliminar un servicio por ID
@@ -114,7 +136,16 @@ async function updateServicios(id, updates) {
  */
 async function deleteServicios(id) {
     const db = await connectDB();
+
+    if (!ObjectId.isValid(id)) {
+        console.error("❌ ERROR: ID inválido en la eliminación:", id);
+        throw new Error("ID inválido para MongoDB");
+    }
+
+    console.log(`🗑 Eliminando servicio con _id: ${id}`);
+
     const result = await db.collection("Servicios").deleteOne({ _id: new ObjectId(id) });
+
     console.log("✅ Servicio eliminado:", result.deletedCount);
     return id;
 }

@@ -3,7 +3,6 @@
 import { store } from "../store/redux.js";
 
 
-import { simpleFetch } from "../lib/simpleFetch.js";
 
 
 const API_PORT = 3001;
@@ -63,59 +62,24 @@ console.log("📌 Usuario cargado desde localStorage:", usuario);
    // 📌 Cargar servicios desde la API
    async function cargarServicios() {
     try {
-      console.log("🔄 Cargando servicios desde la API backend...");
-  
-      const serviciosAPI = await simpleFetch(`http://${location.hostname}:${API_PORT}/read/servicios`, {
-        signal: AbortSignal.timeout(3000),
-        method: "GET",
-      });
-  
-      if (!Array.isArray(serviciosAPI)) throw new Error("⚠️ La API no devolvió un array válido de servicios.");
-  
-      console.log("📌 Servicios cargados desde la API:", serviciosAPI);
-  
-      state.servicios = serviciosAPI; // ✅ Actualizamos `state.servicios`
-      renderServicios(state.servicios); // ✅ Volvemos a renderizar la UI
+        const serviciosAPI = await fetch(`http://${location.hostname}:3001/read/servicios`);
+        const servicios = await serviciosAPI.json();
+
+        console.log("📌 Servicios obtenidos después de actualizar:", servicios);
+
+        if (!Array.isArray(servicios)) throw new Error("⚠️ La API no devolvió un array válido de servicios.");
+
+        // 🚀 Actualizar el estado global
+        state.servicios = servicios;
+
+        // 🚀 Volver a renderizar los servicios en la UI
+        renderServicios(state.servicios);
     } catch (error) {
-      console.error("🚨 Error en la carga de servicios:", error);
+        console.error("❌ Error al obtener servicios:", error);
     }
-  }
+}
+
   
-  // 📌 Evento para escuchar clics en botones de editar y eliminar
-serviciosContainer.addEventListener("click", async (e) => {
-  const target = /** @type {HTMLElement} */ (e.target);
-  if (!target) return;
-
-  // 📌 Editar servicio
-  if (target.classList.contains("btn-editar")) {
-    const _id = target.getAttribute("data-_id");
-    const servicio = state.servicios.find((s) => s._id === _id);
-
-    if (!servicio) {
-      console.error("Error: No se encontró el servicio a editar.");
-      return;
-    }
-
-    // 📌 Aquí puedes abrir un modal o directamente editarlo en la UI
-    const nuevoNombre = prompt("Nuevo nombre del servicio:", servicio.nombre);
-    if (!nuevoNombre) return;
-
-    const datosActualizados = { ...servicio, nombre: nuevoNombre };
-
-    await actualizarServicio(_id, datosActualizados);
-  }
-
-  // 📌 Eliminar servicio
-  if (target.classList.contains("btn-eliminar")) {
-    const _id = target.getAttribute("data-_id");
-    if (!_id) return;
-
-    const confirmacion = confirm("¿Estás seguro de que quieres eliminar este servicio?");
-    if (confirmacion) {
-      await eliminarServicio(_id);
-    }
-  }
-});
 
 
 function renderServicios(serviciosFiltrados = getServiciosDesdeStore()) {
@@ -229,19 +193,19 @@ serviciosContainer.addEventListener("click", async (e) => {
   }
 
    // 📌 EDITAR SERVICIO
-// 📌 EDITAR SERVICIO
+
 if (target.classList.contains("btn-editar")) {
   console.log("🔍 Botón de editar detectado.");
   
-  let _id = target.getAttribute("data-_id"); // Capturamos el _id
+  let _id = target.getAttribute("data-_id");
   console.log("📌 _id del servicio a editar:", _id);
 
-  if (!_id || _id.length !== 24) {  // ✅ Validamos si el _id tiene la estructura correcta
+  if (!_id || _id.length !== 24) {
       console.error("❌ ERROR: ID inválido para MongoDB:", _id);
       return;
   }
 
-  _id = String(_id); // ✅ Convertir el _id a String para evitar errores
+  _id = String(_id);
 
   const servicio = state.servicios.find((s) => String(s._id) === _id);
 
@@ -252,10 +216,16 @@ if (target.classList.contains("btn-editar")) {
       return;
   }
 
-  const nuevoNombre = prompt("Nuevo nombre del servicio:", servicio.nombre);
-  if (!nuevoNombre) return;
+  // 🔥 Evitar múltiples clics en paralelo
+  if (target.hasAttribute("disabled")) return;
+  target.setAttribute("disabled", "");
 
-  // Extraemos _id y dejamos solo los datos a actualizar
+  const nuevoNombre = prompt("Nuevo nombre del servicio:", servicio.nombre);
+  if (!nuevoNombre) {
+      target.removeAttribute("disabled"); // Re-enable the button if no edit
+      return;
+  }
+
   const { _id: id, ...updates } = servicio;
   updates.nombre = nuevoNombre;
 
@@ -266,15 +236,16 @@ if (target.classList.contains("btn-editar")) {
 
       if (resultado) {
           console.log("✅ Servicio actualizado correctamente.");
-          await cargarServicios(); // Recargar la lista después de actualizar
+          await cargarServicios();
       } else {
           console.error("❌ No se pudo actualizar el servicio.");
       }
   } catch (error) {
       console.error("❌ Error en la actualización del servicio:", error);
+  } finally {
+      target.removeAttribute("disabled"); // Habilitar el botón después de la actualización
   }
 }
-
 
 
   // 📌 Eliminar servicio (Solo si el usuario es el propietario)
@@ -322,11 +293,16 @@ function cargarFavoritos() {
    // 📌 Función para actualizar un servicio
    async function actualizarServicio(_id, datosActualizados) {
     try {
-        _id = String(_id).trim();  // Asegurar que sea un string válido
+        _id = String(_id).trim();
+
+        if (!_id || _id.length !== 24) {
+            console.error("❌ ERROR: ID inválido antes de la actualización.");
+            return false;
+        }
 
         console.log(`📌 Enviando actualización para el servicio con _id ${_id}:`, datosActualizados);
 
-        const response = await fetch(`http://${location.hostname}:${API_PORT}/update/servicios/${_id}`, {
+        const response = await fetch(`http://${location.hostname}:3001/update/servicios/${_id}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(datosActualizados),
@@ -336,8 +312,16 @@ function cargarFavoritos() {
             throw new Error(`Error en la actualización: ${response.statusText}`);
         }
 
-        console.log(`✅ Servicio con _id ${_id} actualizado correctamente.`);
-        await cargarServicios(); // Recargar la lista después de actualizar
+        const resultado = await response.json();
+
+        console.log(`✅ Servicio con _id ${_id} actualizado correctamente.`, resultado);
+        
+        // 🚀 ACTUALIZAR `state.servicios` PARA EVITAR DATOS ANTIGUOS
+        state.servicios = state.servicios.map(servicio =>
+            servicio._id === _id ? { ...servicio, ...datosActualizados } : servicio
+        );
+
+        renderServicios(); // 🔥 Refrescar la UI con los datos correctos
 
         return true;
     } catch (error) {
@@ -345,6 +329,7 @@ function cargarFavoritos() {
         return false;
     }
 }
+
 
 
   
@@ -516,37 +501,7 @@ function cargarFavoritos() {
       console.error("🚨 Error al crear el servicio:", error);
     }
   })
-  // 📌 Evento para escuchar clics en botones de editar y eliminar
-  serviciosContainer.addEventListener("click", (e) => {
-    const target = /** @type {HTMLElement} */ (e.target);
-    if (!target) return;
-
-    // 📌 Editar servicio
-    if (target.classList.contains("btn-editar")) {
-      const _id = target.getAttribute("data-_id");
-      const servicio = state.servicios.find((s) => s._id === _id);
-
-      if (!servicio) {
-        console.error("Error: No se encontró el servicio a editar.");
-        return;
-      }
-
-      // 📌 Aquí abrirías un modal con los datos del servicio a editar
-      const datosActualizados = { ...servicio, nombre: "Nuevo Nombre" }; // Simulación de edición
-      actualizarServicio(_id, datosActualizados);
-    }
-
-    // 📌 Eliminar servicio
-    if (target.classList.contains("btn-eliminar")) {
-      const _id = target.getAttribute("data-_id");
-      if (!_id) return;
-
-      const confirmacion = confirm("¿Estás seguro de que quieres eliminar este servicio?");
-      if (confirmacion) {
-        eliminarServicio(_id);
-      }
-    }
-  });
+  
 
   // 📌 Cargar servicios al inicio
   cargarServicios();

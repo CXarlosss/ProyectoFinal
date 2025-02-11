@@ -107,13 +107,19 @@ async function createServicios(servicio) {
 async function updateServicios(id, updates) {
     const db = await connectDB();
 
-    // ✅ Verificar que el _id sea válido
     if (!ObjectId.isValid(id)) {
         console.error(`❌ ERROR: ID inválido para MongoDB: ${id}`);
         throw new Error("ID inválido para MongoDB");
     }
 
-    const objectId = new ObjectId(id); // ✅ Convertir a ObjectId
+    const objectId = new ObjectId(id);
+
+    if (updates._id) {
+        delete updates._id; // 🔥 Asegurar que _id no se envía a MongoDB
+    }
+
+    console.log(`🔍 Actualizando servicio con ID: ${objectId}`);
+    console.log("📝 Datos nuevos para actualización:", updates);
 
     const result = await db.collection("Servicios").updateOne(
         { _id: objectId },

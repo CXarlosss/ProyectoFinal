@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const btnCerrarChat = document.getElementById("cerrar-chat");
     const btnEnviarMensaje = document.getElementById("enviar-mensaje");
     const chatPopup = document.getElementById("chat-popup");
+    
     if (!chatPopup) {
         console.error("❌ No se encontró #chat-popup en el DOM.");
         return;
@@ -100,7 +101,6 @@ export async function abrirChat(contactoId) {
     console.log(`📌 Intentado Abrir el chat con ID: ${contactoId}`);
 
     const chatPopup = document.getElementById("chat-popup");
-
     const chatMessages = document.getElementById("chat-messages");
     const chatTitulo = document.getElementById("chat-titulo");
     const mensajeInput = /** @type {HTMLInputElement | null} */ (document.getElementById("mensaje-input"));
@@ -170,7 +170,7 @@ async function enviarMensaje() {
 
     if (!mensajeInput || !chatTitulo) return;
 
-    let mensajeTexto = mensajeInput.value.trim();
+    const mensajeTexto = mensajeInput.value.trim().replace(/<[^>]*>/g, ""); // Sanitize input to prevent XSS
     if (!mensajeTexto) return;
 
     try {
@@ -178,13 +178,11 @@ async function enviarMensaje() {
         const usuario = JSON.parse(usuarioGuardado || "{}");
         const servicioId = chatTitulo.dataset.contactoId;
 
-        // Detectar si el mensaje tiene una referencia a otro mensaje
-        let mensajeReferencia = null;
-        const match = mensajeTexto.match(/^@(\w+): (.*)/);
-        if (match) {
-            mensajeReferencia = match[1]; // ID del usuario citado
-            mensajeTexto = match[2]; // Extraer solo el mensaje sin la referencia
-        }
+        // 📌 DEBUG: Verificar qué datos se envían
+        console.log("📌 Enviando mensaje con:");
+        console.log("Usuario ID:", usuario._id);
+        console.log("Servicio ID:", servicioId);
+        console.log("Contenido:", mensajeTexto);
 
         const response = await fetch(`http://${location.hostname}:3001/mensajes`, {
             method: "POST",
@@ -193,20 +191,22 @@ async function enviarMensaje() {
                 usuarioId: usuario._id,
                 servicioId,
                 contenido: mensajeTexto,
-                referencia: mensajeReferencia, // ✅ Guardamos la referencia al mensaje anterior
                 leido: false
             })
         });
 
-        if (!response.ok) throw new Error("Error al enviar mensaje");
+        if (!response.ok) throw new Error(`Error al enviar mensaje (${response.status})`);
 
-        mensajeInput.value = ""; // ✅ Limpiar el input después de enviar
-        await cargarMensajes(); // ✅ Recargar el chat para mostrar el nuevo mensaje
+        console.log("✅ Mensaje enviado correctamente.");
+        mensajeInput.value = ""; 
+        await cargarMensajes();
 
     } catch (error) {
         console.error("❌ Error al enviar mensaje:", error);
     }
 }
+
+
 
 /**
  * Abre un formulario para iniciar un nuevo chat.

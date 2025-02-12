@@ -211,30 +211,48 @@ app.delete('/users/:userId/favoritos/:servicioId', async (req, res) => {
 
 //MENSAJES
 // 📌 Crear un nuevo mensaje
-app.post('/mensajes', async (req, res) => {
+app.post("/mensajes", async (req, res) => {
   try {
-    const { usuarioId, servicioId, contenido } = req.body;
+      console.log("📌 Recibiendo mensaje en el servidor...");
+      console.log("Datos recibidos:", req.body);
 
-    if (!usuarioId || !servicioId || !contenido) {
-      return res.status(400).json({ error: "Datos incompletos para crear un mensaje" });
-    }
+      const { usuarioId, servicioId, contenido } = req.body;
 
-    if (!ObjectId.isValid(usuarioId) || !ObjectId.isValid(servicioId)) {
-      return res.status(400).json({ error: "ID de usuario o servicio inválido" });
-    }
+      if (!usuarioId || !servicioId || !contenido) {
+          console.error("❌ Error: Datos incompletos para crear un mensaje.");
+          return res.status(400).json({
+              error: "Datos incompletos para crear un mensaje",
+              datosRecibidos: req.body,
+          });
+      }
 
-    const mensaje = await db.mensajes.create(
-      new ObjectId(usuarioId),
-      new ObjectId(servicioId),
-      contenido
-    );
+      // 📌 Convertimos los IDs a ObjectId
+      const mensajeData = {
+          usuarioId: new ObjectId(usuarioId),
+          servicioId: new ObjectId(servicioId),
+          contenido,
+          leido: false,
+          fecha: new Date(),
+      };
 
-    res.json(mensaje);
+      // 📌 Usamos `connectDB()` para obtener la BD y guardar el mensaje
+      const database = await connectDB();
+      const resultado = await database.collection("mensajes").insertOne(mensajeData);
+
+      console.log("✅ Mensaje guardado en la base de datos:", resultado);
+      res.json({ mensaje: "Mensaje guardado correctamente", resultado });
   } catch (error) {
-    console.error("❌ Error al crear mensaje:", error);
-    res.status(500).json({ error: "Error interno del servidor" });
+      console.error("❌ Error en el servidor al guardar el mensaje:", error);
+      res.status(500).json({
+          error: "Error interno del servidor",
+          detalle: error.message,
+      });
   }
 });
+
+
+
+
 
 // 📌 Obtener mensajes de un usuario o servicio
 app.get('/mensajes', async (req, res) => {
@@ -252,7 +270,48 @@ app.get('/mensajes', async (req, res) => {
 
     console.log("📌 Buscando mensajes con filtro:", filter);
 
-    const mensajes = await db.mensajes.get(filter);
+    const database = await connectDB();
+
+    // 📌 Usamos `$lookup` para unir los nombres del usuario y del servicio
+    const mensajes = await database.collection("mensajes").aggregate([
+      {
+        $match: filter
+      },
+      {
+        $lookup: {
+          from: "Users",
+          localField: "usuarioId",
+          foreignField: "_id",
+          as: "usuario"
+        }
+      },
+      {
+        $lookup: {
+          from: "Servicios",
+          localField: "servicioId",
+          foreignField: "_id",
+          as: "servicio"
+        }
+      },
+      {
+        $unwind: { path: "$usuario", preserveNullAndEmptyArrays: true }
+      },
+      {
+        $unwind: { path: "$servicio", preserveNullAndEmptyArrays: true }
+      },
+      {
+        $project: {
+          _id: 1,
+          contenido: 1,
+          fecha: 1,
+          leido: 1,
+          usuarioId: 1,
+          servicioId: 1,
+          "usuario.nombre": 1,  // Solo incluimos el nombre del usuario
+          "servicio.nombre": 1  // Solo incluimos el nombre del servicio
+        }
+      }
+    ]).toArray();
 
     console.log("✅ Mensajes encontrados:", mensajes);
 
@@ -262,6 +321,7 @@ app.get('/mensajes', async (req, res) => {
     res.status(500).json({ error: "Error interno del servidor" });
   }
 });
+
 
 
 

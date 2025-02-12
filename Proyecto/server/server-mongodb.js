@@ -290,7 +290,7 @@ async function removeFavorito(userId, servicioId) {
  * @param {string} contenido - Contenido del mensaje
  * @returns {Promise<object>} - Mensaje insertado con su _id
  */
-async function createMensaje(usuarioId, servicioId, contenido) {
+async function createMensaje(usuarioId, servicioId, contenido, referencia = null) {
     const db = await connectDB();
 
     if (!ObjectId.isValid(usuarioId) || !ObjectId.isValid(servicioId)) {
@@ -299,14 +299,15 @@ async function createMensaje(usuarioId, servicioId, contenido) {
     }
 
     const mensaje = {
-        usuarioId: new ObjectId(usuarioId), // ✅ Convertimos el ID a ObjectId
-        servicioId: new ObjectId(servicioId), // ✅ Convertimos el ID a ObjectId
+        usuarioId: new ObjectId(usuarioId),
+        servicioId: new ObjectId(servicioId),
         contenido,
-        fecha: new Date(), // ✅ Se guarda correctamente la fecha
+        referencia, // ✅ Guardamos la referencia al mensaje anterior
+        fecha: new Date(),
         leido: false
     };
 
-    const result = await db.collection("mensajes").insertOne(mensaje);
+    const result = await db.collection("Mensajes").insertOne(mensaje);
     console.log("✅ Mensaje creado:", result.insertedId);
     return { ...mensaje, _id: result.insertedId };
 }

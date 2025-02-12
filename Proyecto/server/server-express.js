@@ -226,21 +226,12 @@ app.post("/mensajes", async (req, res) => {
           });
       }
 
-      // 📌 Convertimos los IDs a ObjectId
-      const mensajeData = {
-          usuarioId: new ObjectId(usuarioId),
-          servicioId: new ObjectId(servicioId),
-          contenido,
-          leido: false,
-          fecha: new Date(),
-      };
+      // 📌 Guardamos el mensaje usando la función `createMensaje` de `server-mongodb.js`
+      const mensaje = await db.mensajes.create(usuarioId, servicioId, contenido);
 
-      // 📌 Usamos `connectDB()` para obtener la BD y guardar el mensaje
-      const database = await connectDB();
-      const resultado = await database.collection("mensajes").insertOne(mensajeData);
+      console.log("✅ Mensaje guardado en la base de datos:", mensaje);
+      res.json({ mensaje: "Mensaje guardado correctamente" });
 
-      console.log("✅ Mensaje guardado en la base de datos:", resultado);
-      res.json({ mensaje: "Mensaje guardado correctamente", resultado });
   } catch (error) {
       console.error("❌ Error en el servidor al guardar el mensaje:", error);
       res.status(500).json({
@@ -249,10 +240,6 @@ app.post("/mensajes", async (req, res) => {
       });
   }
 });
-
-
-
-
 
 // 📌 Obtener mensajes de un usuario o servicio
 app.get('/mensajes', async (req, res) => {
@@ -272,11 +259,8 @@ app.get('/mensajes', async (req, res) => {
 
     const database = await connectDB();
 
-    // 📌 Usamos `$lookup` para unir los nombres del usuario y del servicio
     const mensajes = await database.collection("mensajes").aggregate([
-      {
-        $match: filter
-      },
+      { $match: filter },
       {
         $lookup: {
           from: "Users",
@@ -293,12 +277,8 @@ app.get('/mensajes', async (req, res) => {
           as: "servicio"
         }
       },
-      {
-        $unwind: { path: "$usuario", preserveNullAndEmptyArrays: true }
-      },
-      {
-        $unwind: { path: "$servicio", preserveNullAndEmptyArrays: true }
-      },
+      { $unwind: { path: "$usuario", preserveNullAndEmptyArrays: true } },
+      { $unwind: { path: "$servicio", preserveNullAndEmptyArrays: true } },
       {
         $project: {
           _id: 1,
@@ -307,8 +287,8 @@ app.get('/mensajes', async (req, res) => {
           leido: 1,
           usuarioId: 1,
           servicioId: 1,
-          "usuario.nombre": 1,  // Solo incluimos el nombre del usuario
-          "servicio.nombre": 1  // Solo incluimos el nombre del servicio
+          "usuario.nombre": 1,
+          "servicio.nombre": 1
         }
       }
     ]).toArray();
@@ -321,6 +301,7 @@ app.get('/mensajes', async (req, res) => {
     res.status(500).json({ error: "Error interno del servidor" });
   }
 });
+
 
 
 

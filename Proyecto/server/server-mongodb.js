@@ -290,8 +290,8 @@ async function removeFavorito(userId, servicioId) {
  * @param {string} contenido - Contenido del mensaje
  * @returns {Promise<object>} - Mensaje insertado con su _id
  */
-async function createMensaje(usuarioId, servicioId, contenido, referencia = null) {
-    const db = await connectDB();
+async function createMensaje(usuarioId, servicioId, contenido) {
+    const database = await connectDB(); // Asegurarnos de conectar a la base de datos
 
     if (!ObjectId.isValid(usuarioId) || !ObjectId.isValid(servicioId)) {
         console.error("❌ ERROR: ID inválido en createMensaje:", usuarioId, servicioId);
@@ -302,13 +302,13 @@ async function createMensaje(usuarioId, servicioId, contenido, referencia = null
         usuarioId: new ObjectId(usuarioId),
         servicioId: new ObjectId(servicioId),
         contenido,
-        referencia, // ✅ Guardamos la referencia al mensaje anterior
         fecha: new Date(),
         leido: false
     };
 
-    const result = await db.collection("Mensajes").insertOne(mensaje);
-    console.log("✅ Mensaje creado:", result.insertedId);
+    const result = await database.collection("mensajes").insertOne(mensaje);
+
+    console.log("✅ Mensaje creado con ID:", result.insertedId);
     return { ...mensaje, _id: result.insertedId };
 }
 

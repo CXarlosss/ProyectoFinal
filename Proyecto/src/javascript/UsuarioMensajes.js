@@ -64,14 +64,20 @@ function renderizarListaChats(mensajes, usuarioId) {
         return;
     }
 
-    /** @type {Record<string, { id: string, ultimoMensaje: string, fecha: string }>} */
-    const chats = {};
+   /** @type {Record<string, { id: string, nombre: string, ultimoMensaje: string, fecha: string }>} */
+const chats = {};
+
 
     mensajes.forEach(msg => {
         const contactoId = msg.usuarioId === usuarioId ? msg.servicioId : msg.usuarioId;
+        const contactoNombre = msg.usuarioId === usuarioId ? "Servicio" : "Usuario";
+
+    
+    
         if (!chats[contactoId]) {
             chats[contactoId] = {
                 id: contactoId,
+                nombre: contactoNombre || "Desconocido",
                 ultimoMensaje: msg.contenido,
                 fecha: new Date(msg.fecha).toLocaleString()
             };
@@ -82,7 +88,7 @@ function renderizarListaChats(mensajes, usuarioId) {
         const chatItem = document.createElement("div");
         chatItem.classList.add("chat-item");
         chatItem.innerHTML = `
-            <p><strong>Chat con ID: ${chat.id}</strong></p>
+            <p><strong>${chat.nombre}</strong></p> <!-- Aquí se muestra el nombre -->
             <p>${chat.ultimoMensaje}</p>
             <span class="fecha">${chat.fecha}</span>
         `;
@@ -92,6 +98,7 @@ function renderizarListaChats(mensajes, usuarioId) {
 
     console.log("✅ Chats renderizados en la UI.");
 }
+
 
 /**
  * 📌 Abre un chat específico y muestra los mensajes.
@@ -151,9 +158,6 @@ export async function abrirChat(contactoId) {
 // ✅ Exportamos abrirChat como función exportada
 
 
-/**
- * Cierra el chat actual.
- */
 function cerrarChat() {
     const chatPopup = document.getElementById("chat-popup");
     console.log("📌 Cerrando el chat...");
@@ -161,9 +165,6 @@ function cerrarChat() {
 
 }
 
-/**
- * Envía un mensaje dentro del chat abierto.
- */
 async function enviarMensaje() {
     const mensajeInput = /** @type {HTMLInputElement | null} */ (document.getElementById("mensaje-input"));
     const chatTitulo = document.getElementById("chat-titulo");
@@ -206,11 +207,6 @@ async function enviarMensaje() {
     }
 }
 
-
-
-/**
- * Abre un formulario para iniciar un nuevo chat.
- */
 function abrirFormularioNuevoChat() {
     const nuevoChat = prompt("Introduce el ID del servicio o usuario con el que quieres chatear:");
     if (nuevoChat) abrirChat(nuevoChat);

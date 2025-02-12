@@ -43,14 +43,9 @@ document.addEventListener("DOMContentLoaded", () => {
    */
   btnEditarUsuario?.addEventListener("click", () => {
       if (!usuario) return;
-      
       if (modalEditarUsuario) {
-        
         modalEditarUsuario.style.display = "block"; // Asegurar visibilidad
-    }
-
-
-      
+        }
       // Rellenar datos
       if (inputNombre) inputNombre.value = usuario.nombre;
       if (inputTelefono) inputTelefono.value = usuario.telefono;
@@ -62,7 +57,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
   });
   console.log("📌 Enviando actualización para el usuario _id:", usuario._id);
-
 
   /**
    * 📌 Guardar cambios al hacer submit en el formulario
@@ -88,7 +82,7 @@ document.addEventListener("DOMContentLoaded", () => {
       console.log("📩 Datos enviados al backend:", datosActualizados);
 
       try {
-          const resultado = await fetch(`http://${location.hostname}:3001/update/users/${usuario._id}`, {
+          const resultado = await fetch(`${location.protocol}//${location.hostname}:3001/update/users/${usuario._id}`, {
               method: "PUT",
               headers: {
                   "Content-Type": "application/json",

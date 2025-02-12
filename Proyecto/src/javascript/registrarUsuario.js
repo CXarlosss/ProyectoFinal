@@ -1,7 +1,7 @@
 
 // @ts-check
 
-import { Usuario } from "../clases/class.js";
+
 
  import { simpleFetch } from '../lib/simpleFetch.js';
  import { HttpError } from '../classes/HttpError.js'
@@ -116,14 +116,14 @@ const usuarioExistente = Array.isArray(usuariosAPI)
   }
 
   // 📌 Crear usuario
-  const nuevoUsuario = new Usuario(
-    Date.now().toString(),
+  const nuevoUsuario = {
     nombre,
     email,
     password,
     telefono,
     direccion
-  );
+};
+
   const apiResponse = await getAPIData(`http://${location.hostname}:3001/create/users`, 'POST', nuevoUsuario);
 
   if (apiResponse) {

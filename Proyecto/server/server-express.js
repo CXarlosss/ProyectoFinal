@@ -65,9 +65,6 @@ app.put('/update/servicios/:_id', async (req, res) => {
     res.status(500).json({ error: "Error interno del servidor" });
   }
 });
-
-
-
 app.delete('/delete/servicios/:_id', async (req, res) => {
   try {
     console.log(`📌 Eliminando servicio con _id: ${req.params._id}`);
@@ -85,7 +82,6 @@ app.delete('/delete/servicios/:_id', async (req, res) => {
   }
 });
 
-
 app.post('/create/users', async (req, res) => {
   console.log("📌 Usuario recibido:", req.body);
   res.json(await db.users.create(req.body))
@@ -94,10 +90,45 @@ app.get('/read/users',async (req, res) => {
   console.log("📌 Users Creado:", req.body);
   res.json(await db.users.get())
 });
-app.put('/update/users/:_id', async(req, res) => {
-  res.json(await db.users.update(req.params.id, req.body))
-  console.log(`📌 Recibiendo actualización para Usuario_id: ${req.params._id}`, req.body);
-  });
+app.put('/update/users/:_id', async (req, res) => {
+  try {
+    const { _id } = req.params;
+    console.log(`📌 Recibiendo actualización para Usuario con ID: ${_id}`, req.body);
+
+    if (!_id || !ObjectId.isValid(_id)) {
+      console.error("❌ ERROR: ID inválido para MongoDB:", _id);
+      return res.status(400).json({ error: "ID inválido para MongoDB" });
+    }
+
+    const objectId = new ObjectId(_id);
+
+    if (req.body._id) delete req.body._id; // 🔥 Eliminar _id del body
+
+    // 🔹 Verificar si el usuario existe antes de actualizarlo
+    const usuarioExistente = await db.users.get({ _id: objectId });
+    if (!usuarioExistente) {
+      console.warn("⚠ Usuario no encontrado en la base de datos.");
+      return res.status(404).json({ error: "Usuario no encontrado." });
+    }
+
+    // 🔹 Realizar la actualización en MongoDB
+    const resultado = await db.users.update(objectId, req.body);
+
+    if (!resultado || resultado.modifiedCount === 0) {
+      console.warn("⚠ No se encontró el usuario para actualizar o no hubo cambios.");
+      return res.status(404).json({ error: "Usuario no encontrado o sin cambios." });
+    }
+
+    console.log(`✅ Usuario ${_id} actualizado correctamente.`);
+    res.json({ message: "Usuario actualizado correctamente", resultado });
+
+  } catch (error) {
+    console.error("❌ Error en la actualización:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+});
+
+
   app.delete('/delete/users/:_id', async (req, res) => {
     console.log(`📌 Eliminando Users con _id: ${req.params._id}`);
     res.json(await db.users.delete(req.params.id))

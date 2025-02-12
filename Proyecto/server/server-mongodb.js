@@ -173,9 +173,18 @@ async function getUsers(filter = {}) {
  */
 async function createUser(user) {
     const db = await connectDB();
-    const result = await db.collection("Users").insertOne(user);
-    console.log("✅ Usuario creado:", result.insertedId);
-    return { ...user, _id: result.insertedId };
+
+    // 🚀 Insertar usuario en MongoDB (Mongo generará el _id automáticamente)
+    const result = await db.collection("Users").insertOne({
+        nombre: user.nombre,
+        email: user.email,
+        password: user.password,
+        telefono: user.telefono,
+        direccion: user.direccion
+    });
+
+    console.log("✅ Usuario creado en MongoDB con ID:", result.insertedId);
+    return { ...user, _id: result.insertedId };  // Devolver el usuario con su nuevo _id
 }
 
 /**
@@ -186,10 +195,13 @@ async function createUser(user) {
  */
 async function updateUser(id, updates) {
     const db = await connectDB();
-    const result = await db.collection("users").updateOne({ _id: new ObjectId(id) }, { $set: updates });
-    console.log("✅ Usuario actualizado:", result.modifiedCount);
+    const objectId = new ObjectId(id);  // Convertir el ID a ObjectId
+    const result = await db.collection("Users").updateOne({ _id: objectId }, { $set: updates });
+
+    console.log(`✅ Usuario actualizado: ${result.modifiedCount}`);
     return result;
 }
+
 
 /**
  * 📌 Eliminar un usuario por ID

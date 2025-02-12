@@ -7,7 +7,6 @@ const dbName = "LocalMarket";
 
 
 
-
 async function connectDB() {
     // @ts-ignore
     if (!client.topology || !client.topology.isConnected()) {
@@ -16,6 +15,9 @@ async function connectDB() {
     }
     return client.db(dbName);
 }
+
+// 📌 Exportamos `connectDB` y `db`
+export { connectDB, ObjectId };
 
 /**
  * 🔄 Función para probar la conexión a MongoDB
@@ -78,7 +80,6 @@ async function getServicios(filter = {}) {
     const db = await connectDB();
     return await db.collection("Servicios").find(filter).toArray();
 }
-
 /**
  * 📌 Crear un nuevo servicio
  * @param {object} servicio - Datos del servicio a insertar.
@@ -96,8 +97,6 @@ async function createServicios(servicio) {
     console.log("✅ Servicio creado:", result.insertedId);
     return { ...servicio, _id: result.insertedId };
 }
-
-
 /**
  * 📌 Actualizar un servicio existente
  * @param {string} id - ID del servicio a actualizar.
@@ -129,11 +128,6 @@ async function updateServicios(id, updates) {
     console.log(`✅ Servicio ${id} actualizado correctamente:`, result.modifiedCount);
     return result;
 }
-
-
-
-
-
 
 /**
  * 📌 Eliminar un servicio por ID

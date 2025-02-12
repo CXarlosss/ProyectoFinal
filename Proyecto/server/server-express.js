@@ -1,8 +1,11 @@
 // @ts-nocheck
 import express from 'express';
 import bodyParser from 'body-parser';
-import { db } from "./server-mongodb.js";
-import { ObjectId } from "mongodb"; // Asegura que importas ObjectId
+import { db, connectDB } from "./server-mongodb.js";  // 👈 IMPORTA BIEN
+import { ObjectId } from "mongodb"; 
+
+
+
 
 const app = express();
 const port =  process.env.PORT || 3001;
@@ -22,8 +25,7 @@ app.get('/check/:nombre', async (req, res) => {
   const usuarios = await db.users.count()
   res.send(`Hola ${req.params.nombre}, hay ${usuarios} usuarios`)
 })
-
- // CRUD
+ // SERVICIOS
 app.post('/create/servicios', async (req, res) => {
   console.log("📌 Servicio recibido:", req.body);
   res.json(await db.servicios.create(req.body))
@@ -82,12 +84,13 @@ app.delete('/delete/servicios/:_id', async (req, res) => {
   }
 });
 
+//USUARIOS
 app.post('/create/users', async (req, res) => {
   console.log("📌 Usuario recibido:", req.body);
   res.json(await db.users.create(req.body))
 }) 
 app.get('/read/users',async (req, res) => {
-  console.log("📌 Users Creado:", req.body);
+console.log("📌 Users Creado:", req.body);
   res.json(await db.users.get())
 });
 app.put('/update/users/:_id', async (req, res) => {
@@ -127,12 +130,94 @@ app.put('/update/users/:_id', async (req, res) => {
     res.status(500).json({ error: "Error interno del servidor" });
   }
 });
-
-
-  app.delete('/delete/users/:_id', async (req, res) => {
+app.delete('/delete/users/:_id', async (req, res) => {
     console.log(`📌 Eliminando Users con _id: ${req.params._id}`);
     res.json(await db.users.delete(req.params.id))
-  });
+});
+
+//FAVORITOS
+
+// 📌 Obtener la lista de favoritos del usuario
+// 📌 Añadir o quitar un servicio de favoritos
+app.put('/users/:userId/favoritos/:servicioId', async (req, res) => {
+  try {
+    const { userId, servicioId } = req.params;
+
+    if (!ObjectId.isValid(userId) || !ObjectId.isValid(servicioId)) {
+      return res.status(400).json({ error: "ID de usuario o servicio inválido" });
+    }
+
+    const db = await connectDB();
+
+    // Verificar si el usuario ya tiene el servicio en favoritos
+    const usuario = await db.collection("Users").findOne({ _id: new ObjectId(userId) });
+
+    if (!usuario) {
+      return res.status(404).json({ error: "Usuario no encontrado" });
+    }
+
+    const yaEsFavorito = usuario.favoritos?.some(fav => fav.toString() === servicioId);
+
+    let updateQuery;
+    if (yaEsFavorito) {
+      updateQuery = { $pull: { favoritos: new ObjectId(servicioId) } }; // ❌ Quitar de favoritos
+    } else {
+      updateQuery = { $addToSet: { favoritos: new ObjectId(servicioId) } }; // ✅ Añadir a favoritos
+    }
+
+    const result = await db.collection("Users").updateOne(
+      { _id: new ObjectId(userId) },
+      updateQuery
+    );
+
+    if (result.modifiedCount === 0) {
+      return res.status(400).json({ error: "No se realizó ninguna modificación" });
+    }
+
+    res.json({ message: yaEsFavorito ? "Servicio eliminado de favoritos" : "Servicio añadido a favoritos" });
+
+  } catch (error) {
+    console.error("❌ Error al modificar favoritos:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+});
+
+// 📌 Quitar un servicio de favoritos
+app.delete('/users/:userId/favoritos/:servicioId', async (req, res) => {
+  try {
+    const { userId, servicioId } = req.params;
+
+    if (!ObjectId.isValid(userId) || !ObjectId.isValid(servicioId)) {
+      return res.status(400).json({ error: "ID de usuario o servicio inválido" });
+    }
+
+    const db = await connectDB();
+    const result = await db.collection("Users").updateOne(
+      { _id: new ObjectId(userId) },
+      { $pull: { favoritos: new ObjectId(servicioId) } } // 🔥 Remueve el servicio del array
+    );
+
+    if (result.modifiedCount === 0) {
+      return res.status(404).json({ error: "Usuario no encontrado o sin cambios" });
+    }
+
+    res.json({ message: "Servicio eliminado de favoritos" });
+
+  } catch (error) {
+    console.error("❌ Error al quitar de favoritos:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+});
+
+
+
+
+
+
+
+
+
+
 
   app.listen(port, async () => {
     const servicios = await db.servicios.get();

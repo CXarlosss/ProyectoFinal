@@ -264,18 +264,47 @@ serviciosContainer.addEventListener("click", async (e) => {
  * @param {string} _id
  * @param {string} nombre
  */
-function toggleFavorito(_id, nombre) {
-  const index = state.favoritos.findIndex((fav) => fav._id === _id);
+/**
+ * 📌 Añadir o quitar un servicio de favoritos en la base de datos
+ * @param {string} servicioId
+ * @param {string} nombre
+ */
+async function toggleFavorito(servicioId, nombre) {
+  try {
+    if (!usuario || !usuario._id) {
+      console.error("❌ Error: Usuario no autenticado.");
+      return;
+    }
 
-  if (index !== -1) {
-    state.favoritos.splice(index, 1);
-  } else {
-    state.favoritos.push({ _id, nombre });
+    console.log(`📌 Enviando petición para actualizar favoritos del usuario ${usuario._id}`);
+
+    const response = await fetch(`http://${location.hostname}:3001/users/${usuario._id}/favoritos/${servicioId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error en la solicitud: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    console.log("✅ Respuesta de la API:", data);
+
+    // Actualizar estado local
+    const index = state.favoritos.findIndex(fav => fav._id === servicioId);
+    if (index !== -1) {
+      state.favoritos.splice(index, 1); // ❌ Quitar si ya estaba en favoritos
+    } else {
+      state.favoritos.push({ _id: servicioId, nombre }); // ✅ Añadir si no estaba
+    }
+
+    renderServicios(); // 🔥 Refrescar la UI
+  } catch (error) {
+    console.error("🚨 Error al actualizar favoritos:", error);
   }
-
-  guardarFavoritos();
-  renderServicios();
+  guardarFavoritos()
 }
+
 
 function guardarFavoritos() {
   localStorage.setItem(`favoritos_${usuario._id}`, JSON.stringify(state.favoritos));
@@ -334,9 +363,6 @@ function cargarFavoritos() {
     }
 }
 
-
-
-  
   // 📌 Función para eliminar un servicio
   /**
    * @param {any} _id
@@ -363,8 +389,6 @@ function cargarFavoritos() {
     }
   }
   
-
-
   function buscarServicios() {
     const inputBuscador = /** @type {HTMLInputElement | null} */ (
       document.getElementById("buscador")

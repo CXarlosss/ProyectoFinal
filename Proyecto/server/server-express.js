@@ -191,6 +191,7 @@ app.put('/users/:userId/favoritos/:servicioId', async (req, res) => {
   }
 });
 // 📌 Quitar de favoritos
+// 📌 Quitar de favoritos
 app.delete('/users/:userId/favoritos/:servicioId', async (req, res) => {
   try {
     const { userId, servicioId } = req.params;
@@ -199,15 +200,28 @@ app.delete('/users/:userId/favoritos/:servicioId', async (req, res) => {
       return res.status(400).json({ error: "ID de usuario o servicio inválido" });
     }
 
-    await db.users.removeFavorito(userId, servicioId);
+    console.log(`📌 Eliminando favorito: usuario ${userId}, servicio ${servicioId}`);
 
-    res.json({ message: "Servicio eliminado de favoritos" });
+    const database = await connectDB();
+    const result = await database.collection("Users").updateOne(
+      { _id: new ObjectId(userId) },
+      { $pull: { favoritos: new ObjectId(servicioId) } }
+    );
+
+    if (result.modifiedCount === 0) {
+      console.warn(`⚠ No se encontró el favorito para eliminar.`);
+      return res.status(404).json({ error: "Favorito no encontrado" });
+    }
+
+    console.log(`✅ Favorito eliminado correctamente.`);
+    res.json({ message: "Favorito eliminado correctamente" });
 
   } catch (error) {
     console.error("❌ Error al quitar de favoritos:", error);
     res.status(500).json({ error: "Error interno del servidor" });
   }
 });
+
 
 //MENSAJES
 // 📌 Crear un nuevo mensaje
@@ -240,6 +254,7 @@ app.post("/mensajes", async (req, res) => {
       });
   }
 });
+
 
 // 📌 Obtener mensajes de un usuario o servicio
 app.get('/mensajes', async (req, res) => {

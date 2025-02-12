@@ -117,6 +117,7 @@ export async function abrirChat(contactoId) {
     chatPopup.classList.add("active");
     chatTitulo.dataset.contactoId = contactoId;
     chatMessages.innerHTML = "<p>Cargando mensajes...</p>";
+
     try {
         const usuarioGuardado = localStorage.getItem("usuarioRegistrado");
         const usuario = JSON.parse(usuarioGuardado || "{}");
@@ -125,11 +126,10 @@ export async function abrirChat(contactoId) {
 
         if (!response.ok) throw new Error(`Error al obtener mensajes (${response.status})`);
 
-        /** @type {Array<{_id: string, usuarioId: string, servicioId: string, contenido: string, fecha: string, leido: boolean}>} */
         const mensajes = await response.json();
         chatMessages.innerHTML = "";
 
-        mensajes.forEach(msg => {
+        mensajes.forEach((/** @type {{ usuarioId: any; contenido: any; fecha: string | number | Date; _id: any; }} */ msg) => {
             const msgElement = document.createElement("div");
             msgElement.classList.add("mensaje");
             msgElement.innerHTML = `
@@ -138,23 +138,22 @@ export async function abrirChat(contactoId) {
                 <button class="btn-responder" data-mensaje-id="${msg._id}">Responder</button>
             `;
 
-            // Al hacer clic en "Responder", cita el mensaje en el input
-            const responderBtn = msgElement?.querySelector(".btn-responder");
+            const responderBtn = msgElement.querySelector(".btn-responder");
             if (responderBtn) {
                 responderBtn.addEventListener("click", () => {
                     mensajeInput.value = `@${msg.usuarioId}: ${msg.contenido} `;
                     mensajeInput.focus();
                 });
             }
-            console.log(`📌 He leido todo en el abrir chat: ${contactoId}`);
+
             chatMessages.appendChild(msgElement);
         });
 
     } catch (error) {
         console.error("❌ Error al cargar mensajes del chat:", error);
     }
-
 }
+
 // ✅ Exportamos abrirChat como función exportada
 
 

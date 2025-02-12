@@ -68,6 +68,10 @@ export const db = {
         create: createUser,
         update: updateUser,
         delete: deleteUser,
+        getFavoritos: getFavoritos,
+        addFavorito: addFavorito,
+        removeFavorito: removeFavorito
+
     }
 };
 
@@ -128,7 +132,6 @@ async function updateServicios(id, updates) {
     console.log(`✅ Servicio ${id} actualizado correctamente:`, result.modifiedCount);
     return result;
 }
-
 /**
  * 📌 Eliminar un servicio por ID
  * @param {string} id - ID del servicio a eliminar.
@@ -207,4 +210,65 @@ async function deleteUser(id) {
     const result = await db.collection("users").deleteOne({ _id: new ObjectId(id) });
     console.log("✅ Usuario eliminado:", result.deletedCount);
     return id;
+}
+
+//Favoritos
+/**
+ * 📌 Obtener los favoritos de un usuario
+ * @param {string} userId - ID del usuario
+ * @returns {Promise<Array<string>>} - Lista de favoritos
+ */
+async function getFavoritos(userId) {
+    const db = await connectDB();
+
+    if (!ObjectId.isValid(userId)) {
+        console.error("❌ ERROR: ID de usuario inválido:", userId);
+        throw new Error("ID de usuario inválido");
+    }
+
+    const usuario = await db.collection("Users").findOne(
+        { _id: new ObjectId(userId) },
+        { projection: { favoritos: 1 } }
+    );
+
+    return usuario?.favoritos || [];
+}
+
+/**
+ * 📌 Añadir un servicio a los favoritos del usuario
+ * @param {string} userId - ID del usuario
+ * @param {string} servicioId - ID del servicio
+ */
+async function addFavorito(userId, servicioId) {
+    const db = await connectDB();
+
+    if (!ObjectId.isValid(userId) || !ObjectId.isValid(servicioId)) {
+        console.error("❌ ERROR: ID inválido en addFavorito:", userId, servicioId);
+        throw new Error("ID inválido");
+    }
+
+    await db.collection("Users").updateOne(
+        { _id: new ObjectId(userId) },
+        { $addToSet: { favoritos: new ObjectId(servicioId) } }
+    );
+}
+
+/**
+ * 📌 Eliminar un servicio de los favoritos del usuario
+ * @param {string} userId - ID del usuario
+ * @param {string} servicioId - ID del servicio
+ */
+async function removeFavorito(userId, servicioId) {
+    const db = await connectDB();
+
+    if (!ObjectId.isValid(userId) || !ObjectId.isValid(servicioId)) {
+        console.error("❌ ERROR: ID inválido en removeFavorito:", userId, servicioId);
+        throw new Error("ID inválido");
+    }
+
+    await db.collection("Users").updateOne(
+        { _id: new ObjectId(userId) },
+        // @ts-ignore
+        { $pull: { favoritos: new ObjectId(servicioId) } }
+    );
 }

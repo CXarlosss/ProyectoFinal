@@ -139,6 +139,36 @@ app.delete('/delete/users/:_id', async (req, res) => {
 
 // 📌 Obtener la lista de favoritos del usuario
 // 📌 Añadir o quitar un servicio de favoritos
+app.get('/users/:userId/favoritos', async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    if (!ObjectId.isValid(userId)) {
+      return res.status(400).json({ error: "ID de usuario inválido" });
+    }
+
+    const db = await connectDB();
+    const usuario = await db.collection("Users").findOne(
+      { _id: new ObjectId(userId) },
+      { projection: { favoritos: 1 } }
+    );
+
+    if (!usuario || !usuario.favoritos || usuario.favoritos.length === 0) {
+      return res.json([]); // Si no tiene favoritos, devolvemos un array vacío
+    }
+
+    // 🚀 Aquí hacemos la consulta en la colección de Servicios para traer los datos completos
+    const favoritosConNombres = await db.collection("Servicios").find({
+      _id: { $in: usuario.favoritos.map(id => new ObjectId(id)) }
+    }).toArray();
+
+    res.json(favoritosConNombres);
+
+  } catch (error) {
+    console.error("❌ Error al obtener favoritos:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+});
 app.put('/users/:userId/favoritos/:servicioId', async (req, res) => {
   try {
     const { userId, servicioId } = req.params;
@@ -147,42 +177,15 @@ app.put('/users/:userId/favoritos/:servicioId', async (req, res) => {
       return res.status(400).json({ error: "ID de usuario o servicio inválido" });
     }
 
-    const db = await connectDB();
+    await db.users.addFavorito(userId, servicioId);
 
-    // Verificar si el usuario ya tiene el servicio en favoritos
-    const usuario = await db.collection("Users").findOne({ _id: new ObjectId(userId) });
-
-    if (!usuario) {
-      return res.status(404).json({ error: "Usuario no encontrado" });
-    }
-
-    const yaEsFavorito = usuario.favoritos?.some(fav => fav.toString() === servicioId);
-
-    let updateQuery;
-    if (yaEsFavorito) {
-      updateQuery = { $pull: { favoritos: new ObjectId(servicioId) } }; // ❌ Quitar de favoritos
-    } else {
-      updateQuery = { $addToSet: { favoritos: new ObjectId(servicioId) } }; // ✅ Añadir a favoritos
-    }
-
-    const result = await db.collection("Users").updateOne(
-      { _id: new ObjectId(userId) },
-      updateQuery
-    );
-
-    if (result.modifiedCount === 0) {
-      return res.status(400).json({ error: "No se realizó ninguna modificación" });
-    }
-
-    res.json({ message: yaEsFavorito ? "Servicio eliminado de favoritos" : "Servicio añadido a favoritos" });
+    res.json({ message: "Servicio añadido a favoritos" });
 
   } catch (error) {
-    console.error("❌ Error al modificar favoritos:", error);
+    console.error("❌ Error al añadir a favoritos:", error);
     res.status(500).json({ error: "Error interno del servidor" });
   }
 });
-
-// 📌 Quitar un servicio de favoritos
 app.delete('/users/:userId/favoritos/:servicioId', async (req, res) => {
   try {
     const { userId, servicioId } = req.params;
@@ -191,15 +194,7 @@ app.delete('/users/:userId/favoritos/:servicioId', async (req, res) => {
       return res.status(400).json({ error: "ID de usuario o servicio inválido" });
     }
 
-    const db = await connectDB();
-    const result = await db.collection("Users").updateOne(
-      { _id: new ObjectId(userId) },
-      { $pull: { favoritos: new ObjectId(servicioId) } } // 🔥 Remueve el servicio del array
-    );
-
-    if (result.modifiedCount === 0) {
-      return res.status(404).json({ error: "Usuario no encontrado o sin cambios" });
-    }
+    await db.users.removeFavorito(userId, servicioId);
 
     res.json({ message: "Servicio eliminado de favoritos" });
 
@@ -208,6 +203,7 @@ app.delete('/users/:userId/favoritos/:servicioId', async (req, res) => {
     res.status(500).json({ error: "Error interno del servidor" });
   }
 });
+
 
 
 

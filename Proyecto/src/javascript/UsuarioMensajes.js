@@ -1,122 +1,69 @@
 //@ts-check
-document.addEventListener("DOMContentLoaded", () => {
-    console.log("📌 Cargando módulo de mensajes...");
+async function cargarMensajes() {
+    try {
+        const usuarioGuardado = localStorage.getItem("usuarioRegistrado");
+        if (!usuarioGuardado) throw new Error("Usuario no registrado");
 
+        const usuario = JSON.parse(usuarioGuardado);
+        if (!usuario._id) throw new Error("ID de usuario no encontrado");
+
+        console.log(`📌 Buscando mensajes para el usuario: ${usuario._id}`);
+
+        // Hacer la petición al backend para obtener los mensajes
+        const response = await fetch(`http://${location.hostname}:3001/mensajes?usuarioId=${usuario._id}`);
+
+        if (!response.ok) throw new Error(`Error al obtener mensajes (${response.status})`);
+
+        const mensajes = await response.json();
+        console.log("✅ Mensajes obtenidos:", mensajes);
+
+        // Renderizar los mensajes en la UI
+        renderizarMensajes(mensajes);
+
+    } catch (error) {
+        console.error("❌ Error al cargar mensajes:", error);
+    }
+}
+
+/**
+ * @param {any[]} mensajes
+ */
+function renderizarMensajes(mensajes) {
     const chatList = document.getElementById("chat-list");
-    const chatPopup = document.getElementById("chat-popup");
-    const chatTitulo = document.getElementById("chat-titulo");
-    const chatMessages = document.getElementById("chat-messages");
-    const mensajeInput = document.getElementById("mensaje-input");
-    const enviarMensajeBtn = document.getElementById("enviar-mensaje");
-    const cerrarChatBtn = document.getElementById("cerrar-chat");
-
-    let usuarioActivo = "";
-    let conversaciones = {};
-
-    function cargarChats() {
-        if (!chatList) return;
-        chatList.innerHTML = "";
-
-        const chats = Object.keys(conversaciones);
-        if (chats.length === 0) {
-            chatList.innerHTML = "<p>No hay chats aún.</p>";
-            return;
-        }
-
-        chats.forEach((chatId) => {
-            const chatItem = document.createElement("div");
-            chatItem.classList.add("chat-item");
-            chatItem.setAttribute("data-id", chatId);
-            chatItem.innerHTML = `
-                <strong>Chat ${chatId}</strong>
-                <button class="btn-eliminar-chat" data-id="${chatId}">🗑</button>
-            `;
-            chatList.appendChild(chatItem);
-        });
-
-        document.querySelectorAll(".btn-eliminar-chat").forEach((btn) => {
-            btn.addEventListener("click", (event) => {
-                event.stopPropagation();
-                const chatId = btn.getAttribute("data-id");
-                if (chatId) eliminarChat(chatId);
-            });
-        });
+    
+    if (!chatList) {
+        console.error("❌ No se encontró el contenedor de mensajes.");
+        return;
     }
 
-    /**
-     * @param {string} chatId
-     */
-    function abrirChat(chatId) {
-        usuarioActivo = chatId;
-        if (chatTitulo) chatTitulo.textContent = `Conversación con ${chatId}`;
-        if (chatPopup) chatPopup.classList.add("active");
-        actualizarMensajes(chatId);
+    console.log("🔍 Intentando renderizar mensajes...");
+    
+    // Si no hay mensajes, mostrar un mensaje de "No hay chats"
+    if (mensajes.length === 0) {
+        chatList.innerHTML = "<p>No hay chats aún.</p>";
+        console.warn("⚠ No hay mensajes para mostrar.");
+        return;
     }
 
-    /**
-     * @param {string} chatId
-     */
-    function actualizarMensajes(chatId) {
-        if (!chatMessages) return;
+    chatList.innerHTML = ""; // Limpiar la lista antes de agregar nuevos mensajes
 
-        chatMessages.innerHTML = "";
-        const mensajes = conversaciones[chatId] || [];
+    mensajes.forEach((msg) => {
+        const mensajeItem = document.createElement("div");
+        mensajeItem.classList.add("mensaje-item");
 
-        mensajes.forEach((/** @type {{ remitente: any; mensaje: any; }} */ msg) => {
-            const mensajeDiv = document.createElement("div");
-            mensajeDiv.classList.add("mensaje");
-            mensajeDiv.innerHTML = `<strong>${msg.remitente}:</strong> ${msg.mensaje}`;
-            chatMessages.appendChild(mensajeDiv);
-        });
+        // Construir el contenido del mensaje con nombre de usuario y fecha
+        mensajeItem.innerHTML = `
+            <p><strong>${msg.usuarioId}</strong>: ${msg.contenido}</p>
+            <span class="fecha">${new Date(msg.fecha).toLocaleString()}</span>
+        `;
 
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
+        chatList.appendChild(mensajeItem);
+    });
 
-    function guardarMensajes() {
-        localStorage.setItem("conversaciones", JSON.stringify(conversaciones));
-    }
+    console.log("✅ Mensajes renderizados en la UI.");
+}
 
-    /**
-     * @param {string} chatId
-     */
-    function eliminarChat(chatId) {
-        if (!chatId) return;
 
-        if (confirm(`¿Seguro que quieres eliminar el chat con ${chatId}?`)) {
-            delete conversaciones[chatId];
-            guardarMensajes();
-            cargarChats();
-        }
-    }
 
-    if (enviarMensajeBtn) {
-        enviarMensajeBtn.addEventListener("click", () => {
-            if (!usuarioActivo || !mensajeInput || !chatMessages) return;
-
-            const mensaje = mensajeInput.value.trim();
-            if (mensaje === "") return;
-
-            if (!conversaciones[usuarioActivo]) {
-                conversaciones[usuarioActivo] = [];
-            }
-
-            conversaciones[usuarioActivo].push({
-                remitente: "Yo",
-                mensaje: mensaje,
-            });
-
-            mensajeInput.value = "";
-            guardarMensajes();
-            actualizarMensajes(usuarioActivo);
-        });
-    }
-
-    if (cerrarChatBtn) {
-        cerrarChatBtn.addEventListener("click", () => {
-            chatPopup?.classList.remove("active");
-            usuarioActivo = "";
-        });
-    }
-
-    cargarChats();
-});
+// Llamar a la función cuando se cargue la página
+document.addEventListener("DOMContentLoaded", cargarMensajes);

@@ -18,22 +18,21 @@ app.use(bodyParser.json())
 // for parsing application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }))
 
-app.get('/hello/:nombre', (req, res) => {
-  res.send(`Hola ${req.params.nombre}`);
-});
-app.get('/check/:nombre', async (req, res) => {
-  const usuarios = await db.users.count()
-  res.send(`Hola ${req.params.nombre}, hay ${usuarios} usuarios`)
-})
+
+
+
  // SERVICIOS
+ // 📌 Crear un nuevo servicio
 app.post('/create/servicios', async (req, res) => {
   console.log("📌 Servicio recibido:", req.body);
   res.json(await db.servicios.create(req.body))
 }) 
+// 📌 Obtener todos los servicios
 app.get('/read/servicios',async (req, res) => {
   console.log("📌 Servicio Creado:", req.body);
   res.json(await db.servicios.get())
 });
+// 📌 Actualizar un servicio
 app.put('/update/servicios/:_id', async (req, res) => {
   try {
     const { _id } = req.params;
@@ -67,6 +66,7 @@ app.put('/update/servicios/:_id', async (req, res) => {
     res.status(500).json({ error: "Error interno del servidor" });
   }
 });
+// 📌 Eliminar un servicio
 app.delete('/delete/servicios/:_id', async (req, res) => {
   try {
     console.log(`📌 Eliminando servicio con _id: ${req.params._id}`);
@@ -85,14 +85,17 @@ app.delete('/delete/servicios/:_id', async (req, res) => {
 });
 
 //USUARIOS
+// 📌 Crear un nuevo usuario
 app.post('/create/users', async (req, res) => {
   console.log("📌 Usuario recibido:", req.body);
   res.json(await db.users.create(req.body))
 }) 
+// 📌 Obtener todos los usuarios
 app.get('/read/users',async (req, res) => {
 console.log("📌 Users Creado:", req.body);
   res.json(await db.users.get())
 });
+// 📌 Actualizar un usuario
 app.put('/update/users/:_id', async (req, res) => {
   try {
     const { _id } = req.params;
@@ -130,6 +133,7 @@ app.put('/update/users/:_id', async (req, res) => {
     res.status(500).json({ error: "Error interno del servidor" });
   }
 });
+// 📌 Eliminar un usuario
 app.delete('/delete/users/:_id', async (req, res) => {
     console.log(`📌 Eliminando Users con _id: ${req.params._id}`);
     res.json(await db.users.delete(req.params.id))
@@ -137,8 +141,7 @@ app.delete('/delete/users/:_id', async (req, res) => {
 
 //FAVORITOS
 
-// 📌 Obtener la lista de favoritos del usuario
-// 📌 Añadir o quitar un servicio de favoritos
+// 📌 Leer Cuantos hay
 app.get('/users/:userId/favoritos', async (req, res) => {
   try {
     const { userId } = req.params;
@@ -169,6 +172,7 @@ app.get('/users/:userId/favoritos', async (req, res) => {
     res.status(500).json({ error: "Error interno del servidor" });
   }
 });
+// 📌 Añadir a favoritos
 app.put('/users/:userId/favoritos/:servicioId', async (req, res) => {
   try {
     const { userId, servicioId } = req.params;
@@ -186,6 +190,7 @@ app.put('/users/:userId/favoritos/:servicioId', async (req, res) => {
     res.status(500).json({ error: "Error interno del servidor" });
   }
 });
+// 📌 Quitar de favoritos
 app.delete('/users/:userId/favoritos/:servicioId', async (req, res) => {
   try {
     const { userId, servicioId } = req.params;
@@ -204,14 +209,99 @@ app.delete('/users/:userId/favoritos/:servicioId', async (req, res) => {
   }
 });
 
+//MENSAJES
+// 📌 Crear un nuevo mensaje
+app.post('/mensajes', async (req, res) => {
+  try {
+    const { usuarioId, servicioId, contenido } = req.body;
+
+    if (!usuarioId || !servicioId || !contenido) {
+      return res.status(400).json({ error: "Datos incompletos para crear un mensaje" });
+    }
+
+    if (!ObjectId.isValid(usuarioId) || !ObjectId.isValid(servicioId)) {
+      return res.status(400).json({ error: "ID de usuario o servicio inválido" });
+    }
+
+    const mensaje = await db.mensajes.create(
+      new ObjectId(usuarioId),
+      new ObjectId(servicioId),
+      contenido
+    );
+
+    res.json(mensaje);
+  } catch (error) {
+    console.error("❌ Error al crear mensaje:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+});
+
+// 📌 Obtener mensajes de un usuario o servicio
+app.get('/mensajes', async (req, res) => {
+  try {
+    const { usuarioId, servicioId } = req.query;
+    const filter = {};
+
+    if (usuarioId && ObjectId.isValid(usuarioId)) {
+      filter.usuarioId = new ObjectId(usuarioId);
+    }
+
+    if (servicioId && ObjectId.isValid(servicioId)) {
+      filter.servicioId = new ObjectId(servicioId);
+    }
+
+    console.log("📌 Buscando mensajes con filtro:", filter);
+
+    const mensajes = await db.mensajes.get(filter);
+
+    console.log("✅ Mensajes encontrados:", mensajes);
+
+    res.json(mensajes);
+  } catch (error) {
+    console.error("❌ Error al obtener mensajes:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+});
 
 
 
 
 
+// 📌 Marcar un mensaje como leído
+app.put('/mensajes/:mensajeId', async (req, res) => {
+  try {
+    const { mensajeId } = req.params;
 
+    if (!ObjectId.isValid(mensajeId)) {
+      return res.status(400).json({ error: "ID de mensaje inválido" });
+    }
 
+    const resultado = await db.mensajes.update(new ObjectId(mensajeId));
 
+    res.json({ message: "Mensaje marcado como leído", resultado });
+  } catch (error) {
+    console.error("❌ Error al actualizar mensaje:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+});
+
+// 📌 Eliminar un mensaje
+app.delete('/mensajes/:mensajeId', async (req, res) => {
+  try {
+    const { mensajeId } = req.params;
+
+    if (!ObjectId.isValid(mensajeId)) {
+      return res.status(400).json({ error: "ID de mensaje inválido" });
+    }
+
+    const resultado = await db.mensajes.delete(new ObjectId(mensajeId));
+
+    res.json({ message: "Mensaje eliminado correctamente", resultado });
+  } catch (error) {
+    console.error("❌ Error al eliminar mensaje:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+});
 
 
 

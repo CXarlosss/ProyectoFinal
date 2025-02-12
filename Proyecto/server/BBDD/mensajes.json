@@ -1,27 +1,30 @@
 [
-    {
-      "_id": "msg1001",
-      "usuarioId": "1738681206688",
-      "servicioId": "1738682624984",
-      "contenido": "Hola, me interesa tu servicio. ¿Podemos hablar?",
-      "fecha": "2024-02-10T12:30:00.000Z",
-      "leido": false
-    },
-    {
-      "_id": "msg1002",
-      "usuarioId": "1738682426160",
-      "servicioId": "1738682624984",
-      "contenido": "Sí, claro. ¿Qué dudas tienes sobre la heladería?",
-      "fecha": "2024-02-10T12:35:00.000Z",
-      "leido": true
-    },
-    {
-      "_id": "msg1003",
-      "usuarioId": "1738915915051",
-      "servicioId": "1738682624984",
-      "contenido": "¿Tienen opciones sin azúcar?",
-      "fecha": "2024-02-10T12:40:00.000Z",
-      "leido": false
-    }
-  ]
-  
+  {
+    "usuarioId": { "$oid": "67ac72bed9875a3ac6bb1d6b" },
+    "servicioId": { "$oid": "67aca81daf4127da26264dcc" },
+    "contenido": "Hola, me interesa tu servicio. ¿Podemos hablar?",
+    "fecha": { "$date": "2024-02-10T12:30:00.000Z" },
+    "leido": false
+  },
+  {
+    "usuarioId": { "$oid": "67aca81daf4127da26264dcc" },
+    "servicioId": { "$oid": "67ac72bed9875a3ac6bb1d6b" },
+    "contenido": "¡Hola! Claro, ¿en qué te puedo ayudar?",
+    "fecha": { "$date": "2024-02-10T12:35:00.000Z" },
+    "leido": true
+  },
+  {
+    "usuarioId": { "$oid": "67ac72bed9875a3ac6bb1d6b" },
+    "servicioId": { "$oid": "67aca81daf4127da26264dcc" },
+    "contenido": "Quería saber más sobre los horarios disponibles.",
+    "fecha": { "$date": "2024-02-10T12:40:00.000Z" },
+    "leido": false
+  },
+  {
+    "usuarioId": { "$oid": "67aca81daf4127da26264dcc" },
+    "servicioId": { "$oid": "67ac72bed9875a3ac6bb1d6b" },
+    "contenido": "Tenemos disponibilidad por la mañana y por la tarde. ¿Qué horario te viene mejor?",
+    "fecha": { "$date": "2024-02-10T12:45:00.000Z" },
+    "leido": true
+  }
+]

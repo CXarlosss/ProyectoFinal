@@ -72,6 +72,12 @@ export const db = {
         addFavorito: addFavorito,
         removeFavorito: removeFavorito
 
+    },
+    mensajes: {
+        create: createMensaje,
+        get: getMensajes,
+        update: updateMensaje,
+        delete: deleteMensaje
     }
 };
 
@@ -271,4 +277,117 @@ async function removeFavorito(userId, servicioId) {
         // @ts-ignore
         { $pull: { favoritos: new ObjectId(servicioId) } }
     );
+}
+
+
+
+//Mensajes
+
+/**
+ * 📌 Crear un nuevo mensaje
+ * @param {string} usuarioId - ID del usuario que envía el mensaje
+ * @param {string} servicioId - ID del servicio al que se envía el mensaje
+ * @param {string} contenido - Contenido del mensaje
+ * @returns {Promise<object>} - Mensaje insertado con su _id
+ */
+async function createMensaje(usuarioId, servicioId, contenido) {
+    const db = await connectDB();
+
+    if (!ObjectId.isValid(usuarioId) || !ObjectId.isValid(servicioId)) {
+        console.error("❌ ERROR: ID inválido en createMensaje:", usuarioId, servicioId);
+        throw new Error("ID inválido");
+    }
+
+    const mensaje = {
+        usuarioId: new ObjectId(usuarioId), // ✅ Convertimos el ID a ObjectId
+        servicioId: new ObjectId(servicioId), // ✅ Convertimos el ID a ObjectId
+        contenido,
+        fecha: new Date(), // ✅ Se guarda correctamente la fecha
+        leido: false
+    };
+
+    const result = await db.collection("mensajes").insertOne(mensaje);
+    console.log("✅ Mensaje creado:", result.insertedId);
+    return { ...mensaje, _id: result.insertedId };
+}
+
+
+
+/**
+ * 📌 Obtener mensajes de un usuario o servicio
+ * 
+ * @param {object} filter - Filtro opcional (usuarioId, servicioId)
+ * @returns {Promise<Array<object>>} - Lista de mensajes
+ */
+async function getMensajes(filter = {}) {
+    const db = await connectDB();
+    
+    const query = {};
+
+    if (filter.usuarioId) {
+        try {
+            query.usuarioId = new ObjectId(filter.usuarioId); // ✅ Convertir a ObjectId
+        } catch {
+            console.error("❌ ERROR: usuarioId inválido:", filter.usuarioId);
+            return [];
+        }
+    }
+
+    if (filter.servicioId) {
+        try {
+            query.servicioId = new ObjectId(filter.servicioId); // ✅ Convertir a ObjectId
+        } catch  {
+            console.error("❌ ERROR: servicioId inválido:", filter.servicioId);
+            return [];
+        }
+    }
+
+    console.log("🔍 Query ejecutada en MongoDB:", query);
+
+    return await db.collection("mensajes").find(query).toArray();
+}
+
+
+
+/**
+ * 📌 Marcar un mensaje como leído
+ * @param {string} mensajeId - ID del mensaje a actualizar
+ * @returns {Promise<object>} - Resultado de la actualización
+ */
+async function updateMensaje(mensajeId) {
+    const db = await connectDB();
+
+    if (!ObjectId.isValid(mensajeId)) {
+        console.error("❌ ERROR: ID inválido en updateMensaje:", mensajeId);
+        throw new Error("ID inválido");
+    }
+
+    const result = await db.collection("mensajes").updateOne(
+        { _id: new ObjectId(mensajeId) },
+        { $set: { leido: true } }
+    );
+
+    console.log(`✅ Mensaje ${mensajeId} actualizado:`, result.modifiedCount);
+    return result;
+}
+
+/**
+ * 📌 Eliminar un mensaje por ID
+ * @param {string} mensajeId - ID del mensaje a eliminar
+ * @returns {Promise<string>} - ID del mensaje eliminado
+ */
+async function deleteMensaje(mensajeId) {
+    const db = await connectDB();
+
+    if (!ObjectId.isValid(mensajeId)) {
+        console.error("❌ ERROR: ID inválido en deleteMensaje:", mensajeId);
+        throw new Error("ID inválido");
+    }
+
+    console.log(`🗑 Eliminando mensaje con _id: ${mensajeId}`);
+
+    const result = await db.collection("mensajes").deleteOne({ _id: new ObjectId(mensajeId) });
+
+    console.log("✅ Mensaje eliminado:", result.deletedCount);
+    return mensajeId;
 }

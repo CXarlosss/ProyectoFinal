@@ -1,7 +1,7 @@
 //@ts-check
 document.addEventListener("DOMContentLoaded", () => {
-    cargarMensajes();
-    setInterval(cargarMensajes, 5000); // Recarga los mensajes cada 5 segundos
+   /*  cargarMensajes(); */
+   /*  setInterval(cargarMensajes, 5000); // Recarga los mensajes cada 5 segundos */
 
     const btnCerrarChat = document.getElementById("cerrar-chat");
     const btnEnviarMensaje = document.getElementById("enviar-mensaje");

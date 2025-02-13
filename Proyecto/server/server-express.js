@@ -206,22 +206,22 @@ app.put('/users/:userId/favoritos/:servicioId', async (req, res) => {
       return res.status(404).json({ error: "Usuario no encontrado" });
     }
 
-    // 🚀 Verificar si ya está en favoritos
-    const yaEsFavorito = usuario.favoritos && usuario.favoritos.includes(servicioId);
+    const servicioObjectId = new ObjectId(servicioId);
+    const yaEsFavorito = usuario.favoritos && usuario.favoritos.some(id => id.equals(servicioObjectId));
 
     if (yaEsFavorito) {
-      // Si ya es favorito, lo quitamos
+      // ❌ Si ya es favorito, lo quitamos
       await db.collection("Users").updateOne(
         { _id: new ObjectId(userId) },
-        { $pull: { favoritos: servicioId } }
+        { $pull: { favoritos: servicioObjectId } }
       );
       console.log(`❌ Servicio ${servicioId} eliminado de favoritos`);
       return res.json({ message: "Favorito eliminado" });
     } else {
-      // Si no es favorito, lo añadimos
+      // ✅ Si no es favorito, lo añadimos
       await db.collection("Users").updateOne(
         { _id: new ObjectId(userId) },
-        { $addToSet: { favoritos: servicioId } }
+        { $addToSet: { favoritos: servicioObjectId } } // 💡 Evita duplicados
       );
       console.log(`✅ Servicio ${servicioId} añadido a favoritos`);
       return res.json({ message: "Favorito añadido" });
@@ -231,6 +231,8 @@ app.put('/users/:userId/favoritos/:servicioId', async (req, res) => {
     res.status(500).json({ error: "Error interno del servidor" });
   }
 });
+
+
 // 📌 Obtener la lista de favoritos de un usuario
 app.get('/users/:userId/favoritos', async (req, res) => {
   try {
@@ -250,10 +252,10 @@ app.get('/users/:userId/favoritos', async (req, res) => {
 
     if (!usuario || !usuario.favoritos || usuario.favoritos.length === 0) {
       console.warn("⚠ Usuario no tiene favoritos.");
-      return res.json([]); // Si no tiene favoritos, devolvemos un array vacío
+      return res.json([]); // 🔹 Devuelve un array vacío en lugar de error 404
     }
 
-    // 🚀 Consultamos la colección de Servicios para obtener la información de los favoritos
+    // 🚀 Consultamos la colección de Servicios con los IDs de favoritos
     const favoritosConDetalles = await db.collection("Servicios").find({
       _id: { $in: usuario.favoritos.map(id => new ObjectId(id)) }
     }).toArray();
@@ -266,6 +268,7 @@ app.get('/users/:userId/favoritos', async (req, res) => {
     res.status(500).json({ error: "Error interno del servidor" });
   }
 });
+
 
 
 // 📌 Añadir a favoritos
@@ -307,9 +310,23 @@ app.delete('/users/:userId/favoritos/:servicioId', async (req, res) => {
     console.log(`📌 Eliminando favorito: usuario ${userId}, servicio ${servicioId}`);
 
     const db = await connectDB();
+    const usuario = await db.collection("Users").findOne({ _id: new ObjectId(userId) });
+
+    if (!usuario) {
+      return res.status(404).json({ error: "Usuario no encontrado" });
+    }
+
+    const servicioObjectId = new ObjectId(servicioId);
+
+    // 🚀 Verificar si el servicio está en favoritos antes de eliminarlo
+    if (!usuario.favoritos || !usuario.favoritos.some(id => id.equals(servicioObjectId))) {
+      console.warn(`⚠ El servicio ${servicioId} no está en favoritos.`);
+      return res.status(404).json({ error: "Favorito no encontrado" });
+    }
+
     const result = await db.collection("Users").updateOne(
       { _id: new ObjectId(userId) },
-      { $pull: { favoritos: servicioId } }
+      { $pull: { favoritos: servicioObjectId } }
     );
 
     if (result.modifiedCount === 0) {
@@ -317,7 +334,7 @@ app.delete('/users/:userId/favoritos/:servicioId', async (req, res) => {
       return res.status(404).json({ error: "Favorito no encontrado" });
     }
 
-    console.log(`✅ Favorito eliminado correctamente.`);
+    console.log(`✅ Favorito ${servicioId} eliminado correctamente.`);
     res.json({ message: "Favorito eliminado correctamente" });
 
   } catch (error) {
@@ -325,6 +342,7 @@ app.delete('/users/:userId/favoritos/:servicioId', async (req, res) => {
     res.status(500).json({ error: "Error interno del servidor" });
   }
 });
+
 
 
 

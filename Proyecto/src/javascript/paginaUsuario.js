@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
     
     const usuario = JSON.parse(usuarioGuardado);
     console.log("✅ Usuario cargado:", usuario);
-    const btnServicios = document.getElementById("btn-servicios"); // Asegúrate de que el botón existe
+    const btnServicios = document.getElementById("btn-ir-secciones"); // Asegúrate de que el botón existe
 
     if (btnServicios) {
         btnServicios.addEventListener("click", irAServicios);

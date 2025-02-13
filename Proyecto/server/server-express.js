@@ -332,96 +332,97 @@ app.delete('/users/:userId/favoritos/:servicioId', async (req, res) => {
 // 📌 Crear un nuevo mensaje
 app.post("/mensajes", async (req, res) => {
   try {
-      console.log("📌 Recibiendo mensaje en el servidor...");
-      console.log("Datos recibidos:", req.body);
+    console.log("📌 Recibiendo mensaje en el servidor...");
+    console.log("Datos recibidos:", req.body);
 
-      const { usuarioId, servicioId, contenido } = req.body;
+    const { usuarioId, servicioId, receptorId, contenido } = req.body;
 
-      if (!usuarioId || !servicioId || !contenido) {
-          return res.status(400).json({ error: "Datos incompletos para crear un mensaje" });
-      }
-
-      // 📌 Convertimos los IDs a ObjectId
-      const mensajeData = {
-          usuarioId: new ObjectId(usuarioId),
-          servicioId: new ObjectId(servicioId),
-          contenido,
-          leido: false,
-          fecha: new Date(),
-      };
-
-      // 📌 Guardar mensaje en la base de datos
-      const database = await connectDB();
-      const resultado = await database.collection("mensajes").insertOne(mensajeData);
-
-      console.log("✅ Mensaje guardado en la base de datos:", resultado);
-      res.json({ mensaje: "Mensaje guardado correctamente", resultado });
-
-  } catch (error) {
-      console.error("❌ Error en el servidor al guardar el mensaje:", error);
-      res.status(500).json({ error: "Error interno del servidor" });
-  }
-});
-// 📌 Obtener mensajes de un usuario o servicio
-app.get('/mensajes', async (req, res) => {
-  try {
-    const { usuarioId, servicioId } = req.query;
-    const filter = {};
-
-    if (usuarioId && ObjectId.isValid(usuarioId)) {
-      filter.usuarioId = new ObjectId(usuarioId);
+    if (!usuarioId || !contenido) {
+      return res.status(400).json({ error: "Datos incompletos para crear un mensaje" });
     }
 
-    if (servicioId && ObjectId.isValid(servicioId)) {
-      filter.servicioId = new ObjectId(servicioId);
+    const db = await connectDB();
+
+    let receptorFinal = receptorId ? new ObjectId(receptorId) : null;
+    let servicioFinal = servicioId ? new ObjectId(servicioId) : null;
+
+    if (servicioId) {
+      // 🔍 Verificar si el servicio existe
+      const servicio = await db.collection("Servicios").findOne({ _id: servicioFinal });
+
+      if (!servicio) {
+        console.error("❌ Servicio no encontrado:", servicioId);
+        return res.status(404).json({ error: "Servicio no encontrado" });
+      }
+
+      receptorFinal = servicio.usuarioId; // El receptor es el dueño del servicio
+    } else if (receptorId) {
+      // 🔍 Verificar si el usuario receptor existe
+      const usuarioReceptor = await db.collection("Users").findOne({ _id: receptorFinal });
+
+      if (!usuarioReceptor) {
+        console.error("⚠ Usuario receptor no encontrado. Asumimos que es un servicio.");
+        receptorFinal = receptorId; // Deja el receptorId como string si no es un usuario
+      }
+    } else {
+      return res.status(400).json({ error: "Debe haber un servicioId o un receptorId" });
     }
 
-    console.log("📌 Buscando mensajes con filtro:", filter);
+    // 🔥 Guardar mensaje en MongoDB
+    const mensajeData = {
+      usuarioId: new ObjectId(usuarioId),
+      servicioId: servicioFinal || null, // Puede ser null si es usuario a usuario
+      receptorId: receptorFinal,
+      contenido,
+      leido: false,
+      fecha: new Date(),
+    };
 
-    const database = await connectDB();
+    const resultado = await db.collection("mensajes").insertOne(mensajeData);
 
-    const mensajes = await database.collection("mensajes").aggregate([
-      { $match: filter },
-      {
-        $lookup: {
-          from: "Users",
-          localField: "usuarioId",
-          foreignField: "_id",
-          as: "usuario"
-        }
-      },
-      {
-        $lookup: {
-          from: "Servicios",
-          localField: "servicioId",
-          foreignField: "_id",
-          as: "servicio"
-        }
-      },
-      { $unwind: { path: "$usuario", preserveNullAndEmptyArrays: true } },
-      { $unwind: { path: "$servicio", preserveNullAndEmptyArrays: true } },
-      {
-        $project: {
-          _id: 1,
-          contenido: 1,
-          fecha: 1,
-          leido: 1,
-          usuarioId: 1,
-          servicioId: 1,
-          "usuario.nombre": 1,
-          "servicio.nombre": 1
-        }
-      }
-    ]).toArray();
+    console.log("✅ Mensaje guardado correctamente:", resultado);
+    res.json({ mensaje: "Mensaje guardado correctamente", resultado });
 
-    console.log("✅ Mensajes encontrados:", mensajes);
-
-    res.json(mensajes);
   } catch (error) {
-    console.error("❌ Error al obtener mensajes:", error);
+    console.error("❌ Error en el servidor al guardar el mensaje:", error);
     res.status(500).json({ error: "Error interno del servidor" });
   }
 });
+
+
+
+// 📌 Obtener mensajes de un usuario o servicio
+app.get('/mensajes', async (req, res) => {
+  try {
+      const { usuarioId } = req.query;
+      const db = await connectDB();
+
+      if (!ObjectId.isValid(usuarioId)) {
+          return res.status(400).json({ error: "ID inválido" });
+      }
+
+      console.log("📌 Buscando mensajes con usuarioId:", usuarioId);
+
+      const mensajes = await db.collection("mensajes").find({
+        $or: [
+            { usuarioId: new ObjectId(usuarioId) }, // Mensajes enviados por el usuario
+            { receptorId: usuarioId }, // Mensajes recibidos (sin convertir a ObjectId)
+            { servicioId: new ObjectId(usuarioId) } // Mensajes dentro de un servicio específico
+        ]
+    }).sort({ fecha: -1 }).toArray();
+    
+    
+    
+
+      console.log("✅ Mensajes encontrados:", mensajes);
+      res.json(mensajes);
+  } catch (error) {
+      console.error("❌ Error al obtener mensajes:", error);
+      res.status(500).json({ error: "Error interno del servidor" });
+  }
+});
+
+
 // 📌 Marcar un mensaje como leído
 app.put('/mensajes/:mensajeId', async (req, res) => {
   try {

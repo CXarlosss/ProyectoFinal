@@ -7,18 +7,25 @@ document.addEventListener("DOMContentLoaded", () => {
         window.location.href = "registrar.html"; // Redirigir si no hay sesión activa
         return;
     }
-
+    
     const usuario = JSON.parse(usuarioGuardado);
     console.log("✅ Usuario cargado:", usuario);
+    const btnServicios = document.getElementById("btn-servicios"); // Asegúrate de que el botón existe
 
-    // Cargar módulos de favoritos y mensajes
+    if (btnServicios) {
+        btnServicios.addEventListener("click", irAServicios);
+    } else {
+        console.warn("⚠️ No se encontró el botón de servicios en el DOM.");
+    }
+    
+   /*  // Cargar módulos de favoritos y mensajes
     const scriptFavoritos = document.createElement("script");
     scriptFavoritos.src = "./javascript/UsuarioFavoritos.js";
     document.body.appendChild(scriptFavoritos);
 
     const scriptMensajes = document.createElement("script");
     scriptMensajes.src = "./javascript/UsuarioMensajes.js";
-    document.body.appendChild(scriptMensajes);
+    document.body.appendChild(scriptMensajes); */
 
     // 📌 Función para cerrar sesión
     function cerrarSesion() {
@@ -33,4 +40,11 @@ document.addEventListener("DOMContentLoaded", () => {
     if (btnCerrarSesion) {
         btnCerrarSesion.addEventListener("click", cerrarSesion);
     }
+
+    function irAServicios() {
+        if (confirm("¿Estás seguro de que quieres ir a Servicios?")) {
+            window.location.href = "servicios.html";
+        }
+    }
+    
 });

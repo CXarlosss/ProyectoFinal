@@ -290,15 +290,17 @@ async function removeFavorito(userId, servicioId) {
  * @param {string} contenido - Contenido del mensaje
  * @returns {Promise<object>} - Mensaje insertado con su _id
  */
+
 async function createMensaje(usuarioId, servicioId, contenido) {
-    const database = await connectDB(); // Asegurarnos de conectar a la base de datos
+    const db = await connectDB();
 
     if (!ObjectId.isValid(usuarioId) || !ObjectId.isValid(servicioId)) {
         console.error("❌ ERROR: ID inválido en createMensaje:", usuarioId, servicioId);
-        throw new Error("ID inválido");
+        throw new Error("ID inválido para MongoDB");
     }
 
     const mensaje = {
+        chatId: `${usuarioId}_${servicioId}`, // 🔥 Aseguramos que usuario y servicio compartan chat
         usuarioId: new ObjectId(usuarioId),
         servicioId: new ObjectId(servicioId),
         contenido,
@@ -306,11 +308,11 @@ async function createMensaje(usuarioId, servicioId, contenido) {
         leido: false
     };
 
-    const result = await database.collection("mensajes").insertOne(mensaje);
-
-    console.log("✅ Mensaje creado con ID:", result.insertedId);
+    const result = await db.collection("mensajes").insertOne(mensaje);
+    console.log("✅ Mensaje creado en MongoDB:", result.insertedId);
     return { ...mensaje, _id: result.insertedId };
 }
+
 
 
 
@@ -320,32 +322,26 @@ async function createMensaje(usuarioId, servicioId, contenido) {
  * @param {object} filter - Filtro opcional (usuarioId, servicioId)
  * @returns {Promise<Array<object>>} - Lista de mensajes
  */
+/**
+ * 📌 Obtener mensajes de un usuario o servicio (agrupados por chat)
+ */
 async function getMensajes(filter = {}) {
     const db = await connectDB();
     
     const query = {};
-
     if (filter.usuarioId) {
-        try {
-            query.usuarioId = new ObjectId(filter.usuarioId); // ✅ Convertir a ObjectId
-        } catch {
-            console.error("❌ ERROR: usuarioId inválido:", filter.usuarioId);
-            return [];
-        }
-    }
-
-    if (filter.servicioId) {
-        try {
-            query.servicioId = new ObjectId(filter.servicioId); // ✅ Convertir a ObjectId
-        } catch  {
-            console.error("❌ ERROR: servicioId inválido:", filter.servicioId);
-            return [];
-        }
+        query.$or = [
+            { usuarioId: new ObjectId(filter.usuarioId) },
+            { servicioId: new ObjectId(filter.usuarioId) } // 🔥 Verifica si el usuario es un servicio
+        ];
     }
 
     console.log("🔍 Query ejecutada en MongoDB:", query);
 
-    return await db.collection("mensajes").find(query).toArray();
+    return await db.collection("mensajes")
+        .find(query)
+        .sort({ fecha: 1 }) // 🔥 Ordenamos los mensajes por fecha
+        .toArray();
 }
 
 

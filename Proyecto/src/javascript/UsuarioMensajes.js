@@ -1,7 +1,7 @@
 //@ts-check
 document.addEventListener("DOMContentLoaded", () => {
     cargarMensajes();
-    const btnCrearChat = document.getElementById("btn-create-chat");
+
     const btnCerrarChat = document.getElementById("cerrar-chat");
     const btnEnviarMensaje = document.getElementById("enviar-mensaje");
     const chatPopup = document.getElementById("chat-popup");
@@ -11,9 +11,16 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
  
-    if (btnCrearChat) btnCrearChat.addEventListener("click", abrirFormularioNuevoChat);
+
     if (btnCerrarChat) btnCerrarChat.addEventListener("click", cerrarChat);
     if (btnEnviarMensaje) btnEnviarMensaje.addEventListener("click", enviarMensaje);
+    const servicioGuardado = localStorage.getItem("servicioSeleccionado");
+    if (servicioGuardado) {
+        const servicio = JSON.parse(servicioGuardado);
+        abrirChat(servicio._id);
+        localStorage.removeItem("servicioSeleccionado"); // 🔥 Limpiamos después de usarlo
+    }
+    
 });
 
 /**
@@ -47,7 +54,8 @@ async function cargarMensajes() {
 
 /**
  * Renderiza la lista de chats en la UI.
- * @param {Array<{usuarioId: string, servicioId: string, contenido: string, fecha: string, leido: boolean}>} mensajes 
+ * 📌 Renderiza la lista de chats en la UI.
+ * @param {any[]} mensajes
  * @param {string} usuarioId
  */
 function renderizarListaChats(mensajes, usuarioId) {
@@ -60,24 +68,21 @@ function renderizarListaChats(mensajes, usuarioId) {
     chatList.innerHTML = ""; 
 
     if (mensajes.length === 0) {
-        chatList.innerHTML = "<p>No hay chats aún.</p>";
+        chatList.innerHTML = "<p>No tienes chats aún.</p>";
         return;
     }
 
-   /** @type {Record<string, { id: string, nombre: string, ultimoMensaje: string, fecha: string }>} */
-const chats = {};
+    /** @type {Record<string, { id: string, nombre: string, ultimoMensaje: string, fecha: string }>} */
+    const chats = {};
 
-
-    mensajes.forEach(msg => {
+    mensajes.forEach((/** @type {{ usuarioId: any; servicioId: any; servicio: { nombre: any; }; usuario: { nombre: any; }; contenido: any; fecha: string | number | Date; }} */ msg) => {
         const contactoId = msg.usuarioId === usuarioId ? msg.servicioId : msg.usuarioId;
-        const contactoNombre = msg.usuarioId === usuarioId ? "Servicio" : "Usuario";
+        const contactoNombre = msg.usuarioId === usuarioId ? msg.servicio?.nombre || "Servicio" : msg.usuario?.nombre || "Usuario";
 
-    
-    
         if (!chats[contactoId]) {
             chats[contactoId] = {
                 id: contactoId,
-                nombre: contactoNombre || "Desconocido",
+                nombre: contactoNombre,
                 ultimoMensaje: msg.contenido,
                 fecha: new Date(msg.fecha).toLocaleString()
             };
@@ -88,7 +93,7 @@ const chats = {};
         const chatItem = document.createElement("div");
         chatItem.classList.add("chat-item");
         chatItem.innerHTML = `
-            <p><strong>${chat.nombre}</strong></p> <!-- Aquí se muestra el nombre -->
+            <p><strong>${chat.nombre}</strong></p>
             <p>${chat.ultimoMensaje}</p>
             <span class="fecha">${chat.fecha}</span>
         `;
@@ -100,17 +105,24 @@ const chats = {};
 }
 
 
+
+/**
+ * 📌 Abre un chat específico y muestra los mensajes.
+ * @param {string} contactoId 
+ */
+
+
 /**
  * 📌 Abre un chat específico y muestra los mensajes.
  * @param {string} contactoId 
  */
 export async function abrirChat(contactoId) {
-    console.log(`📌 Intentado Abrir el chat con ID: ${contactoId}`);
+    console.log(`📌 Intentando abrir el chat con ID: ${contactoId}`);
 
     const chatPopup = document.getElementById("chat-popup");
     const chatMessages = document.getElementById("chat-messages");
     const chatTitulo = document.getElementById("chat-titulo");
-    const mensajeInput = /** @type {HTMLInputElement | null} */ (document.getElementById("mensaje-input"));
+    const mensajeInput = document.getElementById("mensaje-input");
 
     if (!chatPopup || !chatMessages || !chatTitulo || !mensajeInput) return;
 
@@ -129,23 +141,13 @@ export async function abrirChat(contactoId) {
         const mensajes = await response.json();
         chatMessages.innerHTML = "";
 
-        mensajes.forEach((/** @type {{ usuarioId: any; contenido: any; fecha: string | number | Date; _id: any; }} */ msg) => {
+        mensajes.forEach((/** @type {{ usuarioId: any; contenido: any; fecha: string | number | Date; }} */ msg) => {
             const msgElement = document.createElement("div");
             msgElement.classList.add("mensaje");
             msgElement.innerHTML = `
                 <p><strong>${msg.usuarioId === usuario._id ? "Tú" : "Otro"}:</strong> ${msg.contenido}</p>
                 <span class="fecha">${new Date(msg.fecha).toLocaleString()}</span>
-                <button class="btn-responder" data-mensaje-id="${msg._id}">Responder</button>
             `;
-
-            const responderBtn = msgElement.querySelector(".btn-responder");
-            if (responderBtn) {
-                responderBtn.addEventListener("click", () => {
-                    mensajeInput.value = `@${msg.usuarioId}: ${msg.contenido} `;
-                    mensajeInput.focus();
-                });
-            }
-
             chatMessages.appendChild(msgElement);
         });
 
@@ -154,7 +156,7 @@ export async function abrirChat(contactoId) {
     }
 }
 
-// ✅ Exportamos abrirChat como función exportada
+
 
 
 function cerrarChat() {
@@ -206,7 +208,4 @@ async function enviarMensaje() {
     }
 }
 
-function abrirFormularioNuevoChat() {
-    const nuevoChat = prompt("Introduce el ID del servicio o usuario con el que quieres chatear:");
-    if (nuevoChat) abrirChat(nuevoChat);
-}
+

@@ -28,10 +28,29 @@ app.post('/create/servicios', async (req, res) => {
   res.json(await db.servicios.create(req.body))
 }) 
 // 📌 Obtener todos los servicios
-app.get('/read/servicios',async (req, res) => {
-  console.log("📌 Servicio Creado:", req.body);
-  res.json(await db.servicios.get())
+// 📌 Obtener un único servicio por su ID
+app.get("/read/servicio/:id", async (req, res) => {
+  try {
+      const { id } = req.params;
+      if (!ObjectId.isValid(id)) {
+          return res.status(400).json({ error: "ID inválido" });
+      }
+
+      const db = await connectDB();
+      const servicio = await db.collection("Servicios").findOne({ _id: new ObjectId(id) });
+
+      if (!servicio) {
+          return res.status(404).json({ error: "Servicio no encontrado" });
+      }
+      
+      res.json(servicio);
+  } catch (error) {
+      console.error("❌ Error al obtener el servicio:", error);
+      res.status(500).json({ error: "Error interno del servidor" });
+  }
 });
+
+
 // 📌 Actualizar un servicio
 app.put('/update/servicios/:_id', async (req, res) => {
   try {
@@ -173,24 +192,33 @@ app.get('/users/:userId/favoritos', async (req, res) => {
   }
 });
 // 📌 Añadir a favoritos
-app.put('/users/:userId/favoritos/:servicioId', async (req, res) => {
+// 📌 Marcar como leídos los mensajes de un usuario en un chat
+app.put('/mensajes/:servicioId/leidos', async (req, res) => {
   try {
-    const { userId, servicioId } = req.params;
+      const { servicioId } = req.params;
+      const usuarioGuardado = req.query.usuarioId; // Obtiene el usuario desde la query
 
-    if (!ObjectId.isValid(userId) || !ObjectId.isValid(servicioId)) {
-      return res.status(400).json({ error: "ID de usuario o servicio inválido" });
-    }
+      if (!ObjectId.isValid(servicioId) || !ObjectId.isValid(usuarioGuardado)) {
+          return res.status(400).json({ error: "ID inválido" });
+      }
 
-    await db.users.addFavorito(userId, servicioId);
+      const db = await connectDB();
 
-    res.json({ message: "Servicio añadido a favoritos" });
+      const resultado = await db.collection("mensajes").updateMany(
+          { servicioId: new ObjectId(servicioId), usuarioId: new ObjectId(usuarioGuardado), leido: false },
+          { $set: { leido: true } }
+      );
+
+      console.log(`✅ ${resultado.modifiedCount} mensajes marcados como leídos en el chat con servicio ${servicioId}`);
+      res.json({ message: "Mensajes marcados como leídos", resultado });
 
   } catch (error) {
-    console.error("❌ Error al añadir a favoritos:", error);
-    res.status(500).json({ error: "Error interno del servidor" });
+      console.error("❌ Error al marcar mensajes como leídos:", error);
+      res.status(500).json({ error: "Error interno del servidor" });
   }
 });
-// 📌 Quitar de favoritos
+
+
 // 📌 Quitar de favoritos
 app.delete('/users/:userId/favoritos/:servicioId', async (req, res) => {
   try {
@@ -233,29 +261,30 @@ app.post("/mensajes", async (req, res) => {
       const { usuarioId, servicioId, contenido } = req.body;
 
       if (!usuarioId || !servicioId || !contenido) {
-          console.error("❌ Error: Datos incompletos para crear un mensaje.");
-          return res.status(400).json({
-              error: "Datos incompletos para crear un mensaje",
-              datosRecibidos: req.body,
-          });
+          return res.status(400).json({ error: "Datos incompletos para crear un mensaje" });
       }
 
-      // 📌 Guardamos el mensaje usando la función `createMensaje` de `server-mongodb.js`
-      const mensaje = await db.mensajes.create(usuarioId, servicioId, contenido);
+      // 📌 Convertimos los IDs a ObjectId
+      const mensajeData = {
+          usuarioId: new ObjectId(usuarioId),
+          servicioId: new ObjectId(servicioId),
+          contenido,
+          leido: false,
+          fecha: new Date(),
+      };
 
-      console.log("✅ Mensaje guardado en la base de datos:", mensaje);
-      res.json({ mensaje: "Mensaje guardado correctamente" });
+      // 📌 Guardar mensaje en la base de datos
+      const database = await connectDB();
+      const resultado = await database.collection("mensajes").insertOne(mensajeData);
+
+      console.log("✅ Mensaje guardado en la base de datos:", resultado);
+      res.json({ mensaje: "Mensaje guardado correctamente", resultado });
 
   } catch (error) {
       console.error("❌ Error en el servidor al guardar el mensaje:", error);
-      res.status(500).json({
-          error: "Error interno del servidor",
-          detalle: error.message,
-      });
+      res.status(500).json({ error: "Error interno del servidor" });
   }
 });
-
-
 // 📌 Obtener mensajes de un usuario o servicio
 app.get('/mensajes', async (req, res) => {
   try {
@@ -316,13 +345,6 @@ app.get('/mensajes', async (req, res) => {
     res.status(500).json({ error: "Error interno del servidor" });
   }
 });
-
-
-
-
-
-
-
 // 📌 Marcar un mensaje como leído
 app.put('/mensajes/:mensajeId', async (req, res) => {
   try {
@@ -340,7 +362,6 @@ app.put('/mensajes/:mensajeId', async (req, res) => {
     res.status(500).json({ error: "Error interno del servidor" });
   }
 });
-
 // 📌 Eliminar un mensaje
 app.delete('/mensajes/:mensajeId', async (req, res) => {
   try {

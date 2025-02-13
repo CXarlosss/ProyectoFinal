@@ -155,9 +155,15 @@ async function deleteServicios(id) {
 
     const result = await db.collection("Servicios").deleteOne({ _id: new ObjectId(id) });
 
+    if (result.deletedCount === 0) {
+        console.warn("⚠ No se encontró el servicio para eliminar.");
+        return id;
+    }
+
     console.log("✅ Servicio eliminado:", result.deletedCount);
     return id;
 }
+
 
 /**
  * 📌 Obtener todos los usuarios o filtrar por parámetros
@@ -282,7 +288,6 @@ async function removeFavorito(userId, servicioId) {
 
 
 //Mensajes
-
 /**
  * 📌 Crear un nuevo mensaje
  * @param {string} usuarioId - ID del usuario que envía el mensaje
@@ -312,19 +317,13 @@ async function createMensaje(usuarioId, servicioId, contenido) {
     console.log("✅ Mensaje creado en MongoDB:", result.insertedId);
     return { ...mensaje, _id: result.insertedId };
 }
-
-
-
-
 /**
  * 📌 Obtener mensajes de un usuario o servicio
  * 
  * @param {object} filter - Filtro opcional (usuarioId, servicioId)
  * @returns {Promise<Array<object>>} - Lista de mensajes
  */
-/**
- * 📌 Obtener mensajes de un usuario o servicio (agrupados por chat)
- */
+
 async function getMensajes(filter = {}) {
     const db = await connectDB();
     
@@ -343,9 +342,6 @@ async function getMensajes(filter = {}) {
         .sort({ fecha: 1 }) // 🔥 Ordenamos los mensajes por fecha
         .toArray();
 }
-
-
-
 /**
  * 📌 Marcar un mensaje como leído
  * @param {string} mensajeId - ID del mensaje a actualizar
@@ -367,7 +363,6 @@ async function updateMensaje(mensajeId) {
     console.log(`✅ Mensaje ${mensajeId} actualizado:`, result.modifiedCount);
     return result;
 }
-
 /**
  * 📌 Eliminar un mensaje por ID
  * @param {string} mensajeId - ID del mensaje a eliminar

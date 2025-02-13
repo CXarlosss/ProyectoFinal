@@ -28,27 +28,44 @@ app.post('/create/servicios', async (req, res) => {
   res.json(await db.servicios.create(req.body))
 }) 
 // 📌 Obtener todos los servicios
+
+// 📌 Obtener todos los servicios
+app.get("/read/servicios", async (req, res) => {
+  try {
+    const db = await connectDB();
+    const servicios = await db.collection("Servicios").find().toArray();
+
+    // ✅ Enviar un array vacío en lugar de un error 404 si no hay servicios
+    res.json(servicios);
+  } catch (error) {
+    console.error("❌ Error al obtener los servicios:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+});
+
 // 📌 Obtener un único servicio por su ID
 app.get("/read/servicio/:id", async (req, res) => {
   try {
-      const { id } = req.params;
-      if (!ObjectId.isValid(id)) {
-          return res.status(400).json({ error: "ID inválido" });
-      }
+    const { id } = req.params;
 
-      const db = await connectDB();
-      const servicio = await db.collection("Servicios").findOne({ _id: new ObjectId(id) });
+    if (!ObjectId.isValid(id)) {
+      return res.status(400).json({ error: "ID inválido" });
+    }
 
-      if (!servicio) {
-          return res.status(404).json({ error: "Servicio no encontrado" });
-      }
-      
-      res.json(servicio);
+    const db = await connectDB();
+    const servicio = await db.collection("Servicios").findOne({ _id: new ObjectId(id) });
+
+    if (!servicio) {
+      return res.status(404).json({ error: "Servicio no encontrado" });
+    }
+
+    res.json(servicio);
   } catch (error) {
-      console.error("❌ Error al obtener el servicio:", error);
-      res.status(500).json({ error: "Error interno del servidor" });
+    console.error("❌ Error al obtener el servicio:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
   }
 });
+
 
 
 // 📌 Actualizar un servicio
@@ -88,20 +105,31 @@ app.put('/update/servicios/:_id', async (req, res) => {
 // 📌 Eliminar un servicio
 app.delete('/delete/servicios/:_id', async (req, res) => {
   try {
-    console.log(`📌 Eliminando servicio con _id: ${req.params._id}`);
+    const { _id } = req.params;
+    console.log(`📌 Intentando eliminar servicio con _id: ${_id}`);
 
-    if (!req.params._id || req.params._id.length !== 24) {
-      console.error("❌ ERROR: ID inválido en la eliminación:", req.params._id);
+    if (!_id || !ObjectId.isValid(_id)) {
+      console.error("❌ ERROR: ID inválido para MongoDB:", _id);
       return res.status(400).json({ error: "ID inválido para MongoDB" });
     }
 
-    const resultado = await db.servicios.delete(req.params._id);
-    res.json(resultado);
+    const db = await connectDB();
+    const resultado = await db.collection("Servicios").deleteOne({ _id: new ObjectId(_id) });
+
+    if (resultado.deletedCount === 0) {
+      console.warn(`⚠ No se encontró el servicio para eliminar.`);
+      return res.status(404).json({ error: "Servicio no encontrado" });
+    }
+
+    console.log(`✅ Servicio ${_id} eliminado correctamente.`);
+    res.json({ message: "Servicio eliminado correctamente", resultado });
+
   } catch (error) {
     console.error("❌ Error en la eliminación:", error);
     res.status(500).json({ error: "Error interno del servidor" });
   }
 });
+
 
 //USUARIOS
 // 📌 Crear un nuevo usuario
@@ -161,6 +189,49 @@ app.delete('/delete/users/:_id', async (req, res) => {
 //FAVORITOS
 
 // 📌 Leer Cuantos hay
+app.put('/users/:userId/favoritos/:servicioId', async (req, res) => {
+  try {
+    const { userId, servicioId } = req.params;
+
+    if (!ObjectId.isValid(userId) || !ObjectId.isValid(servicioId)) {
+      return res.status(400).json({ error: "ID de usuario o servicio inválido" });
+    }
+
+    console.log(`📌 Actualizando favoritos para usuario ${userId}, servicio ${servicioId}`);
+
+    const db = await connectDB();
+    const usuario = await db.collection("Users").findOne({ _id: new ObjectId(userId) });
+
+    if (!usuario) {
+      return res.status(404).json({ error: "Usuario no encontrado" });
+    }
+
+    // 🚀 Verificar si ya está en favoritos
+    const yaEsFavorito = usuario.favoritos && usuario.favoritos.includes(servicioId);
+
+    if (yaEsFavorito) {
+      // Si ya es favorito, lo quitamos
+      await db.collection("Users").updateOne(
+        { _id: new ObjectId(userId) },
+        { $pull: { favoritos: servicioId } }
+      );
+      console.log(`❌ Servicio ${servicioId} eliminado de favoritos`);
+      return res.json({ message: "Favorito eliminado" });
+    } else {
+      // Si no es favorito, lo añadimos
+      await db.collection("Users").updateOne(
+        { _id: new ObjectId(userId) },
+        { $addToSet: { favoritos: servicioId } }
+      );
+      console.log(`✅ Servicio ${servicioId} añadido a favoritos`);
+      return res.json({ message: "Favorito añadido" });
+    }
+  } catch (error) {
+    console.error("❌ Error al actualizar favoritos:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+});
+// 📌 Obtener la lista de favoritos de un usuario
 app.get('/users/:userId/favoritos', async (req, res) => {
   try {
     const { userId } = req.params;
@@ -169,6 +240,8 @@ app.get('/users/:userId/favoritos', async (req, res) => {
       return res.status(400).json({ error: "ID de usuario inválido" });
     }
 
+    console.log(`📌 Buscando favoritos para usuario: ${userId}`);
+
     const db = await connectDB();
     const usuario = await db.collection("Users").findOne(
       { _id: new ObjectId(userId) },
@@ -176,21 +249,25 @@ app.get('/users/:userId/favoritos', async (req, res) => {
     );
 
     if (!usuario || !usuario.favoritos || usuario.favoritos.length === 0) {
+      console.warn("⚠ Usuario no tiene favoritos.");
       return res.json([]); // Si no tiene favoritos, devolvemos un array vacío
     }
 
-    // 🚀 Aquí hacemos la consulta en la colección de Servicios para traer los datos completos
-    const favoritosConNombres = await db.collection("Servicios").find({
+    // 🚀 Consultamos la colección de Servicios para obtener la información de los favoritos
+    const favoritosConDetalles = await db.collection("Servicios").find({
       _id: { $in: usuario.favoritos.map(id => new ObjectId(id)) }
     }).toArray();
 
-    res.json(favoritosConNombres);
+    console.log(`✅ Favoritos encontrados para usuario ${userId}:`, favoritosConDetalles);
 
+    res.json(favoritosConDetalles);
   } catch (error) {
     console.error("❌ Error al obtener favoritos:", error);
     res.status(500).json({ error: "Error interno del servidor" });
   }
 });
+
+
 // 📌 Añadir a favoritos
 // 📌 Marcar como leídos los mensajes de un usuario en un chat
 app.put('/mensajes/:servicioId/leidos', async (req, res) => {
@@ -218,7 +295,6 @@ app.put('/mensajes/:servicioId/leidos', async (req, res) => {
   }
 });
 
-
 // 📌 Quitar de favoritos
 app.delete('/users/:userId/favoritos/:servicioId', async (req, res) => {
   try {
@@ -230,10 +306,10 @@ app.delete('/users/:userId/favoritos/:servicioId', async (req, res) => {
 
     console.log(`📌 Eliminando favorito: usuario ${userId}, servicio ${servicioId}`);
 
-    const database = await connectDB();
-    const result = await database.collection("Users").updateOne(
+    const db = await connectDB();
+    const result = await db.collection("Users").updateOne(
       { _id: new ObjectId(userId) },
-      { $pull: { favoritos: new ObjectId(servicioId) } }
+      { $pull: { favoritos: servicioId } }
     );
 
     if (result.modifiedCount === 0) {
@@ -249,6 +325,7 @@ app.delete('/users/:userId/favoritos/:servicioId', async (req, res) => {
     res.status(500).json({ error: "Error interno del servidor" });
   }
 });
+
 
 
 //MENSAJES

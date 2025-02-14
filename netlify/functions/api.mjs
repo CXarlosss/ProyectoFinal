@@ -82,7 +82,7 @@ router.get("/read/servicio/:id", async (req, res) => {
 });
 
 // 📌 Actualizar un servicio
-router.put('/update/servicios/:_id',requireAuth, async (req, res) => {
+router.put('/update/servicios/:_id', async (req, res) => {
   try {
     const { _id } = req.params;
     console.log(`📌 Recibiendo actualización para servicio _id: ${_id}`, req.body);
@@ -116,7 +116,7 @@ router.put('/update/servicios/:_id',requireAuth, async (req, res) => {
   }
 });
 // 📌 Eliminar un servicio
-router.delete('/delete/servicios/:_id',requireAuth, async (req, res) => {
+router.delete('/delete/servicios/:_id', async (req, res) => {
   try {
     const { _id } = req.params;
     console.log(`📌 Intentando eliminar servicio con _id: ${_id}`);
@@ -440,7 +440,7 @@ router.post("/mensajes", async (req, res) => {
 });
 
 // 📌 Obtener mensajes de un usuario o servicio
-router.get('/mensajes',requireAuth,  async (req, res) => {
+router.get('/mensajes',  async (req, res) => {
   try {
       const { usuarioId } = req.query;
       const db = await connectDB();
@@ -472,7 +472,7 @@ router.get('/mensajes',requireAuth,  async (req, res) => {
 });
 
 // 📌 Marcar un mensaje como leído
-router.put('/mensajes/:mensajeId', requireAuth, async (req, res) => {
+router.put('/mensajes/:mensajeId',  async (req, res) => {
   try {
     const { mensajeId } = req.params;
 
@@ -489,7 +489,7 @@ router.put('/mensajes/:mensajeId', requireAuth, async (req, res) => {
   }
 });
 // 📌 Eliminar un mensaje
-router.delete('/mensajes/:mensajeId',requireAuth, async (req, res) => {
+router.delete('/mensajes/:mensajeId', async (req, res) => {
   try {
     const { mensajeId } = req.params;
 
@@ -515,16 +515,6 @@ export const handler = serverless(api);
 
 
 
-  
-  function requireAuth(req, res, next) {
-    // Simulation of authentication (OAuth2)
-    if (req.headers.authorization === 'Bearer 123456') {
-      next()
-    } else {
-      // Unauthorized
-      res.status(401).send('Unauthorized')
-    }
-  }
 export const db = {
     servicios: {
         get: getServicios,

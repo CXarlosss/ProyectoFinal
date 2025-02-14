@@ -1,30 +1,153 @@
-[
-  {
-    "usuarioId": { "$oid": "67ac72bed9875a3ac6bb1d6b" },
-    "servicioId": { "$oid": "67aca81daf4127da26264dcc" },
-    "contenido": "Hola, me interesa tu servicio. ¿Podemos hablar?",
-    "fecha": { "$date": "2024-02-10T12:30:00.000Z" },
-    "leido": false
+[{
+  "_id": {
+    "$oid": "67ae050a900a12b613b3896a"
   },
-  {
-    "usuarioId": { "$oid": "67aca81daf4127da26264dcc" },
-    "servicioId": { "$oid": "67ac72bed9875a3ac6bb1d6b" },
-    "contenido": "¡Hola! Claro, ¿en qué te puedo ayudar?",
-    "fecha": { "$date": "2024-02-10T12:35:00.000Z" },
-    "leido": true
+  "usuarioId": {
+    "$oid": "67ac90dd451e0c959b3fa1d9"
   },
-  {
-    "usuarioId": { "$oid": "67ac72bed9875a3ac6bb1d6b" },
-    "servicioId": { "$oid": "67aca81daf4127da26264dcc" },
-    "contenido": "Quería saber más sobre los horarios disponibles.",
-    "fecha": { "$date": "2024-02-10T12:40:00.000Z" },
-    "leido": false
+  "servicioId": {
+    "$oid": "67adf5bd57c22acea14a6cda"
   },
-  {
-    "usuarioId": { "$oid": "67aca81daf4127da26264dcc" },
-    "servicioId": { "$oid": "67ac72bed9875a3ac6bb1d6b" },
-    "contenido": "Tenemos disponibilidad por la mañana y por la tarde. ¿Qué horario te viene mejor?",
-    "fecha": { "$date": "2024-02-10T12:45:00.000Z" },
-    "leido": true
+  "contenido": "Te quiero mandar un mensaje desde carlosdepet@gmaaail.com  que va destinado a carlosdepet@gmail.com",
+  "leido": false,
+  "fecha": {
+    "$date": "2025-02-13T14:43:22.530Z"
+  },
+  "receptorId": "67ac72bed9875a3ac6bb1d6b"
+},
+{
+  "_id": {
+    "$oid": "67ae0bdd2d6eff53ce2fed7c"
+  },
+  "usuarioId": {
+    "$oid": "67ac72bed9875a3ac6bb1d6b"
+  },
+  "servicioId": {
+    "$oid": "67adf5bd57c22acea14a6cda"
+  },
+  "contenido": "Te respondo desde carlosdeepte@mail.com",
+  "leido": false,
+  "fecha": {
+    "$date": "2025-02-13T15:12:29.185Z"
+  },
+  "receptorId": "67adf5bd57c22acea14a6cda"
+},
+{
+  "_id": {
+    "$oid": "67ae0fb9152a50dae8a7419e"
+  },
+  "usuarioId": {
+    "$oid": "67ac90dd451e0c959b3fa1d9"
+  },
+  "servicioId": {
+    "$oid": "67adf5bd57c22acea14a6cda"
+  },
+  "receptorId": "67ac72bed9875a3ac6bb1d6b",
+  "contenido": "Claro te contesto desde carlosdepet@maail.com",
+  "leido": false,
+  "fecha": {
+    "$date": "2025-02-13T15:28:57.175Z"
   }
-]
+},
+{
+  "_id": {
+    "$oid": "67ae0fdb152a50dae8a7419f"
+  },
+  "usuarioId": {
+    "$oid": "67ac72bed9875a3ac6bb1d6b"
+  },
+  "servicioId": null,
+  "receptorId": {
+    "$oid": "67ac90dd451e0c959b3fa1d9"
+  },
+  "contenido": "Mensaje recibido desde carllosdepet@gmail.com",
+  "leido": false,
+  "fecha": {
+    "$date": "2025-02-13T15:29:31.261Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "67ae1017152a50dae8a741a0"
+  },
+  "usuarioId": {
+    "$oid": "67ac90dd451e0c959b3fa1d9"
+  },
+  "servicioId": {
+    "$oid": "67adf5bd57c22acea14a6cda"
+  },
+  "receptorId": "67ac72bed9875a3ac6bb1d6b",
+  "contenido": "Te mando mi email email :  \"carlosdepet@gmaaail.com\"",
+  "leido": false,
+  "fecha": {
+    "$date": "2025-02-13T15:30:31.414Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "67ae102b152a50dae8a741a1"
+  },
+  "usuarioId": {
+    "$oid": "67ac90dd451e0c959b3fa1d9"
+  },
+  "servicioId": {
+    "$oid": "67adf5bd57c22acea14a6cda"
+  },
+  "receptorId": "67ac72bed9875a3ac6bb1d6b",
+  "contenido": "Te lo vuelvo a mandar email :  \"carlosdepet@gmaaail.com\"",
+  "leido": false,
+  "fecha": {
+    "$date": "2025-02-13T15:30:51.887Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "67ae24348882af6a35bdc3a0"
+  },
+  "usuarioId": {
+    "$oid": "67ac72bed9875a3ac6bb1d6b"
+  },
+  "servicioId": {
+    "$oid": "67ab6961b7af012d9ada21a3"
+  },
+  "receptorId": "1",
+  "contenido": "Claro diga",
+  "leido": false,
+  "fecha": {
+    "$date": "2025-02-13T16:56:20.624Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "67aefa1503090d9cf40e61e5"
+  },
+  "usuarioId": {
+    "$oid": "67aef92003090d9cf40e61e3"
+  },
+  "servicioId": {
+    "$oid": "67aef9e003090d9cf40e61e4"
+  },
+  "receptorId": "67aef92003090d9cf40e61e3",
+  "contenido": "mI Gran Proyecto es la panaderia",
+  "leido": false,
+  "fecha": {
+    "$date": "2025-02-14T08:08:53.267Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "67aefaef03090d9cf40e61e6"
+  },
+  "usuarioId": {
+    "$oid": "67ac72bed9875a3ac6bb1d6b"
+  },
+  "servicioId": {
+    "$oid": "67aef9e003090d9cf40e61e4"
+  },
+  "receptorId": "67aef92003090d9cf40e61e3",
+  "contenido": "HOla Buenas quiero sabes si me lees desde carlosdepet @gmail.com",
+  "leido": false,
+  "fecha": {
+    "$date": "2025-02-14T08:12:31.984Z"
+  }
+}]

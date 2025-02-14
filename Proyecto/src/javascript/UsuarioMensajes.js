@@ -37,26 +37,11 @@ async function cargarMensajes() {
             return;
         }
         const usuario = JSON.parse(usuarioGuardado);
-
         if (!usuario._id) throw new Error("ID de usuario no encontrado");
 
         console.log(`📌 Buscando mensajes para el usuario: ${usuario._id}`);
 
-        const chatId = localStorage.getItem("chatActivo");
-        if (!chatId) {
-            console.warn("⚠ No hay chat activo seleccionado.");
-            return;
-        }
-
-        // 🔥 Generar el chatId correctamente para asegurar la búsqueda
-        const chatIdFinal = [usuario._id, chatId].sort().join("_");
-
-        console.log(`🔍 Buscando mensajes con chatId: ${chatIdFinal}`);
-
-        const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/mensajes?chatId=${chatIdFinal}`, {
-            headers: { "Content-Type": "application/json" }
-        });
-
+        const response = await fetch("https://flourishing-baklava-adefd3.netlify.app/api/read/mensajes");
         if (!response.ok) throw new Error(`Error al obtener mensajes (${response.status})`);
 
         const mensajes = await response.json();
@@ -68,6 +53,7 @@ async function cargarMensajes() {
         console.error("❌ Error al cargar mensajes:", error);
     }
 }
+
 
 
 
@@ -95,7 +81,7 @@ function renderizarListaChats(mensajes, usuarioId) {
     /** @type {Record<string, { id: string, nombre: string, ultimoMensaje: string, fecha: string }>} */
     const chats = {};
 
-    mensajes.forEach((/** @type {{ usuarioId: any; servicioId: any; servicio: { nombre: any; }; usuario: { nombre: any; }; contenido: any; fecha: string | number | Date; }} */ msg) => {
+    mensajes.forEach((msg) => {
         const contactoId = msg.usuarioId === usuarioId ? msg.servicioId : msg.usuarioId;
         const contactoNombre = msg.usuarioId === usuarioId ? msg.servicio?.nombre || "Servicio" : msg.usuario?.nombre || "Usuario";
 
@@ -123,6 +109,7 @@ function renderizarListaChats(mensajes, usuarioId) {
 
     console.log("✅ Chats renderizados en la UI.");
 }
+
 
 /**
  * 📌 Abre un chat específico y muestra los mensajes.

@@ -129,7 +129,7 @@ function renderizarListaChats(mensajes, usuarioId) {
         const usuarioGuardado = localStorage.getItem("usuarioRegistrado");
         const usuario = JSON.parse(usuarioGuardado || "{}");
 
-        const response = await fetch(`http://${location.hostname}:3001/mensajes?usuarioId=${usuario._id}`);
+        const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/mensajes?usuarioId=${usuario._id}`);
 
 
         if (!response.ok) throw new Error(`Error al obtener mensajes (${response.status})`);

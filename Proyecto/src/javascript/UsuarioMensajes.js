@@ -22,7 +22,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const servicioGuardado = localStorage.getItem("servicioSeleccionado");
     if (servicioGuardado) {
         const servicio = JSON.parse(servicioGuardado);
-        abrirChat(servicio._id, "servicio");
+        console.log('Servicio-->', servicio)
+        abrirChat(servicio._id, servicio.receptorId);
         localStorage.removeItem("servicioSeleccionado"); // 🔥 Limpiamos después de usarlo
     }
     cargarMensajes();
@@ -83,16 +84,18 @@ function renderizarListaChats(mensajes, usuarioId) {
         return;
     }
 
-    /** @type {Record<string, { id: string, nombre: string, ultimoMensaje: string, fecha: string }>} */
+    /** @type {Record<string, { id: string,receptorId: string, nombre: string, ultimoMensaje: string, fecha: string }>} */
     const chats = {};
 
     mensajes.forEach((msg) => {
         const contactoId = msg.usuarioId === usuarioId ? msg.servicioId : msg.usuarioId;
         const contactoNombre = msg.usuarioId === usuarioId ? msg.servicio?.nombre || "Servicio" : msg.usuario?.nombre || "Usuario";
-
+        console.log('Mensaje-->', msg)
+        const receptorId = msg.servicioId;
         if (!chats[contactoId]) {
             chats[contactoId] = {
                 id: contactoId,
+                receptorId,
                 nombre: contactoNombre,
                 ultimoMensaje: msg.contenido,
                 fecha: new Date(msg.fecha).toLocaleString()
@@ -109,7 +112,7 @@ function renderizarListaChats(mensajes, usuarioId) {
             <p>${chat.ultimoMensaje}</p>
             <span class="fecha">${chat.fecha}</span>
         `;
-        chatItem.addEventListener("click", () => abrirChat(chat.id, "chat"));
+        chatItem.addEventListener("click", () => abrirChat(chat.id, chat.receptorId));
         chatList.appendChild(chatItem);
     });
 

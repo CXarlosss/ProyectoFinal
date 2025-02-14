@@ -223,6 +223,7 @@ router.delete('/delete/users/:_id', async (req, res) => {
 //FAVORITOS
 
 // 📌 Leer Cuantos hay
+// 📌 Agregar o quitar un favorito
 router.put('/users/:userId/favoritos/:servicioId', async (req, res) => {
   try {
     const { userId, servicioId } = req.params;
@@ -230,8 +231,6 @@ router.put('/users/:userId/favoritos/:servicioId', async (req, res) => {
     if (!ObjectId.isValid(userId) || !ObjectId.isValid(servicioId)) {
       return res.status(400).json({ error: "ID de usuario o servicio inválido" });
     }
-
-    console.log(`📌 Actualizando favoritos para usuario ${userId}, servicio ${servicioId}`);
 
     const db = await connectDB();
     const usuario = await db.collection("Users").findOne({ _id: new ObjectId(userId) });
@@ -241,24 +240,19 @@ router.put('/users/:userId/favoritos/:servicioId', async (req, res) => {
     }
 
     const servicioObjectId = new ObjectId(servicioId);
-    const yaEsFavorito = usuario.favoritos && usuario.favoritos.some(id => id.equals(servicioObjectId));
+    const yaEsFavorito = usuario.favoritos?.some(id => id.toString() === servicioObjectId.toString());
 
     if (yaEsFavorito) {
-      // ❌ Si ya es favorito, lo quitamos
       await db.collection("Users").updateOne(
         { _id: new ObjectId(userId) },
         { $pull: { favoritos: servicioObjectId } }
       );
-      console.log(`❌ Servicio ${servicioId} eliminado de favoritos`);
       return res.json({ message: "Favorito eliminado" });
     } else {
-      // ✅ Si no es favorito, lo añadimos
       await db.collection("Users").updateOne(
         { _id: new ObjectId(userId) },
-        { $setOnInsert: { favoritos: [] }, $addToSet: { favoritos: new ObjectId(servicioId) } }
-    );
-    
-      console.log(`✅ Servicio ${servicioId} añadido a favoritos`);
+        { $addToSet: { favoritos: servicioObjectId } }
+      );
       return res.json({ message: "Favorito añadido" });
     }
   } catch (error) {
@@ -266,6 +260,7 @@ router.put('/users/:userId/favoritos/:servicioId', async (req, res) => {
     res.status(500).json({ error: "Error interno del servidor" });
   }
 });
+
 
 // 📌 Obtener la lista de favoritos de un usuario
 router.get('/users/:userId/favoritos', async (req, res) => {
@@ -396,48 +391,41 @@ router.post("/mensajes", async (req, res) => {
     let servicioFinal = servicioId ? new ObjectId(servicioId) : null;
 
     if (servicioId) {
-      // 🔍 Verificar si el servicio existe
       const servicio = await db.collection("Servicios").findOne({ _id: servicioFinal });
-
       if (!servicio) {
         console.error("❌ Servicio no encontrado:", servicioId);
         return res.status(404).json({ error: "Servicio no encontrado" });
       }
-
-      receptorFinal = servicio.usuarioId; // El receptor es el dueño del servicio
+      receptorFinal = servicio.usuarioId;
     } else if (receptorId) {
-      // 🔍 Verificar si el usuario receptor existe
       const usuarioReceptor = await db.collection("Users").findOne({ _id: receptorFinal });
-
       if (!usuarioReceptor) {
-        console.error("⚠ Usuario receptor no encontrado. Asumimos que es un servicio.");
-        receptorFinal = receptorId; // Deja el receptorId como string si no es un usuario
+        return res.status(404).json({ error: "Usuario receptor no encontrado" });
       }
     } else {
       return res.status(400).json({ error: "Debe haber un servicioId o un receptorId" });
     }
 
-    // 🔥 Guardar mensaje en MongoDB
     const mensajeData = {
-      usuarioId: new ObjectId(usuarioId),  // Convertir usuarioId a ObjectId
-      servicioId: servicioFinal ? new ObjectId(servicioFinal) : null,
-      receptorId: receptorFinal ? new ObjectId(receptorFinal) : null,
+      chatId: `${usuarioId}_${receptorFinal || servicioFinal}`,
+      usuarioId: new ObjectId(usuarioId),
+      servicioId: servicioFinal,
+      receptorId: receptorFinal,
       contenido,
       leido: false,
       fecha: new Date(),
-  };
-  
+    };
 
     const resultado = await db.collection("mensajes").insertOne(mensajeData);
-
     console.log("✅ Mensaje guardado correctamente:", resultado);
     res.json({ mensaje: "Mensaje guardado correctamente", resultado });
 
   } catch (error) {
-    console.error("❌ Error en el servidor al guardar el mensaje:", error);
+    console.error("❌ Error al guardar mensaje:", error);
     res.status(500).json({ error: "Error interno del servidor" });
   }
 });
+
 
 // 📌 Obtener mensajes de un usuario o servicio
 router.get('/mensajes',  async (req, res) => {

@@ -25,15 +25,22 @@ async function connectDB() {
 }
 
 // 📌 Exportamos `connectDB` y `db`
-export { connectDB };
+export { connectDB, ObjectId };
 
 
  // SERVICIOS
  // 📌 Crear un nuevo servicio
-router.post('/create/servicios', async (req, res) => {
+ router.post('/create/servicios', async (req, res) => {
+  try {
+    const db = await connectDB();  // 💡 Asegura que tienes acceso a la DB
+    const result = await db.collection("Servicios").insertOne(req.body);
+    res.json(result);
+  } catch (error) {
+    console.error("❌ Error al crear el servicio:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+});
 
-  res.json(await db.servicios.create(req.body))
-}) 
 // 📌 Obtener todos los servicios
 
 // 📌 Obtener todos los servicios
@@ -144,53 +151,74 @@ router.post('/create/users', async (req, res) => {
   res.json(await db.users.create(req.body))
 }) 
 // 📌 Obtener todos los usuarios
-router.get('/read/users',async (req, res) => {
-console.log("📌 Users Creado:", req.body);
-  res.json(await db.users.get())
+router.get('/read/users', async (req, res) => {
+  try {
+    const db = await connectDB();
+    const users = await db.collection("Users").find().toArray();
+    res.json(users);
+  } catch (error) {
+    console.error("❌ Error al obtener los usuarios:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
 });
+
 // 📌 Actualizar un usuario
 router.put('/update/users/:_id', async (req, res) => {
   try {
     const { _id } = req.params;
-    console.log(`📌 Recibiendo actualización para Usuario con ID: ${_id}`, req.body);
 
-    if (!_id || !ObjectId.isValid(_id)) {
-      console.error("❌ ERROR: ID inválido para MongoDB:", _id);
-      return res.status(400).json({ error: "ID inválido para MongoDB" });
+    if (!ObjectId.isValid(_id)) {
+      return res.status(400).json({ error: "ID inválido" });
     }
 
+    const db = await connectDB();
     const objectId = new ObjectId(_id);
 
-    if (req.body._id) delete req.body._id; // 🔥 Eliminar _id del body
-
-    // 🔹 Verificar si el usuario existe antes de actualizarlo
-    const usuarioExistente = await db.users.get({ _id: objectId });
+    const usuarioExistente = await db.collection("Users").findOne({ _id: objectId });
     if (!usuarioExistente) {
-      console.warn("⚠ Usuario no encontrado en la base de datos.");
-      return res.status(404).json({ error: "Usuario no encontrado." });
+      return res.status(404).json({ error: "Usuario no encontrado" });
     }
 
-    // 🔹 Realizar la actualización en MongoDB
-    const resultado = await db.users.update(objectId, req.body);
+    if (req.body._id) delete req.body._id; // 🔥 Evitar problemas con _id
 
-    if (!resultado || resultado.modifiedCount === 0) {
-      console.warn("⚠ No se encontró el usuario para actualizar o no hubo cambios.");
-      return res.status(404).json({ error: "Usuario no encontrado o sin cambios." });
+    const resultado = await db.collection("Users").updateOne(
+      { _id: objectId },
+      { $set: req.body }
+    );
+
+    if (!resultado.modifiedCount) {
+      return res.status(404).json({ error: "Usuario no encontrado o sin cambios" });
     }
 
-    console.log(`✅ Usuario ${_id} actualizado correctamente.`);
-    res.json({ message: "Usuario actualizado correctamente", resultado });
-
+    res.json({ message: "Usuario actualizado correctamente" });
   } catch (error) {
     console.error("❌ Error en la actualización:", error);
     res.status(500).json({ error: "Error interno del servidor" });
-  } 
+  }
 });
 // 📌 Eliminar un usuario
 router.delete('/delete/users/:_id', async (req, res) => {
-    console.log(`📌 Eliminando Users con _id: ${req.params._id}`);
-    res.json(await db.users.delete(req.params.id))
+  try {
+    const { _id } = req.params;
+
+    if (!ObjectId.isValid(_id)) {
+      return res.status(400).json({ error: "ID inválido" });
+    }
+
+    const db = await connectDB();
+    const resultado = await db.collection("Users").deleteOne({ _id: new ObjectId(_id) });
+
+    if (!resultado.deletedCount) {
+      return res.status(404).json({ error: "Usuario no encontrado" });
+    }
+
+    res.json({ message: "Usuario eliminado correctamente" });
+  } catch (error) {
+    console.error("❌ Error al eliminar usuario:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
 });
+
 
 //FAVORITOS
 
@@ -227,8 +255,9 @@ router.put('/users/:userId/favoritos/:servicioId', async (req, res) => {
       // ✅ Si no es favorito, lo añadimos
       await db.collection("Users").updateOne(
         { _id: new ObjectId(userId) },
-        { $addToSet: { favoritos: servicioObjectId } } // 💡 Evita duplicados
-      );
+        { $setOnInsert: { favoritos: [] }, $addToSet: { favoritos: new ObjectId(servicioId) } }
+    );
+    
       console.log(`✅ Servicio ${servicioId} añadido a favoritos`);
       return res.json({ message: "Favorito añadido" });
     }
@@ -644,12 +673,17 @@ async function createUser(user) {
  * @returns {Promise<object>} - Resultado de la actualización.
  */
 async function updateUser(id, updates) {
-    const db = await connectDB();
-    const objectId = new ObjectId(id);  // Convertir el ID a ObjectId
-    const result = await db.collection("Users").updateOne({ _id: objectId }, { $set: updates });
+  const db = await connectDB();
+  const objectId = new ObjectId(id);
 
-    console.log(`✅ Usuario actualizado: ${result.modifiedCount}`);
-    return result;
+  if (updates._id) delete updates._id; // 🔥 Evitar que _id sea modificado
+
+  const result = await db.collection("Users").updateOne(
+      { _id: objectId },
+      { $set: updates }
+  );
+
+  return result;
 }
 
 
@@ -659,11 +693,11 @@ async function updateUser(id, updates) {
  * @returns {Promise<string>} - ID del usuario eliminado.
  */
 async function deleteUser(id) {
-    const db = await connectDB();
-    const result = await db.collection("users").deleteOne({ _id: new ObjectId(id) });
-    console.log("✅ Usuario eliminado:", result.deletedCount);
-    return id;
+  const db = await connectDB();
+  const result = await db.collection("Users").deleteOne({ _id: new ObjectId(id) });
+  return result.deletedCount > 0 ? id : null;
 }
+
 
 //Favoritos
 /**

@@ -1,6 +1,6 @@
 
 {
-  "include":["src/javascript/**/*.js", "src/clases/clases.jssrc/store/store.jse.js"],
+ "include": ["src/javascript/**/*.js", "src/clases/**/*.js", "src/store/**/*.js"],
   "exclude": ["./node_modules/**/*" ,"./server/**/*"],
   "compileOnSave": false,
   "compilerOptions": {

@@ -1,14 +1,6 @@
 
 // @ts-check
-
-
-
-
  const API_PORT = location.port ? `:${location.port}` : ''
-
-
-
-
 document.addEventListener("DOMContentLoaded", () => {
 
 //Constantes uSER URL
@@ -60,74 +52,70 @@ formularioRegistro.addEventListener("submit", async (e) => {
     return;
   }
 
-  // 📌 Consultar usuarios en la API (asegurando que devuelve un array)
-  const usuariosAPI = (await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/users`)) || [];
-// Asegurar que usuariosAPI es un array antes de usar .find()
-const usuarioExistente = Array.isArray(usuariosAPI) 
-  ? usuariosAPI.find(user => user && typeof user === 'object' && "email" in user && user.email === email)
-  : null;
+  try {
+    const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/users`);
+    if (!response.ok) throw new Error("Error al obtener usuarios");
 
+    const usuariosAPI = await response.json();
+    const usuarioExistente = Array.isArray(usuariosAPI) && usuariosAPI.some(user => user.email === email);
 
-  if (usuarioExistente) {
-    alert("⚠️ Este email ya está registrado. Inicia sesión.");
-    return;
-  }
+    if (usuarioExistente) {
+      alert("⚠️ Este email ya está registrado. Inicia sesión.");
+      return;
+    }
 
-  // 📌 Crear usuario
-  const nuevoUsuario = {
-    nombre,
-    email,
-    password,
-    telefono,
-    direccion
-};
+    const nuevoUsuario = { nombre, email, password, telefono, direccion };
 
-  const apiResponse = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/create/users`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(nuevoUsuario)
-  });
+    const apiResponse = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/create/users`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(nuevoUsuario),
+    });
 
-  if (apiResponse) {
-    console.log("✅ Usuario registrado:", apiResponse);
-    localStorage.setItem("usuarioRegistrado", JSON.stringify(apiResponse));
+    if (!apiResponse.ok) throw new Error("Error al registrar usuario");
+
+    const usuarioCreado = await apiResponse.json();
+    console.log("✅ Usuario registrado:", usuarioCreado);
+    localStorage.setItem("usuarioRegistrado", JSON.stringify(usuarioCreado));
     window.location.href = "paginadelusuario.html";
-  } else {
+  } catch (error) {
+    console.error("❌ Error:", error);
     alert("❌ Error al registrar usuario.");
   }
 });
 
- 
-  
-  // 📌 Evento para iniciar sesión
-  formularioLogin.addEventListener("submit", async (e) => {
+   /**
+   * 📌 Manejador para iniciar sesión
+   */
+   formularioLogin.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const email = /** @type {HTMLInputElement} */ (document.getElementById("email-login")).value.trim();
-    const password = /** @type {HTMLInputElement} */ (document.getElementById("password-login")).value.trim();
+    
+    const email =/** @type {HTMLInputElement} */ (document.getElementById("email-login"))?.value.trim() ?? "";
+    const password =/** @type {HTMLInputElement} */(document.getElementById("password-login") )?.value.trim() ?? "";
 
     if (!email || !password) {
       alert("❌ Email y contraseña son obligatorios.");
       return;
     }
 
-    // 📌 Consultar usuarios en la API
-    const usuariosAPI = (await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/users`)) || [];
+    try {
+      const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/users`);
+      if (!response.ok) throw new Error("Error al obtener usuarios");
 
-    // 📌 Buscar el usuario en la lista obtenida
-    const usuarioEncontrado = Array.isArray(usuariosAPI) ? usuariosAPI.find(user => user.email === email && user.password === password) : null;
+      const usuariosAPI = await response.json();
+      const usuarioEncontrado = Array.isArray(usuariosAPI) && usuariosAPI.find(user => user.email === email && user.password === password);
 
-    if (usuarioEncontrado) {
-      console.log("✅ Usuario autenticado:", usuarioEncontrado);
-      localStorage.setItem("usuarioRegistrado", JSON.stringify(usuarioEncontrado));
-      window.location.href = "paginadelusuario.html";
-    } else {
-      alert("⚠️ Email o contraseña incorrectos.");
+      if (usuarioEncontrado) {
+        console.log("✅ Usuario autenticado:", usuarioEncontrado);
+        localStorage.setItem("usuarioRegistrado", JSON.stringify(usuarioEncontrado));
+        window.location.href = "paginadelusuario.html";
+      } else {
+        alert("⚠️ Email o contraseña incorrectos.");
+      }
+    } catch (error) {
+      console.error("❌ Error:", error);
+      alert("❌ Error al iniciar sesión.");
     }
   });
-
 });
-
-

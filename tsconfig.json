@@ -1,3 +1,4 @@
+
 {
   "include":["src/javascript/**/*.js", "src/clases/clases.jssrc/store/store.jse.js"],
   "exclude": ["./node_modules/**/*" ,"./server/**/*"],

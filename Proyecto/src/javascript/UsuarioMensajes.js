@@ -32,11 +32,11 @@ document.addEventListener("DOMContentLoaded", () => {
 async function cargarMensajes() {
     try {
         const usuarioGuardado = localStorage.getItem("usuarioRegistrado");
-            if (!usuarioGuardado) {
-                console.error("❌ Usuario no registrado en localStorage");
-                return;
-            }
-            const usuario = JSON.parse(usuarioGuardado);
+        if (!usuarioGuardado) {
+            console.error("❌ Usuario no registrado en localStorage");
+            return;
+        }
+        const usuario = JSON.parse(usuarioGuardado);
 
         if (!usuario._id) throw new Error("ID de usuario no encontrado");
 
@@ -44,12 +44,16 @@ async function cargarMensajes() {
 
         const chatId = localStorage.getItem("chatActivo");
         if (!chatId) {
-                console.warn("⚠ No hay chat activo seleccionado.");
+            console.warn("⚠ No hay chat activo seleccionado.");
             return;
         }
 
+        // 🔥 Generar el chatId correctamente para asegurar la búsqueda
+        const chatIdFinal = [usuario._id, chatId].sort().join("_");
 
-        const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/mensajes?chatId=${chatId}`, {
+        console.log(`🔍 Buscando mensajes con chatId: ${chatIdFinal}`);
+
+        const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/mensajes?chatId=${chatIdFinal}`, {
             headers: { "Content-Type": "application/json" }
         });
 
@@ -64,6 +68,7 @@ async function cargarMensajes() {
         console.error("❌ Error al cargar mensajes:", error);
     }
 }
+
 
 
 

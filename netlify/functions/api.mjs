@@ -406,16 +406,20 @@ router.post("/mensajes", async (req, res) => {
     } else {
       return res.status(400).json({ error: "Debe haber un servicioId o un receptorId" });
     }
+    const chatIdFinal = receptorFinal 
+    ? [usuarioId.toString(), receptorFinal.toString()].sort().join("_") // ✅ Ordenado para asegurar siempre el mismo ID
+    : `${usuarioId}_${servicioFinal}`;
 
     const mensajeData = {
-      chatId: `${usuarioId}_${receptorFinal || servicioFinal}`,
-      usuarioId: new ObjectId(usuarioId),
-      servicioId: servicioFinal,
-      receptorId: receptorFinal,
-      contenido,
-      leido: false,
-      fecha: new Date(),
+        chatId: chatIdFinal,
+        usuarioId: new ObjectId(usuarioId),
+        servicioId: servicioFinal,
+        receptorId: receptorFinal,
+        contenido,
+        leido: false,
+        fecha: new Date(),
     };
+
 
     const resultado = await db.collection("mensajes").insertOne(mensajeData);
     console.log("✅ Mensaje guardado correctamente:", resultado);

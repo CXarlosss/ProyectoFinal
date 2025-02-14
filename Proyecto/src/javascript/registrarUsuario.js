@@ -5,6 +5,7 @@
 
  import { simpleFetch } from '../lib/simpleFetch.js';
  import { HttpError } from '../classes/HttpError.js'
+ const API_PORT = location.port ? `:${location.port}` : ''
 
 
 
@@ -103,7 +104,7 @@ formularioRegistro.addEventListener("submit", async (e) => {
   }
 
   // 📌 Consultar usuarios en la API (asegurando que devuelve un array)
-  const usuariosAPI = (await getAPIData(`http://${location.hostname}:3001/read/users`)) || [];
+  const usuariosAPI = (await getAPIData(`${location.protocol}//${location.hostname}:3001/read/users`)) || [];
 // Asegurar que usuariosAPI es un array antes de usar .find()
 const usuarioExistente = Array.isArray(usuariosAPI) 
   ? usuariosAPI.find(user => user && typeof user === 'object' && "email" in user && user.email === email)
@@ -124,7 +125,7 @@ const usuarioExistente = Array.isArray(usuariosAPI)
     direccion
 };
 
-  const apiResponse = await getAPIData(`http://${location.hostname}:3001/create/users`, 'POST', nuevoUsuario);
+  const apiResponse = await getAPIData(`${location.protocol}//${location.hostname}${API_PORT}/api/create/users`, 'POST', nuevoUsuario);
 
   if (apiResponse) {
     console.log("✅ Usuario registrado:", apiResponse);
@@ -150,7 +151,7 @@ const usuarioExistente = Array.isArray(usuariosAPI)
     }
 
     // 📌 Consultar usuarios en la API
-    const usuariosAPI = (await getAPIData(`http://${location.hostname}:3001/read/users`)) || [];
+    const usuariosAPI = (await getAPIData(`${location.protocol}//${location.hostname}${API_PORT}/api/read/users`)) || [];
 
     // 📌 Buscar el usuario en la lista obtenida
     const usuarioEncontrado = Array.isArray(usuariosAPI) ? usuariosAPI.find(user => user.email === email && user.password === password) : null;

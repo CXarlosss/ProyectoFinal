@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
     console.log("📌 Cargando página de usuario...");
+  
 
     const usuarioGuardado = localStorage.getItem("usuarioRegistrado");
     if (!usuarioGuardado) {

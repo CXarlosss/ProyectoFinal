@@ -5,7 +5,8 @@ import { store } from "../store/redux.js";
 
 
 
-const API_PORT = 3001;
+const API_PORT = location.port ? `:${location.port}` : ''
+;
 
 document.addEventListener("DOMContentLoaded", () => {
   console.log("DOM cargado correctamente.");
@@ -62,7 +63,7 @@ console.log("📌 Usuario cargado desde localStorage:", usuario);
    // 📌 Cargar servicios desde la API
    async function cargarServicios() {
     try {
-        const serviciosAPI = await fetch(`http://${location.hostname}:3001/read/servicios`);
+        const serviciosAPI = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/servicios`);
         const servicios = await serviciosAPI.json();
 
         console.log("📌 Servicios obtenidos después de actualizar:", servicios);
@@ -278,7 +279,7 @@ async function toggleFavorito(servicioId, nombre) {
 
     console.log(`📌 Enviando petición para actualizar favoritos del usuario ${usuario._id}`);
 
-    const response = await fetch(`http://${location.hostname}:3001/users/${usuario._id}/favoritos/${servicioId}`, {
+    const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/users/${usuario._id}/favoritos/${servicioId}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
     });
@@ -335,7 +336,7 @@ function cargarFavoritos() {
             delete datosActualizados._id;
         }
 
-        const response = await fetch(`http://${location.hostname}:3001/update/servicios/${_id}`, {
+        const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/update/servicios/${_id}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(datosActualizados),
@@ -376,7 +377,7 @@ function cargarFavoritos() {
         return;
       }
   
-      const response = await fetch(`http://${location.hostname}:${API_PORT}/delete/servicios/${_id}`, {
+      const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/delete/servicios/${_id}`, {
         method: "DELETE",
       });
   
@@ -505,7 +506,7 @@ function cargarFavoritos() {
     try {
       console.log("📌 Enviando nuevo servicio a la API:", nuevoServicio);
   
-      const response = await fetch(`http://${location.hostname}:${API_PORT}/create/servicios`, {
+      const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/create/servicios`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json", // Enviar como JSON

@@ -1,5 +1,9 @@
 //@ts-check
+
+const API_PORT = location.port ? `:${location.port}` : ''
 document.addEventListener("DOMContentLoaded", () => {
+    
+
    /*  cargarMensajes(); */
    /*  setInterval(cargarMensajes, 5000); // Recarga los mensajes cada 5 segundos */
 
@@ -21,6 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
         abrirChat(servicio._id);
         localStorage.removeItem("servicioSeleccionado"); // 🔥 Limpiamos después de usarlo
     }
+
     
 });
 
@@ -34,12 +39,13 @@ async function cargarMensajes() {
 
         console.log(`📌 Buscando mensajes para el usuario: ${usuario._id}`);
 
-        const response = await fetch(`http://${location.hostname}:3001/mensajes?usuarioId=${usuario._id}`);
-
+        const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/mensajes?usuarioId=${usuario._id}`);
+        
         if (!response.ok) throw new Error(`Error al obtener mensajes (${response.status})`);
 
         const mensajes = await response.json();
-        console.log("✅ Mensajes obtenidos:", mensajes);
+        
+        console.log("✅ Mensajes obtenidos desde el backend:", mensajes); // <-- Agregamos este log
 
         renderizarListaChats(mensajes, usuario._id);
 
@@ -47,6 +53,7 @@ async function cargarMensajes() {
         console.error("❌ Error al cargar mensajes:", error);
     }
 }
+
 
 /**
  * Renderiza la lista de chats en la UI.
@@ -183,7 +190,7 @@ async function enviarMensaje() {
             isServicio = await esUnServicio(contactoId).catch(() => false);
         }
         
-        const response = await fetch(`http://${location.hostname}:3001/mensajes`, {
+        const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/mensajes`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -216,11 +223,9 @@ async function enviarMensaje() {
  */
 async function esUnServicio(id) {
     try {
-        const response = await fetch(`http://${location.hostname}:3001/read/servicio/${id}`);
+        const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/servicio/${id}`);
         return response.ok; // Si existe, es un servicio
     } catch {
         return false; // Si no existe, asumimos que es un usuario
     }
 }
-
-

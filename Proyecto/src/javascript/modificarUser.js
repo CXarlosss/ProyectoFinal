@@ -2,7 +2,7 @@
 
 document.addEventListener("DOMContentLoaded", () => {
   console.log("✅ DOM cargado correctamente.");
- 
+ const API_PORT = location.port ? `:${location.port}` : ''
   
 
   // 📌 Verificar si hay un usuario registrado en LocalStorage
@@ -82,7 +82,7 @@ document.addEventListener("DOMContentLoaded", () => {
       console.log("📩 Datos enviados al backend:", datosActualizados);
 
       try {
-          const resultado = await fetch(`${location.protocol}//${location.hostname}:3001/update/users/${usuario._id}`, {
+          const resultado = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/update/users/${usuario._id}`, {
               method: "PUT",
               headers: {
                   "Content-Type": "application/json",

@@ -1,5 +1,6 @@
 //@ts-check
 import {abrirChat} from "./UsuarioMensajes.js"; 
+const API_PORT = location.port ? `:${location.port}` : ''
 
 document.addEventListener("DOMContentLoaded", () => {
     console.log("📌 Cargando módulo de favoritos...");
@@ -14,7 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const usuario = JSON.parse(usuarioGuardado);
             if (!usuario._id) throw new Error("ID de usuario no encontrado");
 
-            const response = await fetch(`http://${location.hostname}:3001/users/${usuario._id}/favoritos`);
+            const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/users/${usuario._id}/favoritos`);
             if (!response.ok) throw new Error("Error al obtener favoritos");
 
             const favoritos = await response.json();
@@ -63,7 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     const usuarioGuardado = localStorage.getItem("usuarioRegistrado");
                     const usuario = JSON.parse(usuarioGuardado || "{}");
 
-                    const response = await fetch(`http://${location.hostname}:3001/users/${usuario._id}/favoritos/${servicioId}`, {
+                    const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/users/${usuario._id}/favoritos/${servicioId}`, {
                         method: "DELETE",
                         headers: { "Content-Type": "application/json" }
                     });

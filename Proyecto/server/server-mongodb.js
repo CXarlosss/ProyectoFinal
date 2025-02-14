@@ -1,3 +1,4 @@
+// @ts-ignore
 import { MongoClient, ObjectId } from "mongodb";
 
 // 📌 URI de conexión a MongoDB (Asegúrate de cambiarla si es necesario)

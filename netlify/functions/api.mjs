@@ -430,6 +430,19 @@ router.post("/mensajes", async (req, res) => {
     res.status(500).json({ error: "Error interno del servidor" });
   }
 });
+router.get("/read/mensajes", async (req, res) => {
+  try {
+    const db = await connectDB();
+    const mensajes = await db.collection("mensajes").find().toArray();
+
+    console.log("✅ Mensajes obtenidos:", mensajes);
+
+    res.json(mensajes);
+  } catch (error) {
+    console.error("❌ Error al obtener los mensajes:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+});
 
 
 // 📌 Obtener mensajes de un usuario o servicio

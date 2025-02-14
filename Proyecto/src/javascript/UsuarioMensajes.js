@@ -31,6 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 async function cargarMensajes() {
     try {
+        console.log("📌 Ejecutando cargarMensajes()...");
         const usuarioGuardado = localStorage.getItem("usuarioRegistrado");
         if (!usuarioGuardado) {
             console.error("❌ Usuario no registrado en localStorage");
@@ -41,7 +42,7 @@ async function cargarMensajes() {
 
         console.log(`📌 Buscando mensajes para el usuario: ${usuario._id}`);
 
-        const response = await fetch("https://flourishing-baklava-adefd3.netlify.app/api/read/mensajes");
+        const response = await fetch("${location.protocol}//${location.hostname}${API_PORT}/api/read/mensajes");
         if (!response.ok) throw new Error(`Error al obtener mensajes (${response.status})`);
 
         const mensajes = await response.json();
@@ -65,6 +66,8 @@ async function cargarMensajes() {
  * @param {string} usuarioId
  */
 function renderizarListaChats(mensajes, usuarioId) {
+    console.log("📌 Ejecutando renderizarListaChats()...");
+    console.log("📌 Datos recibidos en renderizarListaChats:", mensajes);
     const chatList = document.getElementById("chat-list");
     if (!chatList) {
         console.error("❌ No se encontró el contenedor de mensajes.");

@@ -435,7 +435,7 @@ router.get("/read/mensajes", async (req, res) => {
     const db = await connectDB();
     const mensajes = await db.collection("mensajes").find().toArray();
 
-    console.log("✅ Mensajes obtenidos:", mensajes);
+    console.log("✅ Mensajes obtenidos:", mensajes); // <-- Aquí verifica si hay datos
 
     res.json(mensajes);
   } catch (error) {
@@ -443,7 +443,6 @@ router.get("/read/mensajes", async (req, res) => {
     res.status(500).json({ error: "Error interno del servidor" });
   }
 });
-
 
 // 📌 Obtener mensajes de un usuario o servicio
 router.get('/mensajes', async (req, res) => {

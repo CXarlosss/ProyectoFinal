@@ -457,9 +457,9 @@ router.get('/mensajes', async (req, res) => {
       
       const db = await connectDB();
       const mensajes = await db.collection("mensajes").find({
-          $or: [
+          $and: [
               { usuarioId: new ObjectId(usuarioId) }, 
-              { receptorId: new ObjectId(usuarioId) }, 
+             
               { servicioId: new ObjectId(contactoId) } 
           ]
       }).sort({ fecha: -1 }).toArray();

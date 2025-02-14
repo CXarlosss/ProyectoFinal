@@ -5,8 +5,8 @@ import serverless from 'serverless-http';
 
 import { MongoClient, ObjectId } from "mongodb";
 
-const uri = "mongodb+srv://carlosdepet:<db_password>@cluster0.qcz8s.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
-const uri = "mongodb+srv://carlosdepet:7k30jzQMPWxrW907"
+//const uri = "mongodb+srv://carlosdepet:<db_password>@cluster0.qcz8s.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+//const uri = "mongodb+srv://carlosdepet:7k30jzQMPWxrW907"
 // 🔹 Cargar variables de entorno
 const URI = process.env.MONGO_ATLAS;
 const api = express();

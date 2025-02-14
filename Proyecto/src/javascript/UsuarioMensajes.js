@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const servicioGuardado = localStorage.getItem("servicioSeleccionado");
     if (servicioGuardado) {
         const servicio = JSON.parse(servicioGuardado);
-        abrirChat(servicio._id);
+        abrirChat(servicio._id, "servicio");
         localStorage.removeItem("servicioSeleccionado"); // 🔥 Limpiamos después de usarlo
     }
     cargarMensajes();
@@ -102,13 +102,14 @@ function renderizarListaChats(mensajes, usuarioId) {
 
     Object.values(chats).forEach(chat => {
         const chatItem = document.createElement("div");
+        console.log("📌 Renderizando chat:", chat);
         chatItem.classList.add("chat-item");
         chatItem.innerHTML = `
             <p><strong>${chat.nombre}</strong></p>
             <p>${chat.ultimoMensaje}</p>
             <span class="fecha">${chat.fecha}</span>
         `;
-        chatItem.addEventListener("click", () => abrirChat(chat.id));
+        chatItem.addEventListener("click", () => abrirChat(chat.id, "chat"));
         chatList.appendChild(chatItem);
     });
 
@@ -119,8 +120,10 @@ function renderizarListaChats(mensajes, usuarioId) {
 /**
  * 📌 Abre un chat específico y muestra los mensajes.
  * @param {string} contactoId 
+ * @param  {string} receptorId
+ * 
  */
- export async function abrirChat(contactoId) {
+ export async function abrirChat(contactoId, receptorId) {
     console.log(`📌 Intentando abrir el chat con ID: ${contactoId}`);
 
     const chatPopup = document.getElementById("chat-popup");
@@ -138,7 +141,7 @@ function renderizarListaChats(mensajes, usuarioId) {
         const usuarioGuardado = localStorage.getItem("usuarioRegistrado");
         const usuario = JSON.parse(usuarioGuardado || "{}");
 
-        const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/mensajes?usuarioId=${usuario._id}&contactoId=${contactoId}`
+        const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/mensajes?usuarioId=${usuario._id}&contactoId=${contactoId}&receptorId=${receptorId}`
 );
 
 

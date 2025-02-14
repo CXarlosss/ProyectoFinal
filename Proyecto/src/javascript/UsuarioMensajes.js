@@ -160,15 +160,6 @@ async function enviarMensaje() {
         console.log("Destino ID:", contactoId);
         console.log("Contenido:", mensajeTexto);
 
-        // 🚀 Verificar si el destinatario es un servicio o un usuario
-        let esServicio = await verificarSiEsServicio(contactoId);
-        let receptorId = esServicio ? null : contactoId;
-        let servicioId = esServicio ? contactoId : null;
-
-        if (!receptorId && !servicioId) {
-            throw new Error("El destinatario no es válido");
-        }
-
         // 📌 Generar un ID de chat único basado en usuario y receptor
         const chatId = `${usuario._id}_${contactoId}`;
 
@@ -178,8 +169,7 @@ async function enviarMensaje() {
             body: JSON.stringify({
                 usuarioId: usuario._id,
                 chatId,
-                servicioId,
-                receptorId,
+                receptorId: contactoId,
                 contenido: mensajeTexto,
                 leido: false
             })
@@ -196,17 +186,5 @@ async function enviarMensaje() {
 
     } catch (error) {
         console.error("❌ Error al enviar mensaje:", error);
-    }
-}/**
- * 📌 Verifica si el ID pertenece a un servicio o a un usuario
- * @param {string} id 
- * @returns {Promise<boolean>} - `true` si es un servicio, `false` si es un usuario
- */
-async function verificarSiEsServicio(id) {
-    try {
-        const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/servicio/${id}`);
-        return response.ok; // Si la respuesta es válida, es un servicio
-    } catch {
-        return false; // Si hay un error, asumimos que es un usuario
     }
 }

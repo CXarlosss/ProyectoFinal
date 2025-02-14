@@ -17,10 +17,10 @@ const dbName = "LocalMarket";
 
 async function connectDB() {
     // @ts-ignore
-    if (!client.topology || !client.topology.isConnected()) {
-        await client.connect();
-        console.log("✅ Conectado a MongoDB correctamente");
-    }
+    if (!client.topology || client.topology.s.state !== "connected") {
+      await client.connect();
+  }
+  
     return client.db(dbName);
 }
 
@@ -147,8 +147,9 @@ router.delete('/delete/servicios/:_id', async (req, res) => {
 //USUARIOS
 // 📌 Crear un nuevo usuario
 router.post('/create/users', async (req, res) => {
-  console.log("📌 Usuario recibido:", req.body);
-  res.json(await db.users.create(req.body))
+  const db = await connectDB();
+  const result = await db.collection("Users").insertOne(req.body);
+  res.json(result);
 }) 
 // 📌 Obtener todos los usuarios
 router.get('/read/users', async (req, res) => {
@@ -428,28 +429,24 @@ router.post("/mensajes", async (req, res) => {
 
 
 // 📌 Obtener mensajes de un usuario o servicio
-router.get('/mensajes',  async (req, res) => {
+router.get('/mensajes', async (req, res) => {
   try {
       const { usuarioId } = req.query;
-      const db = await connectDB();
 
-      if (!ObjectId.isValid(usuarioId)) {
-          return res.status(400).json({ error: "ID inválido" });
+      if (!usuarioId || !ObjectId.isValid(usuarioId)) {
+          return res.status(400).json({ error: "ID de usuario inválido o no proporcionado" });
       }
 
       console.log("📌 Buscando mensajes con usuarioId:", usuarioId);
-
+      
+      const db = await connectDB();
       const mensajes = await db.collection("mensajes").find({
-        $or: [
-            { usuarioId: new ObjectId(usuarioId) }, 
-            { receptorId: new ObjectId(usuarioId) }, 
-            { servicioId: new ObjectId(usuarioId) } 
-        ]
-    }).sort({ fecha: -1 }).toArray();
-    
-    
-    
-    
+          $or: [
+              { usuarioId: new ObjectId(usuarioId) }, 
+              { receptorId: new ObjectId(usuarioId) }, 
+              { servicioId: new ObjectId(usuarioId) } 
+          ]
+      }).sort({ fecha: -1 }).toArray();
 
       console.log("✅ Mensajes encontrados:", mensajes);
       res.json(mensajes);
@@ -458,6 +455,7 @@ router.get('/mensajes',  async (req, res) => {
       res.status(500).json({ error: "Error interno del servidor" });
   }
 });
+
 
 // 📌 Marcar un mensaje como leído
 router.put('/mensajes/:mensajeId',  async (req, res) => {
@@ -468,7 +466,12 @@ router.put('/mensajes/:mensajeId',  async (req, res) => {
       return res.status(400).json({ error: "ID de mensaje inválido" });
     }
 
-    const resultado = await db.mensajes.update(new ObjectId(mensajeId));
+    const resultado = await db.collection("mensajes").updateOne(
+      { _id: new ObjectId(mensajeId) },
+      { $set: { leido: true } }
+  );
+
+    console.log("✅ Mensaje marcado como leído:", resultado);  
 
     res.json({ message: "Mensaje marcado como leído", resultado });
   } catch (error) {
@@ -485,7 +488,8 @@ router.delete('/mensajes/:mensajeId', async (req, res) => {
       return res.status(400).json({ error: "ID de mensaje inválido" });
     }
 
-    const resultado = await db.mensajes.delete(new ObjectId(mensajeId));
+    const resultado = await db.collection("mensajes").deleteOne({ _id: new ObjectId(mensajeId) });
+
 
     res.json({ message: "Mensaje eliminado correctamente", resultado });
   } catch (error) {
@@ -781,12 +785,14 @@ async function getMensajes(filter = {}) {
     const db = await connectDB();
     
     const query = {};
-    if (filter.usuarioId) {
-        query.$or = [
-            { usuarioId: new ObjectId(filter.usuarioId) },
-            { servicioId: new ObjectId(filter.usuarioId) } // 🔥 Verifica si el usuario es un servicio
-        ];
-    }
+if (filter.usuarioId) {
+    query.$or = [
+        { usuarioId: new ObjectId(filter.usuarioId) },
+        { receptorId: new ObjectId(filter.usuarioId) },
+        { servicioId: new ObjectId(filter.usuarioId) }
+    ];
+}
+
 
     console.log("🔍 Query ejecutada en MongoDB:", query);
 

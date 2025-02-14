@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
         abrirChat(servicio._id);
         localStorage.removeItem("servicioSeleccionado"); // 🔥 Limpiamos después de usarlo
     }
-
+cargarMensajes();
     
 });
 

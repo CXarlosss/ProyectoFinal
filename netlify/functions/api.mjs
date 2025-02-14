@@ -447,7 +447,7 @@ router.get("/read/mensajes", async (req, res) => {
 // 📌 Obtener mensajes de un usuario o servicio
 router.get('/mensajes', async (req, res) => {
   try {
-      const { usuarioId } = req.query;
+      const { usuarioId, contactoId } = req.query;
 
       if (!usuarioId || !ObjectId.isValid(usuarioId)) {
           return res.status(400).json({ error: "ID de usuario inválido o no proporcionado" });
@@ -460,7 +460,7 @@ router.get('/mensajes', async (req, res) => {
           $or: [
               { usuarioId: new ObjectId(usuarioId) }, 
               { receptorId: new ObjectId(usuarioId) }, 
-              { servicioId: new ObjectId(usuarioId) } 
+              { servicioId: new ObjectId(contactoId) } 
           ]
       }).sort({ fecha: -1 }).toArray();
 

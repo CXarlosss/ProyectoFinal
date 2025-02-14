@@ -138,7 +138,7 @@ function renderizarListaChats(mensajes, usuarioId) {
         const usuarioGuardado = localStorage.getItem("usuarioRegistrado");
         const usuario = JSON.parse(usuarioGuardado || "{}");
 
-        const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/mensajes?usuarioId=${usuario._id}`
+        const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/mensajes?usuarioId=${usuario._id}&contactoId=${contactoId}`
 );
 
 

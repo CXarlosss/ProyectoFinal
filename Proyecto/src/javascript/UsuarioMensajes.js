@@ -132,13 +132,16 @@ function cerrarChat() {
  */
 async function enviarMensaje() {
     const mensajeInput = /** @type {HTMLInputElement} */ (document.getElementById("mensaje-input"));
-    const chatTitulo = /** @type {HTMLInputElement} */ (document.getElementById("chat-titulo"));
+    const chatTitulo = document.getElementById("chat-titulo");
 
-    if (!mensajeInput || !chatTitulo) return;
+    if (!mensajeInput || !chatTitulo) {
+        console.error("❌ Elementos del DOM no encontrados.");
+        return;
+    }
 
     const mensajeTexto = mensajeInput.value.trim();
-    if (!mensajeTexto) {
-        console.warn(" No se puede enviar un mensaje vac o.");
+    if (mensajeTexto.length === 0) {
+        console.warn("⚠️ No se puede enviar un mensaje vacío.");
         return;
     }
 
@@ -157,12 +160,26 @@ async function enviarMensaje() {
         console.log("Destino ID:", contactoId);
         console.log("Contenido:", mensajeTexto);
 
+        // 🚀 Verificar si el destinatario es un servicio o un usuario
+        let esServicio = await verificarSiEsServicio(contactoId);
+        let receptorId = esServicio ? null : contactoId;
+        let servicioId = esServicio ? contactoId : null;
+
+        if (!receptorId && !servicioId) {
+            throw new Error("El destinatario no es válido");
+        }
+
+        // 📌 Generar un ID de chat único basado en usuario y receptor
+        const chatId = `${usuario._id}_${contactoId}`;
+
         const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/mensajes`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 usuarioId: usuario._id,
-                receptorId: contactoId, // Ahora se envía correctamente
+                chatId,
+                servicioId,
+                receptorId,
                 contenido: mensajeTexto,
                 leido: false
             })
@@ -170,14 +187,26 @@ async function enviarMensaje() {
 
         if (!response.ok) {
             const errorText = await response.text();
-            throw new Error(`Error al enviar mensaje (${response.status}): ${errorText}`);
+            throw new Error(`Error al enviar mensaje (${response.status}): ${errorText}`); 
         }
 
         console.log("✅ Mensaje enviado correctamente.");
         mensajeInput.value = "";
-        await cargarMensajes();
+        await cargarMensajes(); // Recargar mensajes después de enviar
 
     } catch (error) {
         console.error("❌ Error al enviar mensaje:", error);
+    }
+}/**
+ * 📌 Verifica si el ID pertenece a un servicio o a un usuario
+ * @param {string} id 
+ * @returns {Promise<boolean>} - `true` si es un servicio, `false` si es un usuario
+ */
+async function verificarSiEsServicio(id) {
+    try {
+        const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/servicio/${id}`);
+        return response.ok; // Si la respuesta es válida, es un servicio
+    } catch {
+        return false; // Si hay un error, asumimos que es un usuario
     }
 }

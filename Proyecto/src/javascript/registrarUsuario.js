@@ -3,8 +3,7 @@
 
 
 
- import { simpleFetch } from '../lib/simpleFetch.js';
- import { HttpError } from '../classes/HttpError.js'
+
  const API_PORT = location.port ? `:${location.port}` : ''
 
 
@@ -45,49 +44,7 @@ document.addEventListener("DOMContentLoaded", () => {
     seccionLogin.classList.remove("hidden");
   });
   
-/**
- * Get data from API
- * @param {string} apiURL
- * @param {string} method
- * @param {Object} [data]
-}
- */
-async function getAPIData(apiURL , method = 'GET', data) {
-  let apiData
 
-  // console.log('getAPIData', method, data)
-  try {
-    let headers = new Headers()
-
-    headers.append('Content-Type', !data ? 'application/json' : 'application/x-www-form-urlencoded')
-    headers.append('Access-Control-Allow-Origin', '*')
-    if (data) {
-      headers.append('Content-Length', String(JSON.stringify(data).length))
-    }
-    apiData = await simpleFetch(apiURL, {
-      // Si la petición tarda demasiado, la abortamos
-      signal: AbortSignal.timeout(3000),
-      method: method,
-      // @ts-expect-error TODO
-      body: data ? new URLSearchParams(data) : undefined,
-      headers: headers
-    });
-  } catch (/** @type {any | HttpError} */err) {
-    if (err.name === 'AbortError') {
-      console.error('Fetch abortado');
-    }
-    if (err instanceof HttpError) {
-      if (err.response.status === 404) {
-        console.error('Not found');
-      }
-      if (err.response.status === 500) {
-        console.error('Internal server error');
-      }
-    }
-  }
-
-  return apiData
-}
 
 formularioRegistro.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -104,7 +61,7 @@ formularioRegistro.addEventListener("submit", async (e) => {
   }
 
   // 📌 Consultar usuarios en la API (asegurando que devuelve un array)
-  const usuariosAPI = (await getAPIData(`${location.protocol}//${location.hostname}:3001/read/users`)) || [];
+  const usuariosAPI = (await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/users`)) || [];
 // Asegurar que usuariosAPI es un array antes de usar .find()
 const usuarioExistente = Array.isArray(usuariosAPI) 
   ? usuariosAPI.find(user => user && typeof user === 'object' && "email" in user && user.email === email)
@@ -125,7 +82,13 @@ const usuarioExistente = Array.isArray(usuariosAPI)
     direccion
 };
 
-  const apiResponse = await getAPIData(`${location.protocol}//${location.hostname}${API_PORT}/api/create/users`, 'POST', nuevoUsuario);
+  const apiResponse = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/create/users`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(nuevoUsuario)
+  });
 
   if (apiResponse) {
     console.log("✅ Usuario registrado:", apiResponse);
@@ -151,7 +114,7 @@ const usuarioExistente = Array.isArray(usuariosAPI)
     }
 
     // 📌 Consultar usuarios en la API
-    const usuariosAPI = (await getAPIData(`${location.protocol}//${location.hostname}${API_PORT}/api/read/users`)) || [];
+    const usuariosAPI = (await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/users`)) || [];
 
     // 📌 Buscar el usuario en la lista obtenida
     const usuarioEncontrado = Array.isArray(usuariosAPI) ? usuariosAPI.find(user => user.email === email && user.password === password) : null;

@@ -214,6 +214,7 @@ async function enviarMensaje() {
                 leido: false
             })
         });
+        
 
         if (!response.ok) {
             const errorText = await response.text();

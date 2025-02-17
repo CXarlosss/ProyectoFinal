@@ -164,7 +164,7 @@ function renderizarListaChats(mensajes, usuarioId) {
             `;
             chatMessages.appendChild(msgElement);
         });
-        
+        chatMessages.scrollTop = chatMessages.scrollHeight;
 
     } catch (error) {
         console.error("❌ Error al cargar mensajes del chat:", error);

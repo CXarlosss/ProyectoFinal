@@ -23,7 +23,6 @@ async function connectDB() {
   
     return client.db(dbName);
 }
-
 // 📌 Exportamos `connectDB` y `db`
 export { connectDB, ObjectId };
 
@@ -40,9 +39,6 @@ export { connectDB, ObjectId };
     res.status(500).json({ error: "Error interno del servidor" });
   }
 });
-
-// 📌 Obtener todos los servicios
-
 // 📌 Obtener todos los servicios
 router.get("/read/servicios", async (req, res) => {
   try {
@@ -56,7 +52,6 @@ router.get("/read/servicios", async (req, res) => {
     res.status(500).json({ error: "Error interno del servidor" });
   }
 });
-
 // 📌 Obtener un único servicio por su ID
 // @ts-ignore
 router.get("/read/servicio/:id", async (req, res) => {
@@ -80,7 +75,6 @@ router.get("/read/servicio/:id", async (req, res) => {
     res.status(500).json({ error: "Error interno del servidor" });
   }
 });
-
 // 📌 Actualizar un servicio
 router.put('/update/servicios/:_id', async (req, res) => {
   try {
@@ -162,7 +156,6 @@ router.get('/read/users', async (req, res) => {
     res.status(500).json({ error: "Error interno del servidor" });
   }
 });
-
 // 📌 Actualizar un usuario
 router.put('/update/users/:_id', async (req, res) => {
   try {
@@ -220,7 +213,6 @@ router.delete('/delete/users/:_id', async (req, res) => {
   }
 });
 
-
 //FAVORITOS
 
 // 📌 Leer Cuantos hay
@@ -261,8 +253,6 @@ router.put('/users/:userId/favoritos/:servicioId', async (req, res) => {
     res.status(500).json({ error: "Error interno del servidor" });
   }
 });
-
-
 // 📌 Obtener la lista de favoritos de un usuario
 router.get('/users/:userId/favoritos', async (req, res) => {
   try {
@@ -298,8 +288,6 @@ router.get('/users/:userId/favoritos', async (req, res) => {
     res.status(500).json({ error: "Error interno del servidor" });
   }
 });
-
-
 //FAVoritosMensajes
 
 // 📌 Marcar como leídos los mensajes de un usuario en un chat
@@ -443,7 +431,6 @@ router.get("/read/mensajes", async (req, res) => {
     res.status(500).json({ error: "Error interno del servidor" });
   }
 });
-
 // 📌 Obtener mensajes de un usuario o servicio
 router.get('/mensajes', async (req, res) => {
   try {
@@ -471,8 +458,6 @@ router.get('/mensajes', async (req, res) => {
       res.status(500).json({ error: "Error interno del servidor" });
   }
 });
-
-
 // 📌 Marcar un mensaje como leído
 router.put('/mensajes/:mensajeId',  async (req, res) => {
   try {
@@ -513,7 +498,6 @@ router.delete('/mensajes/:mensajeId', async (req, res) => {
     res.status(500).json({ error: "Error interno del servidor" });
   }
 });
-
 // for parsing application/json
 api.use(bodyParser.json())
 // for parsing application/x-www-form-urlencoded

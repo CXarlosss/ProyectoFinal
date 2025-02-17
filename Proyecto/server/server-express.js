@@ -15,20 +15,34 @@ const port =  process.env.PORT || 3001;
 app.use(express.static('src'))
 // for parsing application/json
 app.use(bodyParser.json())
+// Habilitar CORS (por si se necesita acceso desde un frontend separado)
+app.use((req, res, next) => {
+
+    if (req.headers['x-forwarded-proto'] === 'https') {
+      return res.redirect(`http://${req.headers.host}${req.url}`);
+    }
+  
+  res.header("Access-Control-Allow-Origin", "*"); // Permite peticiones desde cualquier origen
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+  res.header("Access-Control-Allow-Headers", "Content-Type");
+  next();
+});
 // for parsing application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }))
 
 
 
-
- // SERVICIOS
- // 📌 Crear un nuevo servicio
-app.post('/create/servicios', async (req, res) => {
-  console.log("📌 Servicio recibido:", req.body);
-  res.json(await db.servicios.create(req.body))
-}) 
-// 📌 Obtener todos los servicios
-
+// 📌 Crear un nuevo servicio
+ app.post('/create/servicios', async (req, res) => {
+  try {
+    const db = await connectDB();  // 💡 Asegura que tienes acceso a la DB
+    const result = await db.collection("Servicios").insertOne(req.body);
+    res.json(result);
+  } catch (error) {
+    console.error("❌ Error al crear el servicio:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+});
 // 📌 Obtener todos los servicios
 app.get("/read/servicios", async (req, res) => {
   try {
@@ -42,8 +56,8 @@ app.get("/read/servicios", async (req, res) => {
     res.status(500).json({ error: "Error interno del servidor" });
   }
 });
-
 // 📌 Obtener un único servicio por su ID
+// @ts-ignore
 app.get("/read/servicio/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -65,9 +79,6 @@ app.get("/read/servicio/:id", async (req, res) => {
     res.status(500).json({ error: "Error interno del servidor" });
   }
 });
-
-
-
 // 📌 Actualizar un servicio
 app.put('/update/servicios/:_id', async (req, res) => {
   try {
@@ -134,47 +145,50 @@ app.delete('/delete/servicios/:_id', async (req, res) => {
 //USUARIOS
 // 📌 Crear un nuevo usuario
 app.post('/create/users', async (req, res) => {
-  console.log("📌 Usuario recibido:", req.body);
-  res.json(await db.users.create(req.body))
+  const db = await connectDB();
+  const result = await db.collection("Users").insertOne(req.body);
+  res.json(result);
 }) 
 // 📌 Obtener todos los usuarios
-app.get('/read/users',async (req, res) => {
-console.log("📌 Users Creado:", req.body);
-  res.json(await db.users.get())
+app.get('/read/users', async (req, res) => {
+  try {
+    const db = await connectDB();
+    const users = await db.collection("Users").find().toArray();
+    res.json(users);
+  } catch (error) {
+    console.error("❌ Error al obtener los usuarios:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
 });
 // 📌 Actualizar un usuario
 app.put('/update/users/:_id', async (req, res) => {
   try {
     const { _id } = req.params;
-    console.log(`📌 Recibiendo actualización para Usuario con ID: ${_id}`, req.body);
 
-    if (!_id || !ObjectId.isValid(_id)) {
-      console.error("❌ ERROR: ID inválido para MongoDB:", _id);
-      return res.status(400).json({ error: "ID inválido para MongoDB" });
+    if (!ObjectId.isValid(_id)) {
+      return res.status(400).json({ error: "ID inválido" });
     }
 
+    const db = await connectDB();
     const objectId = new ObjectId(_id);
 
-    if (req.body._id) delete req.body._id; // 🔥 Eliminar _id del body
-
-    // 🔹 Verificar si el usuario existe antes de actualizarlo
-    const usuarioExistente = await db.users.get({ _id: objectId });
+    const usuarioExistente = await db.collection("Users").findOne({ _id: objectId });
     if (!usuarioExistente) {
-      console.warn("⚠ Usuario no encontrado en la base de datos.");
-      return res.status(404).json({ error: "Usuario no encontrado." });
+      return res.status(404).json({ error: "Usuario no encontrado" });
     }
 
-    // 🔹 Realizar la actualización en MongoDB
-    const resultado = await db.users.update(objectId, req.body);
+    if (req.body._id) delete req.body._id; // 🔥 Evitar problemas con _id
 
-    if (!resultado || resultado.modifiedCount === 0) {
-      console.warn("⚠ No se encontró el usuario para actualizar o no hubo cambios.");
-      return res.status(404).json({ error: "Usuario no encontrado o sin cambios." });
+    const resultado = await db.collection("Users").updateOne(
+      { _id: objectId },
+      { $set: req.body }
+    );
+
+    if (!resultado.modifiedCount) {
+      return res.status(404).json({ error: "Usuario no encontrado o sin cambios" });
     }
 
-    console.log(`✅ Usuario ${_id} actualizado correctamente.`);
-    res.json({ message: "Usuario actualizado correctamente", resultado });
-
+    res.json({ message: "Usuario actualizado correctamente" });
   } catch (error) {
     console.error("❌ Error en la actualización:", error);
     res.status(500).json({ error: "Error interno del servidor" });
@@ -182,13 +196,31 @@ app.put('/update/users/:_id', async (req, res) => {
 });
 // 📌 Eliminar un usuario
 app.delete('/delete/users/:_id', async (req, res) => {
-    console.log(`📌 Eliminando Users con _id: ${req.params._id}`);
-    res.json(await db.users.delete(req.params.id))
+  try {
+    const { _id } = req.params;
+
+    if (!ObjectId.isValid(_id)) {
+      return res.status(400).json({ error: "ID inválido" });
+    }
+
+    const db = await connectDB();
+    const resultado = await db.collection("Users").deleteOne({ _id: new ObjectId(_id) });
+
+    if (!resultado.deletedCount) {
+      return res.status(404).json({ error: "Usuario no encontrado" });
+    }
+
+    res.json({ message: "Usuario eliminado correctamente" });
+  } catch (error) {
+    console.error("❌ Error al eliminar usuario:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
 });
 
 //FAVORITOS
 
 // 📌 Leer Cuantos hay
+// 📌 Agregar o quitar un favorito
 app.put('/users/:userId/favoritos/:servicioId', async (req, res) => {
   try {
     const { userId, servicioId } = req.params;
@@ -196,8 +228,6 @@ app.put('/users/:userId/favoritos/:servicioId', async (req, res) => {
     if (!ObjectId.isValid(userId) || !ObjectId.isValid(servicioId)) {
       return res.status(400).json({ error: "ID de usuario o servicio inválido" });
     }
-
-    console.log(`📌 Actualizando favoritos para usuario ${userId}, servicio ${servicioId}`);
 
     const db = await connectDB();
     const usuario = await db.collection("Users").findOne({ _id: new ObjectId(userId) });
@@ -207,23 +237,19 @@ app.put('/users/:userId/favoritos/:servicioId', async (req, res) => {
     }
 
     const servicioObjectId = new ObjectId(servicioId);
-    const yaEsFavorito = usuario.favoritos && usuario.favoritos.some(id => id.equals(servicioObjectId));
+    const yaEsFavorito = usuario.favoritos?.some(id => id.toString() === servicioObjectId.toString());
 
     if (yaEsFavorito) {
-      // ❌ Si ya es favorito, lo quitamos
       await db.collection("Users").updateOne(
         { _id: new ObjectId(userId) },
         { $pull: { favoritos: servicioObjectId } }
       );
-      console.log(`❌ Servicio ${servicioId} eliminado de favoritos`);
       return res.json({ message: "Favorito eliminado" });
     } else {
-      // ✅ Si no es favorito, lo añadimos
       await db.collection("Users").updateOne(
         { _id: new ObjectId(userId) },
-        { $addToSet: { favoritos: servicioObjectId } } // 💡 Evita duplicados
+        { $addToSet: { favoritos: servicioObjectId } }
       );
-      console.log(`✅ Servicio ${servicioId} añadido a favoritos`);
       return res.json({ message: "Favorito añadido" });
     }
   } catch (error) {
@@ -231,7 +257,6 @@ app.put('/users/:userId/favoritos/:servicioId', async (req, res) => {
     res.status(500).json({ error: "Error interno del servidor" });
   }
 });
-
 // 📌 Obtener la lista de favoritos de un usuario
 app.get('/users/:userId/favoritos', async (req, res) => {
   try {
@@ -267,8 +292,6 @@ app.get('/users/:userId/favoritos', async (req, res) => {
     res.status(500).json({ error: "Error interno del servidor" });
   }
 });
-
-
 //FAVoritosMensajes
 
 // 📌 Marcar como leídos los mensajes de un usuario en un chat
@@ -342,9 +365,6 @@ app.delete('/users/:userId/favoritos/:servicioId', async (req, res) => {
   }
 });
 
-
-
-
 //MENSAJES
 // 📌 Crear un nuevo mensaje
 app.post("/mensajes", async (req, res) => {
@@ -364,75 +384,99 @@ app.post("/mensajes", async (req, res) => {
     let servicioFinal = servicioId ? new ObjectId(servicioId) : null;
 
     if (servicioId) {
-      // 🔍 Verificar si el servicio existe
       const servicio = await db.collection("Servicios").findOne({ _id: servicioFinal });
-
       if (!servicio) {
         console.error("❌ Servicio no encontrado:", servicioId);
         return res.status(404).json({ error: "Servicio no encontrado" });
       }
-
-      receptorFinal = servicio.usuarioId; // El receptor es el dueño del servicio
+      receptorFinal = servicio.usuarioId;
     } else if (receptorId) {
-      // 🔍 Verificar si el usuario receptor existe
       const usuarioReceptor = await db.collection("Users").findOne({ _id: receptorFinal });
-
       if (!usuarioReceptor) {
-        console.error("⚠ Usuario receptor no encontrado. Asumimos que es un servicio.");
-        receptorFinal = receptorId; // Deja el receptorId como string si no es un usuario
+        return res.status(404).json({ error: "Usuario receptor no encontrado" });
       }
     } else {
       return res.status(400).json({ error: "Debe haber un servicioId o un receptorId" });
     }
+    const chatIdFinal = receptorFinal 
+    ? [usuarioId.toString(), receptorFinal.toString()].sort().join("_") // ✅ Ordenado para asegurar siempre el mismo ID
+    : `${usuarioId}_${servicioFinal}`;
 
-    // 🔥 Guardar mensaje en MongoDB
     const mensajeData = {
-      usuarioId: new ObjectId(usuarioId),  // Convertir usuarioId a ObjectId
-      servicioId: servicioFinal ? new ObjectId(servicioFinal) : null,
-      receptorId: receptorFinal ? new ObjectId(receptorFinal) : null,
-      contenido,
-      leido: false,
-      fecha: new Date(),
-  };
-  
+        chatId: chatIdFinal,
+        usuarioId: new ObjectId(usuarioId),
+        servicioId: servicioFinal,
+        receptorId: receptorFinal,
+        contenido,
+        leido: false,
+        fecha: new Date(),
+    };
+
 
     const resultado = await db.collection("mensajes").insertOne(mensajeData);
-
     console.log("✅ Mensaje guardado correctamente:", resultado);
     res.json({ mensaje: "Mensaje guardado correctamente", resultado });
 
   } catch (error) {
-    console.error("❌ Error en el servidor al guardar el mensaje:", error);
+    console.error("❌ Error al guardar mensaje:", error);
     res.status(500).json({ error: "Error interno del servidor" });
   }
 });
+app.get("/read/mensajes", async (req, res) => {
+  try {
+    const db = await connectDB();
+    const mensajes = await db.collection("mensajes").find().toArray();
 
+    console.log("✅ Mensajes obtenidos:", mensajes); // <-- Aquí verifica si hay datos
+
+    res.json(mensajes);
+  } catch (error) {
+    console.error("❌ Error al obtener los mensajes:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+});
 // 📌 Obtener mensajes de un usuario o servicio
 app.get('/mensajes', async (req, res) => {
   try {
-      const { usuarioId } = req.query;
-      const db = await connectDB();
+      const { usuarioId, contactoId, receptorId } = req.query;
 
-      if (!ObjectId.isValid(usuarioId)) {
-          return res.status(400).json({ error: "ID inválido" });
+      console.log("📌 Buscando mensajes con:", { usuarioId, contactoId, receptorId });
+
+      const db = await connectDB();
+      const query = {};
+
+      // Validar IDs antes de convertirlos en ObjectId
+      if (usuarioId && ObjectId.isValid(usuarioId)) {
+          query.$or = [
+              { usuarioId: new ObjectId(usuarioId) },
+              { receptorId: new ObjectId(usuarioId) }
+          ];
+      } else {
+          console.warn("⚠ usuarioId inválido:", usuarioId);
       }
 
-      console.log("📌 Buscando mensajes con usuarioId:", usuarioId);
+      if (contactoId && ObjectId.isValid(contactoId)) {
+          query.servicioId = new ObjectId(contactoId);
+      } else {
+          console.warn("⚠ contactoId inválido:", contactoId);
+      }
 
-      const mensajes = await db.collection("mensajes").find({
-        $or: [
-            { usuarioId: new ObjectId(usuarioId) }, 
-            { receptorId: new ObjectId(usuarioId) }, 
-            { servicioId: new ObjectId(usuarioId) } 
-        ]
-    }).sort({ fecha: -1 }).toArray();
-    
-    
-    
-    
+      if (receptorId && ObjectId.isValid(receptorId)) {
+          query.receptorId = new ObjectId(receptorId);
+      } else {
+          console.warn("⚠ receptorId inválido:", receptorId);
+      }
+
+      console.log("🔍 Query ejecutada en MongoDB:", query);
+
+      const mensajes = await db.collection("mensajes")
+          .find(query)
+          .sort({ fecha: -1 })
+          .toArray();
 
       console.log("✅ Mensajes encontrados:", mensajes);
       res.json(mensajes);
+
   } catch (error) {
       console.error("❌ Error al obtener mensajes:", error);
       res.status(500).json({ error: "Error interno del servidor" });
@@ -440,7 +484,7 @@ app.get('/mensajes', async (req, res) => {
 });
 
 // 📌 Marcar un mensaje como leído
-app.put('/mensajes/:mensajeId', async (req, res) => {
+app.put('/mensajes/:mensajeId',  async (req, res) => {
   try {
     const { mensajeId } = req.params;
 
@@ -448,7 +492,12 @@ app.put('/mensajes/:mensajeId', async (req, res) => {
       return res.status(400).json({ error: "ID de mensaje inválido" });
     }
 
-    const resultado = await db.mensajes.update(new ObjectId(mensajeId));
+    const resultado = await db.collection("mensajes").updateOne(
+      { _id: new ObjectId(mensajeId) },
+      { $set: { leido: true } }
+  );
+
+    console.log("✅ Mensaje marcado como leído:", resultado);  
 
     res.json({ message: "Mensaje marcado como leído", resultado });
   } catch (error) {
@@ -465,7 +514,8 @@ app.delete('/mensajes/:mensajeId', async (req, res) => {
       return res.status(400).json({ error: "ID de mensaje inválido" });
     }
 
-    const resultado = await db.mensajes.delete(new ObjectId(mensajeId));
+    const resultado = await db.collection("mensajes").deleteOne({ _id: new ObjectId(mensajeId) });
+
 
     res.json({ message: "Mensaje eliminado correctamente", resultado });
   } catch (error) {

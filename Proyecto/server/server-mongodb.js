@@ -57,6 +57,8 @@ async function testMongoConnection() {
 // 📌 Ejecutar la prueba
 testMongoConnection();
 // 📌 Módulo de base de datos
+
+
 export const db = {
     servicios: {
         get: getServicios,
@@ -81,6 +83,7 @@ export const db = {
         delete: deleteMensaje
     }
 };
+
 
 /**
  * 📌 Obtener todos los servicios o filtrar por parámetros
@@ -204,12 +207,17 @@ async function createUser(user) {
  * @returns {Promise<object>} - Resultado de la actualización.
  */
 async function updateUser(id, updates) {
-    const db = await connectDB();
-    const objectId = new ObjectId(id);  // Convertir el ID a ObjectId
-    const result = await db.collection("Users").updateOne({ _id: objectId }, { $set: updates });
+  const db = await connectDB();
+  const objectId = new ObjectId(id);
 
-    console.log(`✅ Usuario actualizado: ${result.modifiedCount}`);
-    return result;
+  if (updates._id) delete updates._id; // 🔥 Evitar que _id sea modificado
+
+  const result = await db.collection("Users").updateOne(
+      { _id: objectId },
+      { $set: updates }
+  );
+
+  return result;
 }
 
 
@@ -219,11 +227,13 @@ async function updateUser(id, updates) {
  * @returns {Promise<string>} - ID del usuario eliminado.
  */
 async function deleteUser(id) {
-    const db = await connectDB();
-    const result = await db.collection("users").deleteOne({ _id: new ObjectId(id) });
-    console.log("✅ Usuario eliminado:", result.deletedCount);
-    return id;
+  const db = await connectDB();
+  const result = await db.collection("Users").deleteOne({ _id: new ObjectId(id) });
+  // @ts-ignore
+  return result.deletedCount > 0 ? id : null;
+
 }
+
 
 //Favoritos
 /**
@@ -329,12 +339,14 @@ async function getMensajes(filter = {}) {
     const db = await connectDB();
     
     const query = {};
-    if (filter.usuarioId) {
-        query.$or = [
-            { usuarioId: new ObjectId(filter.usuarioId) },
-            { servicioId: new ObjectId(filter.usuarioId) } // 🔥 Verifica si el usuario es un servicio
-        ];
-    }
+if (filter.usuarioId) {
+    query.$or = [
+        { usuarioId: new ObjectId(filter.usuarioId) },
+        { receptorId: new ObjectId(filter.usuarioId) },
+        { servicioId: new ObjectId(filter.usuarioId) }
+    ];
+}
+
 
     console.log("🔍 Query ejecutada en MongoDB:", query);
 

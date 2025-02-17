@@ -88,7 +88,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 console.log(`📌 Enviando mensaje al servicio ID: ${servicioId}`);
                 
-                abrirChat(servicioId); // 🛠️ Usa la función de UsuarioMensajes.js
+                abrirChat(servicioId, "Servicio"); // 🛠️ Usa la función de UsuarioMensajes.js
             });
         });
 

@@ -132,9 +132,19 @@ function renderizarListaChats(mensajes, usuarioId) {
     const chatPopup = document.getElementById("chat-popup");
     const chatMessages = document.getElementById("chat-messages");
     const chatTitulo = document.getElementById("chat-titulo");
-    const mensajeInput = document.getElementById("mensaje-input");
+    
 
-    if (!chatPopup || !chatMessages || !chatTitulo || !mensajeInput) return;
+    if (!chatPopup || !chatMessages || !chatTitulo) return;
+
+    if (!contactoId || contactoId.length !== 24) {
+        console.error("❌ contactoId inválido:", contactoId);
+        return;
+    }
+    
+    if (!receptorId || receptorId.length !== 24) {
+        console.error("❌ receptorId inválido:", receptorId);
+        return;
+    }
 
     chatPopup.classList.add("active");
     chatTitulo.dataset.contactoId = contactoId;

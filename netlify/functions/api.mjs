@@ -434,51 +434,30 @@ router.get("/read/mensajes", async (req, res) => {
 // 📌 Obtener mensajes de un usuario o servicio
 router.get('/mensajes', async (req, res) => {
   try {
-      const { usuarioId, contactoId, receptorId } = req.query;
+      const { usuarioId, contactoId ,receptorId} = req.query;
 
-      console.log("📌 Buscando mensajes con:", { usuarioId, contactoId, receptorId });
+      if (!usuarioId || !ObjectId.isValid(usuarioId)) {
+          return res.status(400).json({ error: "ID de usuario inválido o no proporcionado" });
+      }
 
+      console.log("📌 Buscando mensajes con usuarioId:", usuarioId);
+      
       const db = await connectDB();
-      const query = {};
-
-      // Validar IDs antes de convertirlos en ObjectId
-      if (usuarioId && ObjectId.isValid(usuarioId)) {
-          query.$or = [
-              { usuarioId: new ObjectId(usuarioId) },
-              { receptorId: new ObjectId(usuarioId) }
-          ];
-      } else {
-          console.warn("⚠ usuarioId inválido:", usuarioId);
-      }
-
-      if (contactoId && ObjectId.isValid(contactoId)) {
-          query.servicioId = new ObjectId(contactoId);
-      } else {
-          console.warn("⚠ contactoId inválido:", contactoId);
-      }
-
-      if (receptorId && ObjectId.isValid(receptorId)) {
-          query.receptorId = new ObjectId(receptorId);
-      } else {
-          console.warn("⚠ receptorId inválido:", receptorId);
-      }
-
-      console.log("🔍 Query ejecutada en MongoDB:", query);
-
-      const mensajes = await db.collection("mensajes")
-          .find(query)
-          .sort({ fecha: -1 })
-          .toArray();
+      const mensajes = await db.collection("mensajes").find({
+          $and: [
+              { usuarioId: new ObjectId(usuarioId) }, 
+              { receptorId: new ObjectId(receptorId) }, 
+              { servicioId: new ObjectId(contactoId) } 
+          ]
+      }).sort({ fecha: -1 }).toArray();
 
       console.log("✅ Mensajes encontrados:", mensajes);
       res.json(mensajes);
-
   } catch (error) {
       console.error("❌ Error al obtener mensajes:", error);
       res.status(500).json({ error: "Error interno del servidor" });
   }
 });
-
 // 📌 Marcar un mensaje como leído
 router.put('/mensajes/:mensajeId',  async (req, res) => {
   try {

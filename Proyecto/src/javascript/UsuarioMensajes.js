@@ -91,7 +91,8 @@ function renderizarListaChats(mensajes, usuarioId) {
         const contactoId = msg.usuarioId === usuarioId ? msg.servicioId : msg.usuarioId;
         const contactoNombre = msg.usuarioId === usuarioId ? msg.servicio?.nombre || "Servicio" : msg.usuario?.nombre || "Usuario";
         console.log('Mensaje-->', msg)
-        const receptorId = msg.servicioId;
+        const receptorId = msg.usuarioId === usuarioId ? msg.receptorId : msg.usuarioId;
+
         if (!chats[contactoId]) {
             chats[contactoId] = {
                 id: contactoId,
@@ -112,7 +113,12 @@ function renderizarListaChats(mensajes, usuarioId) {
             <p>${chat.ultimoMensaje}</p>
             <span class="fecha">${chat.fecha}</span>
         `;
-        chatItem.addEventListener("click", () => abrirChat(chat.id, chat.receptorId));
+        if (chat.receptorId) {
+            chatItem.addEventListener("click", () => abrirChat(chat.id, chat.receptorId));
+        } else {
+            console.warn(`⚠ El chat con ${chat.nombre} no tiene un receptorId válido.`);
+        }
+        
         chatList.appendChild(chatItem);
     });
 
@@ -141,10 +147,7 @@ function renderizarListaChats(mensajes, usuarioId) {
         return;
     }
     
-    if (!receptorId || receptorId.length !== 24) {
-        console.error("❌ receptorId inválido:", receptorId);
-        return;
-    }
+    
 
     chatPopup.classList.add("active");
     chatTitulo.dataset.contactoId = contactoId;
@@ -155,7 +158,8 @@ function renderizarListaChats(mensajes, usuarioId) {
         const usuario = JSON.parse(usuarioGuardado || "{}");
 
         const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/mensajes?usuarioId=${usuario._id}&contactoId=${contactoId}&receptorId=${receptorId}`
-);
+        
+        )
 
 
         if (!response.ok) throw new Error(`Error al obtener mensajes (${response.status})`);

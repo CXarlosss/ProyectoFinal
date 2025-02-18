@@ -1,15 +1,15 @@
 /**
- * @class RegisterForm
+ * @class RegistrarForm
  * @emits 'register-form-submit'
  */
 
-export class RegisterForm extends HTMLElement {
+export class RegistrarForm extends HTMLElement {
     constructor() {
       super();
     }
   
     connectedCallback() {
-      console.log("✅ RegisterForm.js ha sido cargado correctamente");
+      console.log("✅ RegistrarForm.js ha sido cargado correctamente");
       const shadow = this.attachShadow({ mode: "open" });
 
       
@@ -110,6 +110,6 @@ export class RegisterForm extends HTMLElement {
       }
     }
   // Definir el componente web en el navegador
-  customElements.define("register-form", RegisterForm);
+  customElements.define("registrar-form", RegistrarForm);
 
   

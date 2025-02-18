@@ -38,12 +38,13 @@ document.addEventListener("DOMContentLoaded", () => {
   
 
 //Manejo para registrar usuario
-document.addEventListener("register-form-submit", async (e) => {
-  const usuario = /** @type {CustomEvent} */ (e).detail; // 👈 Casting manual
-  
+document.addEventListener("register-form-submit", (e) => {
+  const evento = /** @type {CustomEvent} */ (e);
+  const usuario = evento.detail; // ✅ Obtener los datos del usuario registrado
+
   if (!usuario) {
-    alert("❌ No se pudo registrar el usuario.");
-    return;
+      alert("❌ No se pudo registrar el usuario.");
+      return;
   }
 
   console.log("✅ Usuario registrado:", usuario);
@@ -51,16 +52,18 @@ document.addEventListener("register-form-submit", async (e) => {
   window.location.href = "paginadelusuario.html";
 });
 
-document.addEventListener("login-form-submit", async (e) => {
-  const usuario = /** @type {CustomEvent} */ (e).detail; // 👈 Casting manual
+document.addEventListener("login-form-submit", (e) => {
+  const evento = /** @type {CustomEvent} */ (e);
+  const usuario = evento.detail; // ✅ Obtener los datos del usuario autenticado
 
   if (!usuario) {
-    alert("❌ Email o contraseña incorrectos.");
-    return;
+      alert("❌ Email o contraseña incorrectos.");
+      return;
   }
 
   console.log("✅ Usuario autenticado:", usuario);
   localStorage.setItem("usuarioRegistrado", JSON.stringify(usuario));
   window.location.href = "paginadelusuario.html";
 });
+
 });

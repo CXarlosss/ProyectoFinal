@@ -37,8 +37,8 @@ document.addEventListener("DOMContentLoaded", () => {
   });
   
 
-
-formularioRegistro.addEventListener("submit", async (e) => {
+//Manejo para registrar usuario
+formularioRegistro.addEventListener("login-form-submit", async (e) => {
   e.preventDefault();
 
   const nombre = /** @type {HTMLInputElement} */ (document.getElementById("nombre-usuario")).value.trim();
@@ -87,7 +87,7 @@ formularioRegistro.addEventListener("submit", async (e) => {
    /**
    * 📌 Manejador para iniciar sesión
    */
-   formularioLogin.addEventListener("submit", async (e) => {
+formularioLogin.addEventListener("register-form-submit", async (e) => {
     e.preventDefault();
 
     

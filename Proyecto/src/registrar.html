@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Gestión de Usuarios</title>
   <link rel="stylesheet" href="./css/styles-registrar.css" />
+  <script type="module" src="./javascript/components/bundle.js" defer></script>
+    <script type="module" src="./javascript/components/RegistrarForm.js" defer></script>
+  <script type="module" src="./javascript/components/LoginForm.js" defer></script>
+  <script type="module" src="./javascript/registrarUsuario.js" defer></script>
 </head>
 <body>
   <header>
@@ -28,41 +32,22 @@
     <!-- Formulario de registro -->
     <section id="formulario-registro">
       <h3>Registro de Usuario</h3>
+      
       <form id="usuario-form">
-        <label for="nombre-usuario">Nombre:</label>
-        <input type="text" id="nombre-usuario" required />
-
-        <label for="email-usuario">Email:</label>
-        <input type="email" id="email-usuario" required />
-
-        <label for="telefono-usuario">Teléfono:</label>
-        <input type="text" id="telefono-usuario" required />
-
-        <label for="direccion-usuario">Dirección:</label>
-        <input type="text" id="direccion-usuario" required />
-
-        <label for="password-usuario">Contraseña:</label>
-        <input type="password" id="password-usuario" required />
-
-        <button type="submit">Registrar Usuario</button>
+        <register-form></register-form>
       </form>
     </section>
 
     <!-- Formulario de inicio de sesión -->
     <section id="formulario-login" class="hidden">
-      <h3>Iniciar Sesión</h3>
+      <h3>Iniciar Sesión</h3>  
       <form id="login-form">
-        <label for="email-login">Email:</label>
-        <input type="email" id="email-login" required />
-
-        <label for="password-login">Contraseña:</label>
-        <input type="password" id="password-login" required />
-
-        <button type="submit">Iniciar Sesión</button>
+        <login-form></login-form>
+       
       </form>
     </section>
   </main>
 
-  <script type="module" src="./javascript/registrarUsuario.js"></script>
+
 </body>
 </html>

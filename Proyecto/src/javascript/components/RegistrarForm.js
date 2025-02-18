@@ -1,6 +1,6 @@
 /**
  * @class RegistrarForm
- * @emits 'register-form-submit'
+ * @emits 'registrar-form-submit'
  */
 
 export class RegistrarForm extends HTMLElement {
@@ -20,7 +20,7 @@ export class RegistrarForm extends HTMLElement {
       // Crear un contenedor para el formulario
       const wrapper = document.createElement("div");
       wrapper.innerHTML = `
-        <form id="registerForm">
+        <form id="registrar-form">
           <label>Nombre: <input type="text" id="nombre-usuario" required /></label>
           <label>Email: <input type="email" id="email-usuario" required /></label>
           <label>Teléfono: <input type="text" id="telefono-usuario" required /></label>
@@ -34,17 +34,17 @@ export class RegistrarForm extends HTMLElement {
       shadow.appendChild(link);
       shadow.appendChild(wrapper);
 
-      const form = shadow.getElementById("registerForm");
+      const form = shadow.getElementById("registrar-form");
       form?.addEventListener("submit", this.onFormSubmit.bind(this));
   }
     
   
     disconnectedCallback() {
-      console.log("📌 Custom element removed from page.");
+      console.log("📌 RegistrarForm Custom element removed from page.");
     }
   
     adoptedCallback() {
-      console.log("📌 Custom element moved to new page.");
+      console.log("📌  RegistrarForm Custom element moved to new page.");
     }
   
     attributeChangedCallback(name, oldValue, newValue) {
@@ -55,9 +55,9 @@ export class RegistrarForm extends HTMLElement {
      * 📌 Manejador del evento de envío del formulario
      */
     async onFormSubmit(e) {
-      e.preventDefault();
-  
+   
       const API_PORT = location.port ? `:${location.port}` : "";
+     e.preventDefault();
   
       const nombre = /** @type {HTMLInputElement} */ (this.shadowRoot?.getElementById("nombre-usuario"))?.value.trim();
       const email = /** @type {HTMLInputElement} */ (this.shadowRoot?.getElementById("email-usuario"))?.value.trim();
@@ -98,7 +98,7 @@ export class RegistrarForm extends HTMLElement {
           window.location.href = "paginadelusuario.html";
     
           // Emitir evento con `bubbles: true`
-          this.dispatchEvent(new CustomEvent("register-form-submit", {
+          this.dispatchEvent(new CustomEvent("registrar-form-submit", {
             bubbles: true,
             detail: usuarioCreado,
           }));

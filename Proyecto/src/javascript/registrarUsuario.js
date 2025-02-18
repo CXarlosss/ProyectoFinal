@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
   
 
 //Manejo para registrar usuario
-document.addEventListener("register-form-submit", (e) => {
+document.addEventListener("registrar-form-submit", (e) => {
   const evento = /** @type {CustomEvent} */ (e);
   const usuario = evento.detail; // ✅ Obtener los datos del usuario registrado
 

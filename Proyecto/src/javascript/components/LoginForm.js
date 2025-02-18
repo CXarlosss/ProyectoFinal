@@ -17,7 +17,7 @@ export class LoginForm extends HTMLElement {//Creamos clase propia que hereda de
       // Importar y aplicar los estilos externos
       const link = document.createElement("link");
       link.rel = "stylesheet";
-      link.href = "../../css/styles-registrar.css"; // Asegúrate de que la ruta sea correcta
+      link.href = "../../css/styles-registrar.css"; 
 
       // Contenedor para el formulario
       const wrapper = document.createElement("div");

@@ -12,10 +12,10 @@ export class RegisterForm extends HTMLElement {
       console.log("✅ RegisterForm.js ha sido cargado correctamente");
       const shadow = this.attachShadow({ mode: "open" });
 
-      // Crear un <link> para el CSS externo
+      
       const link = document.createElement("link");
       link.rel = "stylesheet";
-      link.href = "../../css/styles-registrar.css"; // Ruta al archivo CSS
+      link.href = "../../css/styles-registrar.css"; 
 
       // Crear un contenedor para el formulario
       const wrapper = document.createElement("div");

@@ -1,54 +1,93 @@
-//Define login form component
-/**
- * @class LoginForm
- * @emits 'login-form-submit'
- */
-export class LoginForm extends HTMLElement {//Creamos clase propia que hereda de html element
-    constructor() {//Creamos constructor
-        super();//Llamamos al constructor de la clase padre
-       
+import { importTemplate } from '../../lib/importTemplate.js';
+
+// Configuración del template
+const TEMPLATE = {
+  id: 'loginFormTemplate',
+  url: './javascript/components/LoginRegist.html'
+};
+
+// Esperar a que el template esté en el DOM antes de definir el componente
+async function loadAndDefineComponent() {
+  
+  await importTemplate(TEMPLATE.url);
+  
+  // Esperamos hasta que el template realmente aparezca en el DOM
+  let checkInterval = setInterval(() => {
+    let template = document.body.querySelector(`#${TEMPLATE.id}`);
+    
+    if (template) {
+      clearInterval(checkInterval);
+      
+      
+      // **Solución: Solo definir si no está registrado**
+      if (!customElements.get("login-form")) {
+        
+        customElements.define("login-form", LoginForm);
+      } else {
+        console.warn("⚠️ El elemento <login-form> ya está definido. Omitiendo redefinición.");
+      }
     }
-    //Metodo que se ejecuta al crear el componente
+  }, 100); // Chequea cada 100ms hasta que el template esté en el DOM
+}
+
+// Llamar la función para cargar y definir el componente
+loadAndDefineComponent();
+
+export class LoginForm extends HTMLElement {
+    constructor() {
+      super();
+      this.attachShadow({ mode: "open" });
+    }
+
+    get template() {
+      return document.body.querySelector(`#${TEMPLATE.id}`);
+    }
 
     connectedCallback() {
-      console.log("✅ LoginForm.js ha sido cargado correctamente");
-      const shadow = this.attachShadow({ mode: "open" });
+   
 
-      // Importar y aplicar los estilos externos
-      const link = document.createElement("link");
-      link.rel = "stylesheet";
-      link.href = "../../css/styles-registrar.css"; 
+      if (!this.shadowRoot) {
+        this.attachShadow({ mode: "open" });
+      }
 
-      // Contenedor para el formulario
-      const wrapper = document.createElement("div");
-      wrapper.innerHTML = `
-        <form id="login-form">
-          <label>Email: <input type="email" id="email-login" required /></label>
-          <label>Contraseña: <input type="password" id="password-login" required /></label>
-          <button type="submit">Iniciar Sesión</button>
-        </form>
-      `;
+      // Verificar periódicamente si el template ya está disponible antes de continuar
+      let checkTemplateInterval = setInterval(() => {
+        if (this.template) {
+          clearInterval(checkTemplateInterval);
+          
+          this._setUpContent();
 
-      // Agregar el `<link>` y el formulario al Shadow DOM
-      shadow.appendChild(link);
-      shadow.appendChild(wrapper);
+          const form = this.shadowRoot?.querySelector("#login-form");
+          
 
-      // Obtener el formulario dentro del shadowRoot
-      const form = shadow.getElementById("login-form");
-      form?.addEventListener("submit", this.onFormSubmit.bind(this));
-  }
-disconnecteCallback() {
-    console.log('LoginForm disconnectedCallback');
-    // Lógica para el componente
-}
-adoptedCallback() {
-    console.log('LoginForm adoptedCallback');
-    // Lógica para el componente
-}
-attributeChangedCallback(name, oldValue, newValue) {
-    console.log(`Attribute ${name} has changed.`, oldValue, newValue);
-  }
+          if (form) {
+            form.addEventListener("submit", this.onFormSubmit.bind(this));
+          }
+        }
+      }, 100); // Revisa cada 100ms si el template ya está disponible
+    }
 
+    _setUpContent() {
+
+      const template = this.template;
+    
+      if (!template) {
+
+        return;
+      }
+
+
+      // @ts-ignore
+      this.shadowRoot?.replaceChildren(template.content.cloneNode(true));
+
+      // Crear el link para importar el CSS externo
+      const linkElement = document.createElement("link");
+      linkElement.rel = "stylesheet";
+      linkElement.href = "../../css/styles-registrar.css"; // Ruta del archivo CSS
+    
+      // Agregar el link al Shadow DOM
+      this.shadowRoot?.appendChild(linkElement);
+    }
   async onFormSubmit(e) {
     const API_PORT = location.port ? `:${location.port}` : ''
     e.preventDefault();
@@ -71,7 +110,7 @@ attributeChangedCallback(name, oldValue, newValue) {
           usuariosAPI.find(user => user.email === email && user.password === password);
   
         if (usuarioEncontrado) {
-          console.log("✅ Usuario autenticado:", usuarioEncontrado);
+   
           localStorage.setItem("usuarioRegistrado", JSON.stringify(usuarioEncontrado));
           window.location.href = "paginadelusuario.html";
   

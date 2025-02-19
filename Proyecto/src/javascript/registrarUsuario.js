@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 //Constantes uSER URL
   const formularioRegistro = /** @type {HTMLFormElement | null} */ (
-    document.getElementById("usuario-form")
+    document.getElementById("registrar-form")
   );
   const formularioLogin = /** @type {HTMLFormElement | null} */ (
     document.getElementById("login-form")

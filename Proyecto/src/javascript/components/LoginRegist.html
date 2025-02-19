@@ -1,0 +1,25 @@
+
+
+<template id="loginFormTemplate">
+  <slot></slot>
+    <form id="login-form">
+        <label>Email: <input type="email" id="email-login" required /></label>
+        <label>Contraseña: <input type="password" id="password-login" required /></label>
+        <button type="submit">Iniciar Sesión</button>
+    </form>
+    <slot name="error"></slot>
+</template>
+
+<template id="registrarFormTemplate">
+  <slot></slot>
+  <form id="registrar-form">
+    <label>Nombre: <input type="text" id="nombre-usuario" required /></label>
+    <label>Email: <input type="email" id="email-usuario" required /></label>
+    <label>Teléfono: <input type="text" id="telefono-usuario" required /></label>
+    <label>Dirección: <input type="text" id="direccion-usuario" required /></label>
+    <label>Contraseña: <input type="password" id="password-usuario" required /></label>
+    <button type="submit">Registrar Usuario</button>
+    <slot name="error"></slot>
+  </form>
+</template>
+

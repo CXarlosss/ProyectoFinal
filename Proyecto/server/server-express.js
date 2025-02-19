@@ -1,14 +1,22 @@
 // @ts-nocheck
+
+
 import express from 'express';
 import bodyParser from 'body-parser';
-import { db, connectDB } from "./server-mongodb.js";  
-import { ObjectId } from "mongodb"; 
-
-
+import { db,connectDB,ObjectId } from "./server-mongodb.js";
 
 
 const app = express();
 const port =  process.env.PORT || 3001;
+
+
+
+app.use(express.static('src'))
+// for parsing application/json
+app.use(bodyParser.json())
+// for parsing application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: true }))
+
 
 
 

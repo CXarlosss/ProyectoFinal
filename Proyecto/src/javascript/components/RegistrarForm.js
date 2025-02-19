@@ -117,7 +117,7 @@ export class RegistrarForm extends HTMLElement {
       }
   
       try {
-        const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/users`);
+        const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}api/read/users`);
         if (!response.ok) throw new Error("Error al obtener usuarios");
   
         const usuariosAPI = await response.json();
@@ -130,24 +130,32 @@ export class RegistrarForm extends HTMLElement {
   
         const nuevoUsuario = { nombre, email, password, telefono, direccion };
   
-        const apiResponse = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/create/users`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(nuevoUsuario),
-          });
-    
-          if (!apiResponse.ok) throw new Error("Error al registrar usuario");
-    
-          const usuarioCreado = await apiResponse.json();
-       
-          localStorage.setItem("usuarioRegistrado", JSON.stringify(usuarioCreado));
+        const apiResponse = await fetch(`${location.protocol}//${location.hostname}${API_PORT}api/create/users`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(nuevoUsuario),
+      });
+      
+      if (!apiResponse.ok) throw new Error("Error al registrar usuario");
+      
+      const resultado = await apiResponse.json();
+      console.log("✅ Respuesta de la API:", resultado);
+      
+      if (resultado.acknowledged && resultado.insertedId) {
+          // Recuperar los datos completos del usuario recién creado
+          const usuarioCompleto = { 
+              _id: resultado.insertedId, 
+              ...nuevoUsuario 
+          };
+      
+          console.log("✅ Guardando usuario completo en localStorage:", usuarioCompleto);
+          localStorage.setItem("usuarioRegistrado", JSON.stringify(usuarioCompleto));
           window.location.href = "paginadelusuario.html";
-    
-          // Emitir evento con `bubbles: true`
-          this.dispatchEvent(new CustomEvent("registrar-form-submit", {
-            bubbles: true,
-            detail: usuarioCreado,
-          }));
+      } else {
+          console.error("❌ Error: Respuesta inesperada de la API", resultado);
+          alert("❌ Hubo un problema al registrar el usuario.");
+      }
+      
     
         } catch (error) {
           console.error("❌ Error:", error);

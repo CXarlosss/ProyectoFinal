@@ -1,9 +1,9 @@
-import { importTemplate } from '../../lib/importTemplate.js';
+import { importTemplate } from '../../../lib/importTemplate.js';
 
 // Configuración del template
 const TEMPLATE = {
   id: 'loginFormTemplate',
-  url: './javascript/components/LoginRegist.html'
+  url: '../../javascript/components/Login/LoginRegist.html'
 };
 
 // Esperar a que el template esté en el DOM antes de definir el componente

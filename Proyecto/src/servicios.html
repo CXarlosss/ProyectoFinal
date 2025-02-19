@@ -4,6 +4,9 @@
   <meta charset="UTF-8" />
   <title>Servicios</title>
   <link rel="stylesheet" href="./css/styles-servicios.css" />
+  <script type="module" src="./javascript/components/bundle.js"></script>
+  <script type="module" src="./javascript/components/buscadorServicios.js"></script>
+  <script type="module" src="./javascript/servicios.js"></script>
 </head>
 <body>
   <header>
@@ -17,16 +20,18 @@
     </nav>
   </header>
 
-  <main>
-    <div class="main-buttons">
-   
+  <main> 
+    <buscador-servicios></buscador-servicios>
+      <!-- <div class="main-buttons">
+     
+
       <input type="text" id="buscador" placeholder=" Que desea Hoy??" />
       <button id="btn-buscador">Buscar Servicios</button>
       <button id="btn-filtrar-actividades">Filtrar Actividades</button>
       <button id="btn-filtrar-comercios">Filtrar Comercios</button>
       <button id="btn-mostrar-todos">Todos</button>
       <button id="btn-crear-servicio">Crear Servicio</button>
-    </div>
+    </div>   -->
 
     <section id="modal-crear-servicio" class="modal hidden">
       <div class="modal-content">
@@ -65,8 +70,7 @@
               <label for="etiquetas-servicio">Etiquetas (separadas por coma):</label>
               <input type="text" id="etiquetas-servicio" required /><br/>
   
-              <label for="usuario-id-servicio">ID de Usuario:</label>
-              <input type="number" id="usuario-id-servicio" required /><br/>
+           
   
               <label for="email-usuario-servicio">Email de Usuario:</label>
               <input type="email" id="email-usuario-servicio" required /><br/>
@@ -82,5 +86,5 @@
   <footer>
     <p>&copy; 2025 - Marketplace de Productos Locales</p>
   </footer>
-  <script type="module" src="./javascript/servicios.js"></script>
+
 </body>

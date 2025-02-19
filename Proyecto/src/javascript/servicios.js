@@ -15,16 +15,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const serviciosContainer =
     /** @type {HTMLDivElement | null} */ document.getElementById( "servicios-container");
-  const btnFiltrarActividades =/** @type {HTMLButtonElement | null} */ document.getElementById( "btn-filtrar-actividades");
-  const btnFiltrarComercios = /** @type {HTMLButtonElement | null} */ document.getElementById("btn-filtrar-comercios");
-  const btnMostrarTodos =/** @type {HTMLButtonElement | null} */ document.getElementById("btn-mostrar-todos" );
-  const btnCrearServicio =/** @type {HTMLButtonElement | null} */ document.getElementById( "btn-crear-servicio");
-  const modalCrearServicio =/** @type {HTMLDivElement | null} */ document.getElementById( "modal-crear-servicio");
+   const modalCrearServicio =/** @type {HTMLDivElement | null} */ document.getElementById( "modal-crear-servicio");
   const formCrearServicio =/** @type {HTMLFormElement | null} */ document.getElementById("crear-servicio-form");
   const btnCerrarModal = /** @type {HTMLButtonElement | null} */ document.getElementById(  "btn-cerrar-modal" );
-  const inputBuscador = /** @type {HTMLInputElement | null} */ document.getElementById("buscador");
-  const btnBuscador = /** @type {HTMLButtonElement | null} */ document.getElementById( "btn-buscador" );
-
+ 
   if (!serviciosContainer) {
     console.error("No se encontró el contenedor de servicios.");
     return;
@@ -45,17 +39,65 @@ console.log("📌 Usuario cargado desde localStorage:", usuario);
 
 
 
-
-
-
-
-
-
   /** @type {{ servicios: { _id: string, nombre: string, descripcion: string, ubicacion: string, valoracion: string, imagen: string, categoria: string }[], favoritos: { _id: string, nombre: string }[] }} */
   const state = {
     servicios: [],
     favoritos: [],
   };
+  // 📌 Escuchar eventos del <buscador-servicios>
+  document.addEventListener("buscar-servicios", (event) => { 
+    /** @type {CustomEvent<{ busqueda: string }>} */
+    // @ts-ignore
+    const customEvent = event;
+    console.log("📡 Evento 'buscar-servicios' capturado:", customEvent.detail);
+
+    const terminoBusqueda = customEvent.detail?.busqueda?.trim().toLowerCase();
+
+    if (!terminoBusqueda) {
+      console.log("🔎 No se ingresó un término de búsqueda. Mostrando todos los servicios.");
+      renderServicios(state.servicios);
+      return;
+    }
+
+  
+
+  const serviciosFiltrados = state.servicios.filter(servicio =>
+    servicio.nombre.toLowerCase().includes(terminoBusqueda) ||
+    servicio.descripcion.toLowerCase().includes(terminoBusqueda) ||
+    servicio.ubicacion.toLowerCase().includes(terminoBusqueda)
+  );
+
+  console.log("🔍 Servicios filtrados:", serviciosFiltrados);
+  renderServicios(serviciosFiltrados);
+});
+
+document.addEventListener("filtrar-actividades", () => {
+  console.log("📡 Evento 'filtrar-actividades' capturado.");
+  const filtrados = state.servicios.filter(servicio => servicio.categoria === "actividad");
+  renderServicios(filtrados);
+});
+
+document.addEventListener("filtrar-comercios", () => {
+  console.log("📡 Evento 'filtrar-comercios' capturado.");
+  const filtrados = state.servicios.filter(servicio => servicio.categoria === "comercio");
+  renderServicios(filtrados);
+});
+
+document.addEventListener("mostrar-todos", () => {
+  console.log("📡 Evento 'mostrar-todos' capturado.");
+  renderServicios(state.servicios);
+});
+
+document.addEventListener("crear-servicio", () => {
+  console.log("📡 Evento 'crear-servicio' capturado.");
+  document.getElementById("modal-crear-servicio")?.classList.remove("hidden");
+});
+btnCerrarModal?.addEventListener("click", () => {
+  modalCrearServicio?.classList.add("hidden");
+});
+
+
+  
   cargarServicios();
   cargarFavoritos();
 
@@ -63,8 +105,10 @@ console.log("📌 Usuario cargado desde localStorage:", usuario);
    // 📌 Cargar servicios desde la API
    async function cargarServicios() {
     try {
-        const serviciosAPI = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/servicios`);
-        const servicios = await serviciosAPI.json();
+   /*    const serviciosAPI = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/read/servicios`); */
+
+      const serviciosAPI = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/servicios`); 
+     const servicios = await serviciosAPI.json();
 
         console.log("📌 Servicios obtenidos después de actualizar:", servicios);
 
@@ -390,74 +434,13 @@ function cargarFavoritos() {
     }
   }
   
-  function buscarServicios() {
-    const inputBuscador = /** @type {HTMLInputElement | null} */ (
-      document.getElementById("buscador")
-    );
-
-    if (!inputBuscador) {
-      console.error("El campo de búsqueda no fue encontrado en el DOM.");
-      return;
-    }
-
-    // Obtener el valor real del input, asegurando que no modifique el atributo 'value' de forma incorrecta
-    const terminoBusqueda = inputBuscador.value.trim().toLowerCase();
-
-    if (!terminoBusqueda) {
-      renderServicios(); // Si está vacío, mostrar todos los servicios
-      return;
-    }
-
-    try {
-      /** @type {Array<{ _id: string, nombre: string, descripcion: string, ubicacion: string, valoracion: string, imagen: string, categoria: string }>} */
-      const serviciosFiltrados = state.servicios.filter(
-        (servicio) =>
-          servicio?.nombre?.toLowerCase()?.includes(terminoBusqueda) ||
-          servicio?.descripcion?.toLowerCase()?.includes(terminoBusqueda) ||
-          servicio?.ubicacion?.toLowerCase()?.includes(terminoBusqueda)
-      );
-
-      renderServicios(serviciosFiltrados);
-    } catch (error) {
-      console.error("Error al buscar servicios:", error);
-    }
-  }
+  
 
   function getServiciosDesdeStore() {
     return store.getState().servicios;
   }
   
  
-  // 📌 Mostrar modal de creación
-  btnCrearServicio?.addEventListener("click", () => {
-    modalCrearServicio?.classList.remove("hidden");
-  });
-  // 📌 Cerrar modal de creación
-  btnCerrarModal?.addEventListener("click", () => {
-    modalCrearServicio?.classList.add("hidden");
-  });
-
-  btnFiltrarActividades?.addEventListener("click", () =>
-    renderServicios(
-      state.servicios.filter(({ categoria }) => categoria === "actividad")
-    )
-  );
-  btnFiltrarComercios?.addEventListener("click", () =>
-    renderServicios(
-      state.servicios.filter(({ categoria }) => categoria === "comercio")
-    )
-  );
-  btnMostrarTodos?.addEventListener("click", () => {
-    renderServicios(state.servicios);
-  });
-
-  // 📌 Eventos de búsqueda
-  btnBuscador?.addEventListener("click", buscarServicios);
-  inputBuscador?.addEventListener("keyup", (event) => {
-    if (event.key === "Enter") {
-      buscarServicios();
-    }
-  });
   // 📌 Crear nuevo servicio desde el formulario
   formCrearServicio?.addEventListener("submit", async (e) => {
     e.preventDefault();

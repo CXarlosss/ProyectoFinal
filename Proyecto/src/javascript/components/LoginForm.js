@@ -88,57 +88,77 @@ export class LoginForm extends HTMLElement {
       // Agregar el link al Shadow DOM
       this.shadowRoot?.appendChild(linkElement);
     }
-  async onFormSubmit(e) {
-    const API_PORT = location.port ? `:${location.port}` : ''
-    e.preventDefault();
-
-    
-    const email =/** @type {HTMLInputElement} */ (document.getElementById("email-login"))?.value.trim() ?? "";
-    const password =/** @type {HTMLInputElement} */(document.getElementById("password-login") )?.value.trim() ?? "";
-
-    if (!email || !password) {
-      alert("❌ Email y contraseña son obligatorios.");
-      return;
-    }
-
-    try {
-        const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/users`);
-        if (!response.ok) throw new Error("Error al obtener usuarios");
+    async onFormSubmit(e) {
+      e.preventDefault();
   
-        const usuariosAPI = await response.json();
-        const usuarioEncontrado = Array.isArray(usuariosAPI) &&
-          usuariosAPI.find(user => user.email === email && user.password === password);
+      const API_PORT = location.port ? `:${location.port}` : '';
   
-        if (usuarioEncontrado) {
-   
-          localStorage.setItem("usuarioRegistrado", JSON.stringify(usuarioEncontrado));
-          window.location.href = "paginadelusuario.html";
+      // 🔥 🔥 SOLUCIÓN: Usar `shadowRoot.querySelector` correctamente
+      const emailInput = /** @type {HTMLInputElement | null} */ (this.shadowRoot?.querySelector("#email-login"));
+      const passwordInput =/** @type {HTMLInputElement | null} */( this.shadowRoot?.querySelector("#password-login"));
   
-          // Emitir evento personalizado con bubbles
-          this.dispatchEvent(new CustomEvent("login-form-submit", {
-            bubbles: true, // ✅ Permite que el evento suba en el DOM
-            detail: usuarioEncontrado
-          }));
-        } else {
-          alert("⚠️ Email o contraseña incorrectos.");
-          this.dispatchEvent(new CustomEvent("login-form-submit", {
-            bubbles: true,
-            detail: null
-          }));
-        }
-      } catch (error) {
-        console.error("❌ Error:", error);
-        alert("❌ Error al iniciar sesión.");
-        this.dispatchEvent(new CustomEvent("login-form-submit", {
-          bubbles: true,
-          detail: null
-        }));
+      console.log("📌 Verificando inputs...");
+      console.log("🔍 emailInput:", emailInput);
+      console.log("🔍 passwordInput:", passwordInput);
+  
+      if (!emailInput || !passwordInput) {
+          console.error("❌ No se encontraron los campos de email o password.");
+          alert("❌ Error en el formulario. Intenta recargar la página.");
+          return;
       }
-
-    }
-
-
-
+  
+      const email = emailInput.value.trim();
+      const password = passwordInput.value.trim();
+  
+      console.log("📩 Email ingresado:", email);
+      console.log("🔑 Contraseña ingresada:", password);
+  
+      if (!email || !password) {
+          alert("❌ Email y contraseña son obligatorios.");
+          return;
+      }
+  
+      try {
+          console.log("📡 Enviando petición a la API...");
+  
+          const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/users`);
+          console.log("📡 Respuesta recibida:", response);
+  
+          if (!response.ok) throw new Error("Error al obtener usuarios");
+  
+          const usuariosAPI = await response.json();
+          console.log("📜 Lista de usuarios obtenida:", usuariosAPI);
+  
+          const usuarioEncontrado = Array.isArray(usuariosAPI) &&
+              usuariosAPI.find(user => user.email === email && user.password === password);
+  
+          console.log("🔍 Usuario encontrado:", usuarioEncontrado);
+  
+          if (usuarioEncontrado) {
+              console.log("✅ Usuario autenticado:", usuarioEncontrado);
+              localStorage.setItem("usuarioRegistrado", JSON.stringify(usuarioEncontrado));
+              window.location.href = "paginadelusuario.html";
+  
+              this.dispatchEvent(new CustomEvent("login-form-submit", {
+                  bubbles: true,
+                  detail: usuarioEncontrado
+              }));
+          } else {
+              alert("⚠️ Email o contraseña incorrectos.");
+              this.dispatchEvent(new CustomEvent("login-form-submit", {
+                  bubbles: true,
+                  detail: null
+              }));
+          }
+      } catch (error) {
+          console.error("❌ Error:", error);
+          alert("❌ Error al iniciar sesión.");
+          this.dispatchEvent(new CustomEvent("login-form-submit", {
+              bubbles: true,
+              detail: null
+          }));
+      }
+  }
 }
 customElements.define('login-form', LoginForm);
 

@@ -1,17 +1,28 @@
 document.addEventListener("DOMContentLoaded", () => {
-    console.log("📌 Cargando página de usuario...");
-  
-
     const usuarioGuardado = localStorage.getItem("usuarioRegistrado");
+
     if (!usuarioGuardado) {
         console.error("❌ No hay usuario registrado en localStorage.");
-        window.location.href = "registrar.html"; // Redirigir si no hay sesión activa
+        alert("⚠️ No hay sesión activa. Redirigiendo a la página de registro...");
+        window.location.href = "registrar.html"; 
         return;
     }
-    
+
+    // 🔥 SOLUCIÓN: Mostrar qué datos se están guardando
+    console.log("✅ Usuario cargado desde localStorage:", usuarioGuardado);
+
     const usuario = JSON.parse(usuarioGuardado);
-    console.log("✅ Usuario cargado:", usuario);
-    const btnServicios = document.getElementById("btn-ir-secciones"); // Asegúrate de que el botón existe
+
+    if (!usuario || !usuario.email) {
+        console.error("❌ Usuario inválido en localStorage:", usuario);
+        alert("⚠️ Error en los datos de sesión. Redirigiendo...");
+        window.location.href = "registrar.html";
+        return;
+    }
+
+    console.log("✅ Usuario autenticado:", usuario);
+
+    const btnServicios = document.getElementById("btn-ir-secciones"); 
 
     if (btnServicios) {
         btnServicios.addEventListener("click", irAServicios);

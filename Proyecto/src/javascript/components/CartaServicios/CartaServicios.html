@@ -1,26 +1,21 @@
-<template>
-    <div class="card">
-        <img src="${servicio.imagen || "default.jpg"}" alt="Imagen de ${servicio.nombre || "Servicio"}" class="card-img" />
-        <h3>${servicio.nombre || "Nombre no disponible"}</h3>
-        <p>${servicio.descripcion || "Descripción no disponible"}</p>
-        <p><strong>Ubicación:</strong> ${servicio.ubicacion || "Ubicación no disponible"}</p>
-        <p><strong>Valoración:</strong> ${servicio.valoracion || "No valorado"}</p>
-        
-        <!-- BOTÓN "MÁS DETALLES" -->
-        <button class="btn-detalles" data-_id="${servicio._id}">📜 Más Detalles</button>
+<template id="carta-servicios-template">
+  <div class="card">
+      <img class="card-img" alt="Imagen del servicio" />
+      <h3 class="servicio-nombre">Nombre no disponible</h3>
+      <p class="servicio-descripcion">Descripción no disponible</p>
+      <p><strong>Ubicación:</strong> <span class="servicio-ubicacion">Ubicación no disponible</span></p>
+      <p><strong>Valoración:</strong> <span class="servicio-valoracion">No valorado</span></p>
+      
+      <!-- BOTÓN "MÁS DETALLES" -->
+      <button class="btn-detalles">📜 Más Detalles</button>
 
-        <!-- BOTÓN "AÑADIR A FAVORITOS" -->
-        <button class="btn-favorito ${state.favoritos.some(fav => fav._id === servicio._id) ? "favorito" : ""}" 
-                data-_id="${servicio._id}" 
-                data-nombre="${servicio.nombre || ""}">
-          ${state.favoritos.some(fav => fav._id === servicio._id) ? "★ Favorito" : "☆ Añadir a Favoritos"}
-        </button>
+      <!-- BOTÓN "AÑADIR A FAVORITOS" -->
+      <button class="btn-favorito">☆ Añadir a Favoritos</button>
 
-        <!-- BOTÓN EDITAR (SOLO SI EL USUARIO ES EL PROPIETARIO) -->
-        ${esPropietario ? `<button class="btn-editar" data-_id="${String(servicio._id)}">✏️ Editar</button>` : ""}
+      <!-- BOTÓN EDITAR (SOLO SI EL USUARIO ES EL PROPIETARIO) -->
+      <button class="btn-editar hidden">✏️ Editar</button>
 
-  
-        <!-- BOTÓN ELIMINAR (SOLO SI EL USUARIO ES EL PROPIETARIO) -->
-        ${esPropietario ? `<button class="btn-eliminar" data-_id="${servicio._id}">🗑 Eliminar</button>` : ""}
-      </div>
-    </template>;
+      <!-- BOTÓN ELIMINAR (SOLO SI EL USUARIO ES EL PROPIETARIO) -->
+      <button class="btn-eliminar hidden">🗑 Eliminar</button>
+  </div>
+</template>

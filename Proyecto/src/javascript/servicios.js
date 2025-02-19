@@ -105,8 +105,8 @@ btnCerrarModal?.addEventListener("click", () => {
    // 📌 Cargar servicios desde la API
    async function cargarServicios() {
     try {
-   /*    const serviciosAPI = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/read/servicios`); */
-
+  /*   const serviciosAPI = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/read/servicios`);
+ */
       const serviciosAPI = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/servicios`); 
      const servicios = await serviciosAPI.json();
 
@@ -125,7 +125,6 @@ btnCerrarModal?.addEventListener("click", () => {
 }
 
   
-
 
 function renderServicios(serviciosFiltrados = getServiciosDesdeStore()) {
   console.log("🛠 Ejecutando renderServicios con:", serviciosFiltrados);
@@ -148,67 +147,26 @@ function renderServicios(serviciosFiltrados = getServiciosDesdeStore()) {
 
   console.log("📌 Usuario actual:", usuario);
 
-  serviciosFiltrados.forEach((/** @type {{ emailUsuario: string; nombre: any; }} */ servicio) => {
-    console.log("📌 Revisando servicio:", servicio);
-    console.log("📧 Comparando emails:", servicio.emailUsuario, usuario.email);
+  // 📌 Crear una instancia de <carta-serv>
+  const cartaServ = document.createElement("carta-serv");
 
-    if (!servicio.emailUsuario) {
-      console.warn("⚠ El servicio no tiene emailUsuario definido:", servicio);
-    }
+  // 🔥 Pasar los datos al componente
+  // @ts-ignore
+  cartaServ.servicios = serviciosFiltrados.map((servicio) => ({
+    ...servicio,
+    esPropietario: servicio.emailUsuario?.trim().toLowerCase() === usuario.email?.trim().toLowerCase(),
+  }));
 
-    if (servicio.emailUsuario?.trim().toLowerCase() === usuario.email?.trim().toLowerCase()) {
-      console.log("✅ Es propietario del servicio:", servicio.nombre);
-    } else {
-      console.log("❌ No es propietario");
-    }
-  });
+  // 📌 Limpiar y añadir
+  serviciosContainer.innerHTML = ""; 
+  serviciosContainer.appendChild(cartaServ);
 
-  console.log("📌 Servicios filtrados:", serviciosFiltrados);
-
-  serviciosContainer.innerHTML = serviciosFiltrados
-    .slice(0, 7) // ✅ Mostrar solo 7 servicios
-    .map((/** @type {{ _id: string; emailUsuario: string; imagen: any; nombre: any; descripcion: any; ubicacion: any; valoracion: any; }} */ servicio) => {
-      if (!servicio || !servicio._id) return "";
-      let esPropietario = false;
-
-      console.log("📌 Servicio:", servicio);
-
-      if (servicio.emailUsuario?.trim().toLowerCase() === usuario.email?.trim().toLowerCase()) {
-        esPropietario = true;
-      }
-
-      return `
-        <div class="card">
-          <img src="${servicio.imagen || "default.jpg"}" alt="Imagen de ${servicio.nombre || "Servicio"}" class="card-img" />
-          <h3>${servicio.nombre || "Nombre no disponible"}</h3>
-          <p>${servicio.descripcion || "Descripción no disponible"}</p>
-          <p><strong>Ubicación:</strong> ${servicio.ubicacion || "Ubicación no disponible"}</p>
-          <p><strong>Valoración:</strong> ${servicio.valoracion || "No valorado"}</p>
-          
-          <!-- BOTÓN "MÁS DETALLES" -->
-          <button class="btn-detalles" data-_id="${servicio._id}">📜 Más Detalles</button>
-
-          <!-- BOTÓN "AÑADIR A FAVORITOS" -->
-          <button class="btn-favorito ${state.favoritos.some(fav => fav._id === servicio._id) ? "favorito" : ""}" 
-                  data-_id="${servicio._id}" 
-                  data-nombre="${servicio.nombre || ""}">
-            ${state.favoritos.some(fav => fav._id === servicio._id) ? "★ Favorito" : "☆ Añadir a Favoritos"}
-          </button>
-
-          <!-- BOTÓN EDITAR (SOLO SI EL USUARIO ES EL PROPIETARIO) -->
-          ${esPropietario ? `<button class="btn-editar" data-_id="${String(servicio._id)}">✏️ Editar</button>` : ""}
-
-    
-          <!-- BOTÓN ELIMINAR (SOLO SI EL USUARIO ES EL PROPIETARIO) -->
-          ${esPropietario ? `<button class="btn-eliminar" data-_id="${servicio._id}">🗑 Eliminar</button>` : ""}
-        </div>
-      `;
-    })
-    .join("");
-
-    console.log("✅ Contenido final en serviciosContainer:");
-
+  console.log("✅ Contenido final en serviciosContainer:", serviciosContainer);
 }
+
+
+
+
 
 serviciosContainer.addEventListener("click", async (e) => {
   const target = /** @type {HTMLElement} */ (e.target);

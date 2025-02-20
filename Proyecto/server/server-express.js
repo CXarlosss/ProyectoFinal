@@ -38,6 +38,8 @@ app.use((req, res, next) => {
 // for parsing application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }))
 
+app.use(express.static("public"));  // Si "javascript/lib" está dentro de "public"
+app.use("/javascript", express.static("javascript")); // Si "javascript" está en la raíz del proyecto
 
 
 // 📌 Crear un nuevo servicio

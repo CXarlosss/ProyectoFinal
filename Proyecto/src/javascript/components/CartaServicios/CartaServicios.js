@@ -13,7 +13,6 @@ console.log("📌 CartaServicios.js cargado correctamente.");
  * @property {string} imagen
  * @property {string} emailUsuario
  * @property {boolean} esFavorito
- * @property {boolean} esPropietario
  */
 
 // 📌 Configuración del template
@@ -22,7 +21,14 @@ const TEMPLATE = {
   url: "../../javascript/components/CartaServicios/CartaServicios.html",
 };
 
-// 📌 Función para cargar y definir el componente
+// 📌 Obtener usuario autenticado desde localStorage
+const usuarioGuardado = localStorage.getItem("usuarioRegistrado");
+const usuario = usuarioGuardado ? /** @type {{email: string} | null} */ (JSON.parse(usuarioGuardado)) : null;
+console.log("📌 Usuario autenticado en localStorage:", usuario);
+
+/**
+ * 📌 Función para cargar y definir el componente
+ */
 async function loadAndDefineComponent() {
   console.log("⏳ Intentando importar template desde:", TEMPLATE.url);
 
@@ -34,9 +40,10 @@ async function loadAndDefineComponent() {
     return;
   }
 
-  // 🔥 Esperar hasta que el template realmente esté disponible en el DOM
+  // 🔥 Esperar hasta que el template esté en el DOM
   let checkInterval = setInterval(() => {
-    let template = document.body.querySelector(`#${TEMPLATE.id}`);
+    const template = /** @type {HTMLTemplateElement | null} */ (document.body.querySelector(`#${TEMPLATE.id}`));
+
     if (template) {
       clearInterval(checkInterval);
       console.log("✅ Template disponible en el DOM.");
@@ -45,7 +52,7 @@ async function loadAndDefineComponent() {
         console.log("🆕 Definiendo <carta-servicio> como Web Component...");
         customElements.define("carta-servicio", CartaServicio);
       } else {
-        console.warn("⚠️ El elemento <carta-servicio> ya está definido. Omitiendo redefinición.");
+        console.warn("⚠️ <carta-servicio> ya está definido. Omitiendo redefinición.");
       }
     }
   }, 100);
@@ -61,8 +68,28 @@ class CartaServicio extends HTMLElement {
     this.attachShadow({ mode: "open" });
   }
 
+  static get observedAttributes() {
+    return ["_id", "nombre", "descripcion", "ubicacion", "valoracion", "imagen", "emailUsuario"];
+  }
+
   /**
-   * Obtiene el template del documento.
+   * @param {string} name
+   * @param {string | null} oldValue
+   * @param {string | null} newValue
+   */
+  attributeChangedCallback(name, oldValue, newValue) {
+    console.log(`📌 Atributo cambiado en <carta-servicio>: ${name} = ${newValue}`);
+    this.render();
+  }
+
+  connectedCallback() {
+    console.log("✅ <carta-servicio> conectado al DOM.");
+    this.render();
+    this.addEventListeners();
+  }
+
+  /**
+   * 📌 Obtiene el template del documento.
    * @returns {HTMLTemplateElement | null}
    */
   get template() {
@@ -70,75 +97,113 @@ class CartaServicio extends HTMLElement {
     return /** @type {HTMLTemplateElement | null} */ (document.body.querySelector(`#${TEMPLATE.id}`));
   }
 
-  connectedCallback() {
-    console.log("✅ <carta-servicio> conectado al DOM.");
+  /**
+   * 📌 Renderiza el servicio en la tarjeta.
+   */
+  render() {
+    console.log("📌 Renderizando <carta-servicio>...");
 
     if (!this.shadowRoot) {
-      console.log("🛠 Creando Shadow DOM...");
-      this.attachShadow({ mode: "open" });
-    }
-
-    // 🔥 Esperar hasta que el template esté disponible
-    let checkTemplateInterval = setInterval(() => {
-      const template = this.template;
-      if (template) {
-        clearInterval(checkTemplateInterval);
-        console.log("✅ Template encontrado en el DOM.");
-        this._loadTemplate();
-      } else {
-        console.warn("⏳ Aún esperando que el template aparezca...");
-      }
-    }, 100);
-  }
-
-  _loadTemplate() {
-    console.log("🛠 Cargando template dentro del componente...");
-
-    const template = this.template;
-    if (!template || !this.shadowRoot) {
-      console.error("❌ No se pudo cargar el template en _loadTemplate.");
+      console.error("❌ Shadow DOM no disponible en <carta-servicio>.");
       return;
     }
 
-    console.log("✅ Template clonado correctamente en el Shadow DOM.");
-    this.shadowRoot.replaceChildren(template.content.cloneNode(true));
+    const template = this.template;
+    if (!template) {
+      console.error("❌ No se encontró `#carta-servicios-template`.");
+      return;
+    }
 
-    // ✅ Importar el CSS externo
+    this.shadowRoot.innerHTML = "";
+    this.shadowRoot.appendChild(template.content.cloneNode(true));
+
+    // ✅ Importar CSS externo
     const linkElement = document.createElement("link");
     linkElement.rel = "stylesheet";
-    linkElement.href = "../../css/styles-servicios.css"; // Ajusta la ruta según sea necesario
+    linkElement.href = "../../css/styles-servicios.css";
     this.shadowRoot.appendChild(linkElement);
+
     console.log("🎨 CSS importado:", linkElement.href);
+
+    // 📌 Asignar valores a la tarjeta
+    const img = /** @type {HTMLImageElement | null} */ (this.shadowRoot.querySelector(".card-img"));
+    const nombre = /** @type {HTMLElement | null} */ (this.shadowRoot.querySelector(".servicio-nombre"));
+    const descripcion = /** @type {HTMLElement | null} */ (this.shadowRoot.querySelector(".servicio-descripcion"));
+    const ubicacion = /** @type {HTMLElement | null} */ (this.shadowRoot.querySelector(".servicio-ubicacion"));
+    const valoracion = /** @type {HTMLElement | null} */ (this.shadowRoot.querySelector(".servicio-valoracion"));
+
+    if (img) img.src = this.getAttribute("imagen") || "default.jpg";
+    if (nombre) nombre.textContent = this.getAttribute("nombre") || "Nombre no disponible";
+    if (descripcion) descripcion.textContent = this.getAttribute("descripcion") || "Descripción no disponible";
+    if (ubicacion) ubicacion.textContent = `Ubicación: ${this.getAttribute("ubicacion") || "Ubicación no disponible"}`;
+    if (valoracion) valoracion.textContent = `Valoración: ${this.getAttribute("valoracion") || "No valorado"}`;
+
+    // 📌 Ocultar o mostrar botones según el usuario
+    const emailUsuario = this.getAttribute("emailUsuario");
+    const btnEditar = this.shadowRoot.querySelector(".btn-editar");
+    const btnEliminar = this.shadowRoot.querySelector(".btn-eliminar");
+
+    console.log("📌 Email del propietario:", emailUsuario);
+    console.log("📌 Email del usuario autenticado:", usuario?.email);
+
+    if (!usuario || usuario.email !== emailUsuario) {
+      
+      btnEditar?.classList.add("hidden");
+      btnEliminar?.classList.add("hidden");
+
+      // 🔥 Asegurar ocultación completa
+      // @ts-ignore
+      if (btnEditar) btnEditar.style.display = "none";
+      // @ts-ignore
+      if (btnEliminar) btnEliminar.style.display = "none";
+    } else {
+      
+      btnEditar?.classList.remove("hidden");
+      btnEliminar?.classList.remove("hidden");
+
+      // @ts-ignore
+      if (btnEditar) btnEditar.style.display = "inline-block";
+      // @ts-ignore
+      if (btnEliminar) btnEliminar.style.display = "inline-block";
+    }
   }
 
-  /**
-   * 📌 Asigna datos al componente carta-servicio.
-   * @param {Servicio} data
-   */
-  set servicio(data) {
-    console.log("🛠 Asignando datos al servicio:", data);
+  /** 📌 Agrega eventos a los botones de la carta */
+  addEventListeners() {
+    if (!this.shadowRoot) return;
 
-    if (!data || !this.shadowRoot) return;
+    const id = this.getAttribute("_id"); // Obtener el ID del servicio
 
-    /** @type {HTMLImageElement | null} */
-    const img = this.shadowRoot.querySelector(".card-img");
-    /** @type {HTMLElement | null} */
-    const nombre = this.shadowRoot.querySelector(".servicio-nombre");
-    /** @type {HTMLElement | null} */
-    const descripcion = this.shadowRoot.querySelector(".servicio-descripcion");
-    /** @type {HTMLElement | null} */
-    const ubicacion = this.shadowRoot.querySelector(".servicio-ubicacion");
-    /** @type {HTMLElement | null} */
-    const valoracion = this.shadowRoot.querySelector(".servicio-valoracion");
+    // 📜 Evento "Más Detalles"
+    const btnDetalles = this.shadowRoot.querySelector(".btn-detalles");
+    btnDetalles?.addEventListener("click", () => {
+      console.log(`📌 Ver detalles del servicio: ${id}`);
+      window.location.href = `servicio.html?_id=${encodeURIComponent(id || "")}`;
+    });
 
-    if (img) {
-      img.src = data.imagen || "default.jpg";
-      img.alt = `Imagen de ${data.nombre || "Servicio"}`;
-    }
-    if (nombre) nombre.textContent = data.nombre || "Nombre no disponible";
-    if (descripcion) descripcion.textContent = data.descripcion || "Descripción no disponible";
-    if (ubicacion) ubicacion.textContent = data.ubicacion || "Ubicación no disponible";
-    if (valoracion) valoracion.textContent = data.valoracion || "No valorado";
+    // ⭐ Evento "Añadir a Favoritos"
+    const btnFavorito = this.shadowRoot.querySelector(".btn-favorito");
+    btnFavorito?.addEventListener("click", () => {
+      console.log(`⭐ Añadir/Quitar favorito: ${id}`);
+      document.dispatchEvent(new CustomEvent("toggle-favorito", { detail: { id } }));
+    });
+
+    // ✏️ Evento "Editar Servicio"
+    const btnEditar = this.shadowRoot.querySelector(".btn-editar");
+    btnEditar?.addEventListener("click", () => {
+      console.log(`✏️ Editar servicio: ${id}`);
+      document.dispatchEvent(new CustomEvent("editar-servicio", { detail: { id } }));
+    });
+
+    // 🗑 Evento "Eliminar Servicio"
+    const btnEliminar = this.shadowRoot.querySelector(".btn-eliminar");
+    btnEliminar?.addEventListener("click", () => {
+      console.log(`🗑 Eliminar servicio: ${id}`);
+      const confirmacion = confirm("¿Estás seguro de eliminar este servicio?");
+      if (confirmacion) {
+        document.dispatchEvent(new CustomEvent("eliminar-servicio", { detail: { id } }));
+      }
+    });
   }
 }
 

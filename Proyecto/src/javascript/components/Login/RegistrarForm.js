@@ -3,7 +3,7 @@ import { importTemplate } from '../../../lib/importTemplate.js';
 // Configuración del template
 const TEMPLATE = {
   id: 'registrarFormTemplate',
-  url: '../../javascript/components/Login/LoginRegist.html'
+  url: '../../javascript/components/CartaSERV/CartaSERV.html'
 
 };
 

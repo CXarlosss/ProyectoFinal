@@ -1,3 +1,4 @@
+// @ts-check
 import { importTemplate } from "../../../lib/importTemplate.js";
 
 console.log("📌 BuscadorServicios.js cargado correctamente.");
@@ -8,10 +9,12 @@ const TEMPLATE = {
   url: "../../javascript/components/Busqueda/BuscadorServicios.html",
 };
 
-// 📌 Función para cargar y definir el componente
+/**
+ * 📌 Función para cargar y definir el componente
+ */
 async function loadAndDefineComponent() {
   console.log("⏳ Intentando importar template desde:", TEMPLATE.url);
-  
+
   try {
     await importTemplate(TEMPLATE.url);
     console.log("✅ Template importado correctamente.");
@@ -20,7 +23,7 @@ async function loadAndDefineComponent() {
     return;
   }
 
-  let template = document.body.querySelector(`#${TEMPLATE.id}`);
+  let template = /** @type {HTMLTemplateElement | null} */ (document.body.querySelector(`#${TEMPLATE.id}`));
   console.log("🔍 Buscando template en el DOM:", template);
 
   if (!template) {
@@ -49,14 +52,14 @@ export class BuscadorServicios extends HTMLElement {
 
   get template() {
     console.log("🔍 Intentando obtener template del DOM...");
-    const template = document.body.querySelector(`#${TEMPLATE.id}`);
-    
+    const template = /** @type {HTMLTemplateElement | null} */ (document.body.querySelector(`#${TEMPLATE.id}`));
+
     if (!template) {
       console.error("❌ No se encontró el template en el DOM.");
     } else {
       console.log("✅ Template encontrado en el DOM.");
     }
-    
+
     return template;
   }
 
@@ -73,7 +76,7 @@ export class BuscadorServicios extends HTMLElement {
 
   _loadTemplate() {
     console.log("🛠 Cargando template dentro del componente...");
-    
+
     const template = this.template;
 
     if (!template) {
@@ -82,13 +85,12 @@ export class BuscadorServicios extends HTMLElement {
     }
 
     console.log("✅ Template clonado correctamente en el Shadow DOM.");
-    // @ts-ignore
     this.shadowRoot?.replaceChildren(template.content.cloneNode(true));
 
     // ✅ Importar el CSS externo
     const linkElement = document.createElement("link");
     linkElement.rel = "stylesheet";
-    linkElement.href = "../../css/styles-servicios.css"; // Ajusta la ruta según sea necesario
+    linkElement.href = "../../css/styles-servicios.css";
     this.shadowRoot?.appendChild(linkElement);
     console.log("🎨 CSS importado:", linkElement.href);
 
@@ -98,7 +100,7 @@ export class BuscadorServicios extends HTMLElement {
   _addEventListeners() {
     console.log("🎯 Añadiendo eventos a los botones...");
 
-    const buscador = this.shadowRoot?.getElementById("buscador");
+    const buscador = /** @type {HTMLInputElement | null} */ (this.shadowRoot?.getElementById("buscador"));
     const btnBuscar = this.shadowRoot?.getElementById("btn-buscador");
 
     if (!buscador) {
@@ -110,25 +112,36 @@ export class BuscadorServicios extends HTMLElement {
     }
 
     btnBuscar?.addEventListener("click", this.buscarServicios.bind(this));
-    this.shadowRoot?.getElementById("btn-filtrar-actividades")?.addEventListener("click", () =>
-      this._dispatchEvent("filtrar-actividades")
-    );
-    this.shadowRoot?.getElementById("btn-filtrar-comercios")?.addEventListener("click", () =>
-      this._dispatchEvent("filtrar-comercios")
-    );
-    this.shadowRoot?.getElementById("btn-mostrar-todos")?.addEventListener("click", () =>
-      this._dispatchEvent("mostrar-todos")
-    );
-    this.shadowRoot?.getElementById("btn-crear-servicio")?.addEventListener("click", () =>
-      this._dispatchEvent("crear-servicio")
-    );
+
+    const filtros = [
+      { id: "btn-filtrar-actividades", evento: "filtrar-actividades" },
+      { id: "btn-filtrar-comercios", evento: "filtrar-comercios" },
+      { id: "btn-mostrar-todos", evento: "mostrar-todos" },
+      { id: "btn-crear-servicio", evento: "crear-servicio" }
+    ];
+
+    filtros.forEach(({ id, evento }) => {
+      const btn = this.shadowRoot?.getElementById(id);
+      if (btn) {
+        btn.addEventListener("click", () => {
+          console.log(`✅ Botón ${id} presionado.`);
+          console.log(`📡 Disparando evento: ${evento}`);
+          console.log(`🎯 Elemento presionado:`, btn);
+          this._dispatchEvent(evento);
+        });
+        
+        console.log(`✅ Evento "${evento}" vinculado al botón #${id}`);
+      } else {
+        console.error(`❌ No se encontró el botón con ID "${id}"`);
+      }
+    });
 
     console.log("✅ Eventos añadidos correctamente.");
   }
 
   buscarServicios() {
     console.log("🔎 Ejecutando búsqueda...");
-  
+
     const inputBuscador = /** @type {HTMLInputElement | null} */ (this.shadowRoot?.getElementById("buscador"));
     const busqueda = inputBuscador ? inputBuscador.value.trim().toLowerCase() : "";
 
@@ -136,11 +149,14 @@ export class BuscadorServicios extends HTMLElement {
 
     this._dispatchEvent("buscar-servicios", { busqueda });
   }
-  
+
+  /**
+   * 📡 Dispara eventos personalizados
+   * @param {string} eventName
+   * @param {Object} [detail={}]
+   */
   _dispatchEvent(eventName, detail = {}) {
     console.log(`📡 Disparando evento "${eventName}" con detalle:`, detail);
-    this.dispatchEvent(new CustomEvent(eventName, { bubbles: true, composed: true, detail }));
+    document.dispatchEvent(new CustomEvent(eventName, { bubbles: true, composed: true, detail }));
   }
 }
-
-

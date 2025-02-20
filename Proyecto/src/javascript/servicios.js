@@ -8,33 +8,47 @@ document.addEventListener("DOMContentLoaded", () => {
   // 📌 Configuración de la API
   const API_PORT = location.port ? `:${location.port}` : "";
 
-  let serviciosContainer =/** @type {HTMLDivElement | null} */ document.getElementById(  "servicios-container");
-  const modalCrearServicio =/** @type {HTMLDivElement | null} */ document.getElementById(  "modal-crear-servicio");
-  const formCrearServicio =/** @type {HTMLFormElement | null} */ document.getElementById("crear-servicio-form");
-  const btnCerrarModal =/** @type {HTMLButtonElement | null} */ document.getElementById( "btn-cerrar-modal" );
-    // 📌 Esperar que el contenedor `#servicios-container` esté disponible
-    async function esperarContenedorServicios() {
-      let intentos = 0;
-      const maxIntentos = 10;
+  let serviciosContainer =
+    /** @type {HTMLDivElement | null} */ document.getElementById(
+      "servicios-container"
+    );
+  const modalCrearServicio =
+    /** @type {HTMLDivElement | null} */ document.getElementById(
+      "modal-crear-servicio"
+    );
+  const formCrearServicio =
+    /** @type {HTMLFormElement | null} */ document.getElementById(
+      "crear-servicio-form"
+    );
+  const btnCerrarModal =
+    /** @type {HTMLButtonElement | null} */ document.getElementById(
+      "btn-cerrar-modal"
+    );
+  // 📌 Esperar que el contenedor `#servicios-container` esté disponible
+  async function esperarContenedorServicios() {
+    let intentos = 0;
+    const maxIntentos = 10;
 
-      return new Promise((resolve, reject) => {
-        const intervalo = setInterval(() => {
-          serviciosContainer = document.getElementById("servicios-container");
+    return new Promise((resolve, reject) => {
+      const intervalo = setInterval(() => {
+        serviciosContainer = document.getElementById("servicios-container");
 
-          if (serviciosContainer) {
-            clearInterval(intervalo);
-            console.log("✅ `#servicios-container` encontrado en el DOM.");
-            resolve(true);
-          } else if (intentos >= maxIntentos) {
-            clearInterval(intervalo);
-            console.error("❌ No se encontró `#servicios-container` después de varios intentos.");
-            reject(false);
-          }
+        if (serviciosContainer) {
+          clearInterval(intervalo);
+          console.log("✅ `#servicios-container` encontrado en el DOM.");
+          resolve(true);
+        } else if (intentos >= maxIntentos) {
+          clearInterval(intervalo);
+          console.error(
+            "❌ No se encontró `#servicios-container` después de varios intentos."
+          );
+          reject(false);
+        }
 
-          intentos++;
-        }, 300);
-      });
-    }
+        intentos++;
+      }, 300);
+    });
+  }
 
   // 📌 Verificar usuario registrado
   const usuarioGuardado = localStorage.getItem("usuarioRegistrado");
@@ -52,22 +66,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const state = {
     servicios: [],
-    favoritos: []
-};
+    favoritos: [],
+  };
 
-// Luego dentro de `iniciarApp()`
+  // Luego dentro de `iniciarApp()`
 
-
-
-
-async function cargarServicios() {
-  try {
-      const serviciosAPI = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/read/servicios`);
+  async function cargarServicios() {
+    try {
+      const serviciosAPI = await fetch(
+        `${location.protocol}//${location.hostname}${API_PORT}/read/servicios`
+      );
       const servicios = await serviciosAPI.json();
 
       console.log("📌 Servicios obtenidos después de actualizar:", servicios);
 
-      if (!Array.isArray(servicios)) throw new Error("⚠️ La API no devolvió un array válido de servicios.");
+      if (!Array.isArray(servicios))
+        throw new Error("⚠️ La API no devolvió un array válido de servicios.");
 
       // ✅ Guardar en `state.servicios`
       state.servicios = servicios;
@@ -77,15 +91,15 @@ async function cargarServicios() {
       window.state = state;
 
       // ✅ Disparar evento para que `CartaSERV` reciba los servicios
-      document.dispatchEvent(new CustomEvent("servicios-cargados", { detail: { servicios } }));
-
-  } catch (error) {
+      document.dispatchEvent(
+        new CustomEvent("servicios-cargados", { detail: { servicios } })
+      );
+    } catch (error) {
       console.error("❌ Error al obtener servicios:", error);
+    }
   }
-}
 
-
-// 📌 Renderizar servicios en el DOM
+  // 📌 Renderizar servicios en el DOM
   /**
    * @param {any[]} servicios
    */
@@ -94,55 +108,53 @@ async function cargarServicios() {
 
     const serviciosContainer = document.getElementById("servicios-container");
     if (!serviciosContainer) {
-        console.error("❌ No se encontró `#servicios-container` en el DOM.");
-        return;
+      console.error("❌ No se encontró `#servicios-container` en el DOM.");
+      return;
     }
 
     // ❗❗❗ LIMPIAR EL CONTENEDOR ANTES DE RENDERIZAR ❗❗❗
-    serviciosContainer.innerHTML = ""; 
+    serviciosContainer.innerHTML = "";
 
     servicios.forEach((servicio) => {
-        const cartaServicio = document.createElement("carta-servicio");
-        cartaServicio.setAttribute("_id", servicio._id);
-        cartaServicio.setAttribute("nombre", servicio.nombre);
-        cartaServicio.setAttribute("descripcion", servicio.descripcion);
-        cartaServicio.setAttribute("ubicacion", servicio.ubicacion);
-        cartaServicio.setAttribute("valoracion", servicio.valoracion);
-        cartaServicio.setAttribute("imagen", servicio.imagen);
-        cartaServicio.setAttribute("emailUsuario", servicio.emailUsuario);
+      const cartaServicio = document.createElement("carta-servicio");
+      cartaServicio.setAttribute("_id", servicio._id);
+      cartaServicio.setAttribute("nombre", servicio.nombre);
+      cartaServicio.setAttribute("descripcion", servicio.descripcion);
+      cartaServicio.setAttribute("ubicacion", servicio.ubicacion);
+      cartaServicio.setAttribute("valoracion", servicio.valoracion);
+      cartaServicio.setAttribute("imagen", servicio.imagen);
+      cartaServicio.setAttribute("emailUsuario", servicio.emailUsuario);
 
-        console.log(`✅ Asignando servicio con ID: ${servicio._id}`);
+      console.log(`✅ Asignando servicio con ID: ${servicio._id}`);
 
-        serviciosContainer.appendChild(cartaServicio);
+      serviciosContainer.appendChild(cartaServicio);
     });
 
     console.log("✅ Servicios renderizados correctamente.");
-}
-
-
-// Eventos del buscador
-document.addEventListener("buscar-servicios", (event) => {
-  // ✅ Esperar hasta que `state.servicios` tenga datos
-  if (!state.servicios || state.servicios.length === 0) {
-      console.warn("⚠️ No hay servicios cargados todavía. Esperando...");
-      return;
   }
 
-  // @ts-ignore
-  const { busqueda } = event.detail;
-  console.log("📡 Evento 'buscar-servicios' capturado:", busqueda);
+  // Eventos del buscador
+  document.addEventListener("buscar-servicios", (event) => {
+    // ✅ Esperar hasta que `state.servicios` tenga datos
+    if (!state.servicios || state.servicios.length === 0) {
+      console.warn("⚠️ No hay servicios cargados todavía. Esperando...");
+      return;
+    }
 
-  const serviciosFiltrados = state.servicios.filter(servicio =>
-      servicio.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
-      servicio.descripcion.toLowerCase().includes(busqueda.toLowerCase()) ||
-      servicio.ubicacion.toLowerCase().includes(busqueda.toLowerCase())
-  );
+    // @ts-ignore
+    const { busqueda } = event.detail;
+    console.log("📡 Evento 'buscar-servicios' capturado:", busqueda);
 
-  console.log("🔍 Servicios filtrados:", serviciosFiltrados);
-  renderServicios(serviciosFiltrados);
-});
+    const serviciosFiltrados = state.servicios.filter(
+      (servicio) =>
+        servicio.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
+        servicio.descripcion.toLowerCase().includes(busqueda.toLowerCase()) ||
+        servicio.ubicacion.toLowerCase().includes(busqueda.toLowerCase())
+    );
 
-
+    console.log("🔍 Servicios filtrados:", serviciosFiltrados);
+    renderServicios(serviciosFiltrados);
+  });
 
   document.addEventListener("filtrar-actividades", () => {
     console.log("📡 Evento 'filtrar-actividades' capturado.");
@@ -213,14 +225,9 @@ document.addEventListener("buscar-servicios", (event) => {
     }, 300);
   });
 
-
-
   /// 📌 Cargar servicios después de esperar el contenedor
-   esperarContenedorServicios();
+  esperarContenedorServicios();
   cargarServicios();
-
-
-
 
   serviciosContainer?.addEventListener("click", async (e) => {
     const target = /** @type {HTMLElement} */ (e.target);
@@ -366,8 +373,6 @@ document.addEventListener("buscar-servicios", (event) => {
       } else {
         state.favoritos.push({ _id: servicioId, nombre }); // ✅ Añadir si no estaba
       }
-
-
     } catch (error) {
       console.error("🚨 Error al actualizar favoritos:", error);
     }
@@ -379,7 +384,7 @@ document.addEventListener("buscar-servicios", (event) => {
       `favoritos_${usuario._id}`,
       JSON.stringify(state.favoritos)
     );
-    cargarFavoritos
+    cargarFavoritos;
   }
 
   function cargarFavoritos() {
@@ -434,8 +439,6 @@ document.addEventListener("buscar-servicios", (event) => {
       state.servicios = state.servicios.map((servicio) =>
         servicio._id === _id ? { ...servicio, ...datosActualizados } : servicio
       );
-
-      
 
       return true;
     } catch (error) {

@@ -145,10 +145,12 @@ export class BuscadorServicios extends HTMLElement {
     const inputBuscador = /** @type {HTMLInputElement | null} */ (this.shadowRoot?.getElementById("buscador"));
     const busqueda = inputBuscador ? inputBuscador.value.trim().toLowerCase() : "";
 
-    console.log("📡 Buscando servicios con el término:", busqueda);
+    console.log("📡 Disparando evento 'buscar-servicios' con el término:", busqueda);
 
+    // 📌 Enviar el término de búsqueda a <carta-serv>
     this._dispatchEvent("buscar-servicios", { busqueda });
-  }
+}
+
 
   /**
    * 📡 Dispara eventos personalizados

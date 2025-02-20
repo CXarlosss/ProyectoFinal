@@ -94,30 +94,31 @@ async function cargarServicios() {
 
     const serviciosContainer = document.getElementById("servicios-container");
     if (!serviciosContainer) {
-      console.error("❌ No se encontró `#servicios-container` en el DOM.");
-      return;
+        console.error("❌ No se encontró `#servicios-container` en el DOM.");
+        return;
     }
 
-    // Limpiar contenido previo antes de agregar nuevos servicios
-    serviciosContainer.innerHTML = "";
+    // ❗❗❗ LIMPIAR EL CONTENEDOR ANTES DE RENDERIZAR ❗❗❗
+    serviciosContainer.innerHTML = ""; 
 
     servicios.forEach((servicio) => {
-      const cartaServicio = document.createElement("carta-servicio");
-      cartaServicio.setAttribute("_id", servicio._id); // ✅ PASAR ID AQUÍ
-      cartaServicio.setAttribute("nombre", servicio.nombre);
-      cartaServicio.setAttribute("descripcion", servicio.descripcion);
-      cartaServicio.setAttribute("ubicacion", servicio.ubicacion);
-      cartaServicio.setAttribute("valoracion", servicio.valoracion);
-      cartaServicio.setAttribute("imagen", servicio.imagen);
-      cartaServicio.setAttribute("emailUsuario", servicio.emailUsuario);
+        const cartaServicio = document.createElement("carta-servicio");
+        cartaServicio.setAttribute("_id", servicio._id);
+        cartaServicio.setAttribute("nombre", servicio.nombre);
+        cartaServicio.setAttribute("descripcion", servicio.descripcion);
+        cartaServicio.setAttribute("ubicacion", servicio.ubicacion);
+        cartaServicio.setAttribute("valoracion", servicio.valoracion);
+        cartaServicio.setAttribute("imagen", servicio.imagen);
+        cartaServicio.setAttribute("emailUsuario", servicio.emailUsuario);
 
-      console.log(`✅ Asignando servicio con ID: ${servicio._id}`); // Debugging
+        console.log(`✅ Asignando servicio con ID: ${servicio._id}`);
 
-      serviciosContainer.appendChild(cartaServicio);
+        serviciosContainer.appendChild(cartaServicio);
     });
 
     console.log("✅ Servicios renderizados correctamente.");
-  }
+}
+
 
 // Eventos del buscador
 document.addEventListener("buscar-servicios", (event) => {

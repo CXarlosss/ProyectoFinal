@@ -26,7 +26,8 @@ const API_PORT = location.port ? `:${location.port}` : ''
           console.log("🔄 Cargando servicio desde la API backend...");
 
           // @ts-ignore
-          const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/servicio/${encodeURIComponent(servicioId)}`);
+          const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/read/servicio/${encodeURIComponent(servicioId)}`);
+       /*    const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/servicio/${encodeURIComponent(servicioId)}`); */
 
           if (!response.ok) {
               throw new Error(`❌ Error al obtener el servicio (HTTP ${response.status})`);

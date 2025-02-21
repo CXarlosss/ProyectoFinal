@@ -1,5 +1,7 @@
 // @ts-check
 
+
+
 // @ts-check
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -232,18 +234,23 @@ document.addEventListener("DOMContentLoaded", () => {
   serviciosContainer?.addEventListener("click", async (e) => {
     const target = /** @type {HTMLElement} */ (e.target);
     if (!target) return;
-    console.log("🛠 Clic detectado en:", target); //  Debugging
-    if (target.classList.contains("btn-detalles")) {
-      const _id = target.getAttribute("data-_id");
-      console.log("📌 _id del servicio seleccionado:", _id);
 
-      if (_id) {
-        window.location.href = `serviciosin.html?_id=${encodeURIComponent(
-          _id
-        )}`;
-      } else {
-        console.error("❌ Error: No se encontró el _id del servicio.");
-      }
+    console.log("🛠 Clic detectado en:", target);
+
+    // 🛑 Verificar si está dentro de un Web Component
+    if (target.closest("carta-servicio")) {
+        const cartaServicio = target.closest("carta-servicio");
+
+        if (target.classList.contains("btn-detalles")) {
+            const _id = cartaServicio?.getAttribute("_id"); // ✅ Obtener `_id` directamente del componente
+            console.log("📌 _id del servicio seleccionado:", _id);
+
+            if (_id) {
+                window.location.href = `serviciosin.html?_id=${encodeURIComponent(_id)}`;
+            } else {
+                console.error("❌ Error: No se encontró el _id del servicio.");
+            }
+        }
     }
 
     // 📌 Añadir a Favoritos
@@ -261,7 +268,17 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       console.log("📌 _id del servicio a editar:", _id);
     }
+      // 📌 EDITAR SERVICIO (esto ya lo maneja `carta-servicio`)
+      if (target.classList.contains("btn-editar")) {
+        console.warn("✏️ La edición ahora la maneja `carta-servicio`.");
+        return;
+      }
 
+      // 📌 ELIMINAR SERVICIO (esto ya lo maneja `carta-servicio`)
+      if (target.classList.contains("btn-eliminar")) {
+        console.warn("🗑 La eliminación ahora la maneja `carta-servicio`.");
+        return;
+}
     // 📌 EDITAR SERVICIO
     if (target.classList.contains("btn-editar")) {
       console.log("🔍 Botón de editar detectado.");
@@ -342,55 +359,66 @@ document.addEventListener("DOMContentLoaded", () => {
    */
   async function toggleFavorito(servicioId, nombre) {
     try {
-      if (!usuario || !usuario._id) {
-        console.error("❌ Error: Usuario no autenticado.");
-        return;
-      }
-
-      console.log(
-        `📌 Enviando petición para actualizar favoritos del usuario ${usuario._id}`
-      );
-
-      const response = await fetch(
-        `${location.protocol}//${location.hostname}${API_PORT}/api/users/${usuario._id}/favoritos/${servicioId}`,
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
+        if (!usuario || !usuario._id) {
+            console.error("❌ Error: Usuario no autenticado.");
+            return;
         }
-      );
 
-      if (!response.ok) {
-        throw new Error(`Error en la solicitud: ${response.statusText}`);
-      }
+        console.log(`📌 Enviando solicitud para actualizar favoritos del usuario ${usuario._id}`);
 
-      const data = await response.json();
-      console.log("✅ Respuesta de la API:", data);
+        const index = state.favoritos.findIndex((fav) => fav._id === servicioId);
+        const esFavorito = index !== -1;
+        const url = `${location.protocol}//${location.hostname}${API_PORT}/api/users/${usuario._id}/favoritos/${servicioId}`;
+        const metodo = esFavorito ? "DELETE" : "POST"; // Si está en favoritos, lo eliminamos; si no, lo añadimos
 
-      // Actualizar estado local
-      const index = state.favoritos.findIndex((fav) => fav._id === servicioId);
-      if (index !== -1) {
-        state.favoritos.splice(index, 1); // ❌ Quitar si ya estaba en favoritos
-      } else {
-        state.favoritos.push({ _id: servicioId, nombre }); // ✅ Añadir si no estaba
-      }
+        console.log(`📡 Llamando a la API con método: ${metodo}, URL: ${url}`);
+
+        const response = await fetch(url, {
+            method: metodo,
+            headers: { "Content-Type": "application/json" },
+            cache: "no-cache", // 🔥 Evita la caché
+        });
+
+        if (!response.ok) {
+            throw new Error(`Error en la solicitud: ${response.statusText}`);
+        }
+
+        console.log(`✅ Favorito ${esFavorito ? "eliminado" : "añadido"} correctamente en la base de datos.`);
+
+        if (esFavorito) {
+            state.favoritos = state.favoritos.filter(fav => fav._id !== servicioId);
+        } else {
+            state.favoritos.push({ _id: servicioId, nombre });
+        }
+
+        guardarFavoritos();
+        actualizarBotonFavorito(servicioId);
     } catch (error) {
-      console.error("🚨 Error al actualizar favoritos:", error);
+        console.error("🚨 Error al actualizar favoritos:", error);
     }
-    guardarFavoritos();
-  }
+}
 
-  function guardarFavoritos() {
-    localStorage.setItem(
-      `favoritos_${usuario._id}`,
-      JSON.stringify(state.favoritos)
-    );
-    cargarFavoritos;
-  }
 
-  function cargarFavoritos() {
-    const favoritosGuardados = localStorage.getItem(`favoritos_${usuario._id}`);
-    state.favoritos = favoritosGuardados ? JSON.parse(favoritosGuardados) : [];
-  }
+function guardarFavoritos() {
+  localStorage.setItem(`favoritos_${usuario._id}`, JSON.stringify(state.favoritos));
+}
+
+
+
+function actualizarBotonFavorito(id) {
+  document.querySelectorAll("carta-servicio").forEach((carta) => {
+      if (carta.getAttribute("_id") === id) {
+          const btnFavorito = carta.shadowRoot?.querySelector(".btn-favorito");
+
+          if (btnFavorito) {
+              const esFavorito = state.favoritos.some((fav) => fav._id === id);
+              btnFavorito.textContent = esFavorito ? "★ Quitar de Favoritos" : "☆ Añadir a Favoritos";
+          }
+      }
+  });
+}
+
+
   /**
    * @param {any} _id
    * @param {any} datosActualizados

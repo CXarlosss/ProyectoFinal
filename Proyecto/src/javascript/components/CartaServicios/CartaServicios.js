@@ -84,9 +84,16 @@ class CartaServicio extends HTMLElement {
 
   connectedCallback() {
     console.log("✅ <carta-servicio> conectado al DOM.");
+    console.log("📌 Atributos actuales:", {
+        _id: this.getAttribute("_id"),
+        nombre: this.getAttribute("nombre"),
+        emailUsuario: this.getAttribute("emailUsuario"),
+    });
+
     this.render();
     this.addEventListeners();
-  }
+}
+
 
   /**
    * 📌 Obtiene el template del documento.

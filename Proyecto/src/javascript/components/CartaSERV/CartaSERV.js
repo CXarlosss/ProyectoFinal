@@ -59,17 +59,30 @@ export class CartaSERV extends HTMLElement {
   }
 
   async _loadTemplate() {
+    console.log("⏳ Cargando template para `<carta-serv>`...");
+
     const template = document.body.querySelector("#carta-serv-container-template");
 
     if (!template) {
-      console.error("❌ No se encontró el template en el DOM.");
-      return;
+        console.error("❌ No se encontró el template en el DOM.");
+        return;
     }
 
+    // 🚀 Reemplazar contenido con el template
     // @ts-ignore
     this.shadowRoot?.replaceChildren(template.content.cloneNode(true));
-    console.log("✅ Template cargado en `<carta-serv>`.");
-  }
+
+    // 🕐 Esperar hasta que `#servicios-container` esté disponible
+    setTimeout(() => {
+        const container = this.shadowRoot?.querySelector("#servicios-container");
+        if (!container) {
+            console.error("❌ ERROR: `#servicios-container` sigue sin existir en el DOM.");
+        } else {
+            console.log("✅ `#servicios-container` encontrado en `<carta-serv>`.");
+        }
+    }, 100);
+}
+
 
   _addEventListeners() {
     console.log("🎯 Agregando eventos de búsqueda y filtrado en `<carta-serv>`...");
@@ -132,36 +145,40 @@ export class CartaSERV extends HTMLElement {
    * @param {Array<any>} [servicios=this._servicios]
    */
   render(servicios = this._servicios) {
-    console.log("📌 Renderizando servicios...");
+    console.log("📌 Intentando renderizar servicios...");
 
-    const container = this.shadowRoot?.querySelector("#servicios-container");
+    const container = document.querySelector("#servicios-container");
+
     if (!container) {
-      console.error("❌ No se encontró `#servicios-container` dentro de `<carta-serv>`.");
-      return;
+        console.error("❌ No se encontró `#servicios-container` en el DOM. Reintentando en 100ms...");
+        
+        setTimeout(() => this.render(servicios), 100); // 🔥 Reintentar después de 100ms
+        return;
     }
 
-    container.innerHTML = ""; // ❗❗❗ Limpiar antes de agregar nuevos elementos
+    container.innerHTML = ""; // 🔥 LIMPIAR ANTES DE AGREGAR SERVICIOS
 
     if (!servicios.length) {
-      console.warn("⚠️ No hay servicios para mostrar en `<carta-serv>`.");
-      return;
+        console.warn("⚠️ No hay servicios para mostrar.");
+        return;
     }
 
     servicios.forEach(servicio => {
-      const servicioElement = document.createElement("carta-servicio");
-      servicioElement.setAttribute("nombre", servicio.nombre);
-      servicioElement.setAttribute("descripcion", servicio.descripcion);
-      servicioElement.setAttribute("ubicacion", servicio.ubicacion);
-      servicioElement.setAttribute("valoracion", servicio.valoracion);
-      servicioElement.setAttribute("imagen", servicio.imagen);
+        const cartaServicio = document.createElement("carta-servicio");
+        cartaServicio.setAttribute("_id", servicio._id || "SIN_ID");
+        cartaServicio.setAttribute("nombre", servicio.nombre);
+        cartaServicio.setAttribute("descripcion", servicio.descripcion);
+        cartaServicio.setAttribute("ubicacion", servicio.ubicacion);
+        cartaServicio.setAttribute("valoracion", servicio.valoracion);
+        cartaServicio.setAttribute("imagen", servicio.imagen);
 
-      if (servicio.emailUsuario) {
-        servicioElement.setAttribute("emailUsuario", servicio.emailUsuario);
-      }
+        if (servicio.emailUsuario) {
+            cartaServicio.setAttribute("emailUsuario", servicio.emailUsuario);
+        }
 
-      container.appendChild(servicioElement);
+        container.appendChild(cartaServicio);
     });
 
     console.log(`✅ Se han agregado ${servicios.length} servicios a <carta-serv>.`);
-  }
+}
 }

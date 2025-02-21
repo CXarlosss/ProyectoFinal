@@ -129,7 +129,7 @@ export class BuscadorServicios extends HTMLElement {
           console.log(`🎯 Elemento presionado:`, btn);
           this._dispatchEvent(evento);
         });
-        
+
         console.log(`✅ Evento "${evento}" vinculado al botón #${id}`);
       } else {
         console.error(`❌ No se encontró el botón con ID "${id}"`);
@@ -149,7 +149,91 @@ export class BuscadorServicios extends HTMLElement {
 
     // 📌 Enviar el término de búsqueda a <carta-serv>
     this._dispatchEvent("buscar-servicios", { busqueda });
-}
+  }
+
+
+  formCrearServicio =  /** @type {HTMLFormElement | null} */ this.shadowRoot?.getElementById("crear-servicio-form");
+  modalCrearServicio =   /** @type {HTMLDivElement | null} */this.shadowRoot?.getElementById("modal-crear-servicio");
+
+  async crearServicio() {
+    console.log("📡 Intentando crear servicio...");
+  
+    // Verifica si el modal está visible
+    if (this.modalCrearServicio && this.modalCrearServicio.classList.contains("hidden")) {
+      console.error("❌ El modal no está visible.");
+      return;
+    }
+  
+    // Verifica si el usuario está autenticado
+    const usuarioGuardado = localStorage.getItem("usuarioRegistrado");
+    const usuario = usuarioGuardado ? JSON.parse(usuarioGuardado) : null;
+    if (!usuario || !usuario._id) {
+      alert("⚠️ No estás autenticado. Inicia sesión para crear un servicio.");
+      return;
+    }
+  
+    // Obtener los valores del formulario
+    const nuevoServicio = {
+      // @ts-ignore
+      nombre: this.shadowRoot?.getElementById("nombre-servicio")?.value,
+      // @ts-ignore
+      descripcion: this.shadowRoot?.getElementById("descripcion-servicio")?.value,
+      // @ts-ignore
+      ubicacion: this.shadowRoot?.getElementById("ubicacion-servicio")?.value,
+      // @ts-ignore
+      valoracion: Number(this.shadowRoot?.getElementById("valoracion-servicio")?.value),
+      // @ts-ignore
+      imagen: this.shadowRoot?.getElementById("imagen-servicio")?.value || "default.jpg",
+      // @ts-ignore
+      categoria: this.shadowRoot?.getElementById("categoria-servicio")?.value,
+      // @ts-ignore
+      precio: Number(this.shadowRoot?.getElementById("precio-servicio")?.value),
+      // @ts-ignore
+      horarios: this.shadowRoot?.getElementById("horario-servicio")?.value,
+      // @ts-ignore
+      metodoPago: this.shadowRoot?.getElementById("metodo-pago-servicio")?.value,
+      // @ts-ignore
+      etiquetas: this.shadowRoot?.getElementById("etiquetas-servicio")?.value,
+      usuarioId: usuario ? usuario._id : null,
+      emailUsuario: usuario ? usuario.email : null,
+    };
+  
+    console.log("📡 Nuevo servicio:", nuevoServicio);
+  
+    // Validación de campos obligatorios
+    if (!nuevoServicio.nombre || !nuevoServicio.descripcion || !nuevoServicio.ubicacion) {
+      alert("⚠️ Todos los campos obligatorios deben estar llenos.");
+      return;
+    }
+  
+    // Enviar la solicitud para crear el servicio
+    const API_PORT = location.port ? `:${location.port}` : "";
+    const url = `${location.protocol}//${location.hostname}${API_PORT}/create/servicios`;
+    console.log("URL generada para la solicitud:", url);
+  
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(nuevoServicio),
+      });
+  
+      if (!response.ok) {
+        throw new Error(`Error en la solicitud: ${response.statusText}`);
+      }
+  
+      const apiData = await response.json();
+      console.log("✅ Servicio creado correctamente:", apiData);
+      alert("✅ Servicio creado con éxito");
+  
+      // Disparar evento para actualizar la lista de servicios
+      this._dispatchEvent("servicio-creado");
+    } catch (error) {
+      console.error("🚨 Error al crear el servicio:", error);
+      alert("❌ Hubo un error al crear el servicio. Inténtalo de nuevo.");
+    }
+  }
+  
 
 
   /**
@@ -158,7 +242,6 @@ export class BuscadorServicios extends HTMLElement {
    * @param {Object} [detail={}]
    */
   _dispatchEvent(eventName, detail = {}) {
-    console.log(`📡 Disparando evento "${eventName}" con detalle:`, detail);
-    document.dispatchEvent(new CustomEvent(eventName, { bubbles: true, composed: true, detail }));
+    document.dispatchEvent(new CustomEvent(eventName, { detail }));
   }
 }

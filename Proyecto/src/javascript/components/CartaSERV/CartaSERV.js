@@ -10,7 +10,6 @@ const TEMPLATE = {
 
 // 📌 Función para importar y definir el componente
 async function loadAndDefineComponent() {
-
   try {
     await importTemplate(TEMPLATE.url);
   } catch (error) {
@@ -27,7 +26,7 @@ async function loadAndDefineComponent() {
       if (!customElements.get("carta-serv")) {
         customElements.define("carta-serv", CartaSERV);
       } else {
-        console.warn("⚠️ El elemento <carta-serv> ya está definido. Omitiendo redefinición.")
+        console.warn("⚠️ El elemento <carta-serv> ya está definido. Omitiendo redefinición.");
       }
     }
   }, 100);
@@ -56,7 +55,22 @@ export class CartaSERV extends HTMLElement {
   connectedCallback() {
     this._loadTemplate();
     this._addEventListeners();
-  }
+
+    // 🚀 Agregar listener para actualizar servicios cuando se cree uno nuevo
+    document.addEventListener("servicio-creado", async (event) => {
+      // @ts-ignore
+      console.log("📡 Evento 'servicio-creado' capturado en CartaSERV:", event.detail);
+      
+      // Asegurar que los datos tienen un ID
+      // @ts-ignore
+      if (!event.detail || !event.detail._id) {
+          console.warn("⚠️ Servicio creado sin ID, posible error en la API.");
+          return;
+      }
+  
+      await cargarServicios();
+  });
+}  
 
   async _loadTemplate() {
     console.log("⏳ Cargando template para `<carta-serv>`...");
@@ -64,8 +78,8 @@ export class CartaSERV extends HTMLElement {
     const template = document.body.querySelector("#carta-serv-container-template");
 
     if (!template) {
-        console.error("❌ No se encontró el template en el DOM.");
-        return;
+      console.error("❌ No se encontró el template en el DOM.");
+      return;
     }
 
     // 🚀 Reemplazar contenido con el template
@@ -74,15 +88,14 @@ export class CartaSERV extends HTMLElement {
 
     // 🕐 Esperar hasta que `#servicios-container` esté disponible
     setTimeout(() => {
-        const container = this.shadowRoot?.querySelector("#servicios-container");
-        if (!container) {
-            console.error("❌ ERROR: `#servicios-container` sigue sin existir en el DOM.");
-        } else {
-            console.log("✅ `#servicios-container` encontrado en `<carta-serv>`.");
-        }
+      const container = this.shadowRoot?.querySelector("#servicios-container");
+      if (!container) {
+        console.error("❌ ERROR: `#servicios-container` sigue sin existir en el DOM.");
+      } else {
+        console.log("✅ `#servicios-container` encontrado en `<carta-serv>`.");
+      }
     }, 100);
-}
-
+  }
 
   _addEventListeners() {
     console.log("🎯 Agregando eventos de búsqueda y filtrado en `<carta-serv>`...");
@@ -102,7 +115,7 @@ export class CartaSERV extends HTMLElement {
     });
 
     document.addEventListener("mostrar-todos", () => {
-      this.render(); // Volver a mostrar todos
+      this.render();
     });
   }
 
@@ -112,7 +125,7 @@ export class CartaSERV extends HTMLElement {
    */
   filtrarServicios(busqueda) {
     if (!busqueda || busqueda.trim() === "") {
-      this.render(); // Si el término está vacío, mostrar todos los servicios
+      this.render();
       return;
     }
 
@@ -150,35 +163,65 @@ export class CartaSERV extends HTMLElement {
     const container = document.querySelector("#servicios-container");
 
     if (!container) {
-        console.error("❌ No se encontró `#servicios-container` en el DOM. Reintentando en 100ms...");
-        
-        setTimeout(() => this.render(servicios), 100); // 🔥 Reintentar después de 100ms
-        return;
+      console.error("❌ No se encontró `#servicios-container` en el DOM. Reintentando en 100ms...");
+      setTimeout(() => this.render(servicios), 100);
+      return;
     }
 
-    container.innerHTML = ""; // 🔥 LIMPIAR ANTES DE AGREGAR SERVICIOS
+    container.innerHTML = ""; 
 
     if (!servicios.length) {
-        console.warn("⚠️ No hay servicios para mostrar.");
-        return;
+      console.warn("⚠️ No hay servicios para mostrar.");
+      return;
     }
 
     servicios.forEach(servicio => {
-        const cartaServicio = document.createElement("carta-servicio");
-        cartaServicio.setAttribute("_id", servicio._id || "SIN_ID");
-        cartaServicio.setAttribute("nombre", servicio.nombre);
-        cartaServicio.setAttribute("descripcion", servicio.descripcion);
-        cartaServicio.setAttribute("ubicacion", servicio.ubicacion);
-        cartaServicio.setAttribute("valoracion", servicio.valoracion);
-        cartaServicio.setAttribute("imagen", servicio.imagen);
+      const cartaServicio = document.createElement("carta-servicio");
+      cartaServicio.setAttribute("_id", servicio._id || "SIN_ID");
+      cartaServicio.setAttribute("nombre", servicio.nombre);
+      cartaServicio.setAttribute("descripcion", servicio.descripcion);
+      cartaServicio.setAttribute("ubicacion", servicio.ubicacion);
+      cartaServicio.setAttribute("valoracion", servicio.valoracion);
+      cartaServicio.setAttribute("imagen", servicio.imagen);
 
-        if (servicio.emailUsuario) {
-            cartaServicio.setAttribute("emailUsuario", servicio.emailUsuario);
-        }
+      if (servicio.emailUsuario) {
+        cartaServicio.setAttribute("emailUsuario", servicio.emailUsuario);
+      }
 
-        container.appendChild(cartaServicio);
+      container.appendChild(cartaServicio);
     });
 
     console.log(`✅ Se han agregado ${servicios.length} servicios a <carta-serv>.`);
+  }
 }
+
+// 📌 Función para obtener servicios de la API
+async function cargarServicios() {
+  try {
+    const API_PORT = location.port ? `:${location.port}` : "";
+    const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/read/servicios`);
+    const servicios = await response.json();
+
+    console.log("📡 Servicios obtenidos después de actualizar:", servicios);
+
+    if (!Array.isArray(servicios)) {
+      throw new Error("⚠️ La API no devolvió un array válido de servicios.");
+    }
+
+    // 🔥 ACTUALIZAR `CartaSERV`
+    const cartaServ = document.querySelector("carta-serv");
+    if (cartaServ) {
+      // @ts-ignore
+      cartaServ.servicios = servicios;
+    }
+
+  } catch (error) {
+    console.error("❌ Error al obtener servicios:", error);
+  }
 }
+
+// ✅ Escuchar evento para actualizar la lista cuando se cree un servicio
+document.addEventListener("actualizar-lista-servicios", () => {
+  console.log("📡 Evento 'actualizar-lista-servicios' capturado. Recargando...");
+  cargarServicios();
+});

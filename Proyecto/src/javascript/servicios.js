@@ -9,7 +9,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // 📌 Configuración de la API
   const API_PORT = location.port ? `:${location.port}` : "";
-
+  esperarContenedorServicios()
+cargarServicios();
   let serviciosContainer =
     /** @type {HTMLDivElement | null} */ document.getElementById(
       "servicios-container"
@@ -23,6 +24,15 @@ document.addEventListener("DOMContentLoaded", () => {
     /** @type {HTMLButtonElement | null} */ document.getElementById(
       "btn-cerrar-modal"
     );
+    const formCrearServicio = /** @type {HTMLButtonElement | null} */ document.getElementById("crear-servicio-form");
+
+    if (!modalCrearServicio || !formCrearServicio) {
+      console.error("❌ No se encontró el modal o formulario de creación de servicios.");
+      return;
+    }
+  
+    // Evento para mostrar modal
+   
   // 📌 Esperar que el contenedor `#servicios-container` esté disponible
   async function esperarContenedorServicios() {
     let intentos = 0;
@@ -224,9 +234,71 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 300);
   });
 
+   // Manejo de envío del formulario
+   formCrearServicio.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    console.log("📡 Intentando crear un servicio...");
+
+    const usuarioGuardado = localStorage.getItem("usuarioRegistrado");
+    if (!usuarioGuardado) {
+      alert("⚠️ No estás autenticado. Inicia sesión para crear un servicio.");
+      return;
+    }
+    const usuario = JSON.parse(usuarioGuardado);
+
+    const nuevoServicio = {
+      // @ts-ignore
+      nombre: formCrearServicio.querySelector("#nombre-servicio").value.trim(),
+      // @ts-ignore
+      descripcion: formCrearServicio.querySelector("#descripcion-servicio").value.trim(),
+      // @ts-ignore
+      ubicacion: formCrearServicio.querySelector("#ubicacion-servicio").value.trim(),
+      // @ts-ignore
+      valoracion: parseFloat(formCrearServicio.querySelector("#valoracion-servicio").value) || 0,
+      // @ts-ignore
+      precio: parseFloat(formCrearServicio.querySelector("#precio-servicio").value) || 0,
+      // @ts-ignore
+      metodoPago: formCrearServicio.querySelector("#metodo-pago-servicio").value.trim(),
+      // @ts-ignore
+      etiquetas: formCrearServicio.querySelector("#etiquetas-servicio").value.split(",").map(tag => tag.trim()).filter(Boolean),
+      usuarioId: usuario._id,
+      emailUsuario: usuario.email,
+    };
+
+    console.log("📋 Datos listos para enviar:", nuevoServicio);
+
+    if (!nuevoServicio.nombre || !nuevoServicio.descripcion || !nuevoServicio.ubicacion) {
+      alert("⚠️ Todos los campos obligatorios deben estar llenos.");
+      return;
+    }
+
+    try {
+      const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/create/servicios`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(nuevoServicio),
+      });
+
+      if (!response.ok) {
+        throw new Error(`❌ Error en la solicitud: ${response.statusText}`);
+      }
+
+      const apiData = await response.json();
+      console.log("✅ Servicio creado correctamente:", apiData);
+      alert("✅ Servicio creado con éxito");
+
+      document.dispatchEvent(new CustomEvent("servicio-creado", { detail: apiData }));
+      // @ts-ignore
+      formCrearServicio.reset();
+      modalCrearServicio.classList.add("hidden");
+    } catch (error) {
+      console.error("❌ Error al crear servicio:", error);
+      alert("❌ Hubo un error al crear el servicio.");
+    }
+  });
+});
   /// 📌 Cargar servicios después de esperar el contenedor
-  esperarContenedorServicios();
-  cargarServicios();
+  
   
  
 
@@ -234,8 +306,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
- 
+
   // 📌 Crear nuevo servicio desde el formulario
  
 
-});
+// @ts-ignore
+

@@ -1,8 +1,6 @@
 // @ts-check
 import { importTemplate } from "../../../lib/importTemplate.js";
 
-
-
 // 📌 Configuración del template
 const TEMPLATE = {
   id: "cargar-servicios-template",
@@ -11,7 +9,6 @@ const TEMPLATE = {
 
 // 📌 Función para importar y definir el componente
 async function loadAndDefineComponent() {
-
   try {
     await importTemplate(TEMPLATE.url);
   } catch (error) {
@@ -53,21 +50,17 @@ export class CargarServicios extends HTMLElement {
 
   connectedCallback() {
     this._loadTemplate();
+    this.cargarServicios(); // 🚀 Cargar servicios al conectar el componente al DOM
   }
 
   _loadTemplate() {
-
     const template = this.template;
     if (!template || !this.shadowRoot) {
       return;
     }
 
-
-   
     // @ts-ignore
     const clone = template.content.cloneNode(true);
-
-    // ✅ Insertar en el Shadow DOM
     this.shadowRoot.replaceChildren(clone);
 
     // ✅ Importar el CSS externo
@@ -81,7 +74,6 @@ export class CargarServicios extends HTMLElement {
   }
 
   _addEventListeners() {
-
     const btnCargar = this.shadowRoot?.querySelector("#btn-cargar-servicios");
     const estadoCarga = this.shadowRoot?.querySelector("#estado-carga");
 
@@ -98,24 +90,30 @@ export class CargarServicios extends HTMLElement {
 
   async cargarServicios() {
     try {
-      const API_PORT = location.port ? `:${location.port}` : '';
+      const API_PORT = location.port ? `:${location.port}` : "";
       const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/read/servicios`);
       const servicios = await response.json();
 
-      console.log("📌 Servicios obtenidos:", servicios);
+      console.log("📡 Servicios obtenidos después de actualizar:", servicios);
 
-      if (!Array.isArray(servicios)) throw new Error("⚠️ La API no devolvió un array válido de servicios.");
+      if (!Array.isArray(servicios)) {
+        throw new Error("⚠️ La API no devolvió un array válido de servicios.");
+      }
 
-      // ✅ Guardar en LocalStorage para depuración
-      localStorage.setItem("serviciosGuardados", JSON.stringify(servicios));
-
-      // ✅ Disparar evento para renderizar servicios en CartaSERV
-      document.dispatchEvent(new CustomEvent("servicios-cargados", { detail: { servicios } }));
+      // 🔥 ACTUALIZAR `CartaSERV`
+      const cartaServ = document.querySelector("carta-serv");
+      if (cartaServ) {
+        // @ts-ignore
+        cartaServ.servicios = servicios;
+      } else {
+        console.error("❌ No se encontró `<carta-serv>` en el DOM.");
+      }
 
       if (this.shadowRoot) {
         // @ts-ignore
-    this.shadowRoot.querySelector("#estado-carga").textContent = "✅ Servicios cargados correctamente. Pulse en 'Cargar Servicios' para recargar.";
+        this.shadowRoot.querySelector("#estado-carga").textContent = "✅ Servicios cargados correctamente.";
       }
+
     } catch (error) {
       console.error("❌ Error al obtener servicios:", error);
       if (this.shadowRoot) {
@@ -125,3 +123,13 @@ export class CargarServicios extends HTMLElement {
     }
   }
 }
+
+// ✅ Escuchar evento para actualizar la lista cuando se cree un servicio
+document.addEventListener("actualizar-lista-servicios", () => {
+  console.log("📡 Evento 'actualizar-lista-servicios' capturado. Recargando...");
+  const cargarServiciosComponent = document.querySelector("cargar-servicios");
+  if (cargarServiciosComponent) {
+    // @ts-ignore
+    cargarServiciosComponent.cargarServicios();
+  }
+});

@@ -382,56 +382,39 @@ app.post("/mensajes", async (req, res) => {
     console.log("📌 Recibiendo mensaje en el servidor...");
     console.log("Datos recibidos:", req.body);
 
-    const { usuarioId, servicioId, receptorId, contenido } = req.body;
+    const { usuarioId, receptorId, contenido } = req.body;
 
-    if (!usuarioId || !contenido) {
+    if (!usuarioId || !receptorId || !contenido) {
       return res.status(400).json({ error: "Datos incompletos para crear un mensaje" });
     }
 
     const db = await connectDB();
 
-    let receptorFinal = receptorId ? new ObjectId(receptorId) : null;
-    let servicioFinal = servicioId ? new ObjectId(servicioId) : null;
-
-    if (servicioId) {
-      const servicio = await db.collection("Servicios").findOne({ _id: servicioFinal });
-      if (!servicio) {
-        console.error("❌ Servicio no encontrado:", servicioId);
-        return res.status(404).json({ error: "Servicio no encontrado" });
-      }
-      receptorFinal = servicio.usuarioId;
-    } else if (receptorId) {
-      const usuarioReceptor = await db.collection("Users").findOne({ _id: receptorFinal });
-      if (!usuarioReceptor) {
-        return res.status(404).json({ error: "Usuario receptor no encontrado" });
-      }
-    } else {
-      return res.status(400).json({ error: "Debe haber un servicioId o un receptorId" });
-    }
-    const chatIdFinal = receptorFinal 
-    ? [usuarioId.toString(), receptorFinal.toString()].sort().join("_") // ✅ Ordenado para asegurar siempre el mismo ID
-    : `${usuarioId}_${servicioFinal}`;
+    // 🔥 Generar un ID de chat único para ambos usuarios
+    const chatIdFinal = [usuarioId.toString(), receptorId.toString()].sort().join("_");
 
     const mensajeData = {
-        chatId: chatIdFinal,
-        usuarioId: new ObjectId(usuarioId),
-        servicioId: servicioFinal,
-        receptorId: receptorFinal,
-        contenido,
-        leido: false,
-        fecha: new Date(),
+      chatId: chatIdFinal,
+      usuarioId: new ObjectId(usuarioId),
+      receptorId: new ObjectId(receptorId),
+      contenido,
+      leido: false,
+      fecha: new Date(),
     };
 
-
+    // 🚀 Insertar mensaje en la base de datos
     const resultado = await db.collection("mensajes").insertOne(mensajeData);
     console.log("✅ Mensaje guardado correctamente:", resultado);
     res.json({ mensaje: "Mensaje guardado correctamente", resultado });
 
   } catch (error) {
     console.error("❌ Error al guardar mensaje:", error);
-    res.status(500).json({ error: "Error interno del servidor" });
+    res.status(500).json({ error: "Error interno del servidor", detalles: error.message });
   }
 });
+
+
+
 app.get("/read/mensajes", async (req, res) => {
   try {
     const db = await connectDB();
@@ -448,50 +431,41 @@ app.get("/read/mensajes", async (req, res) => {
 // 📌 Obtener mensajes de un usuario o servicio
 app.get('/mensajes', async (req, res) => {
   try {
-      const { usuarioId, contactoId, receptorId } = req.query;
+    const { usuarioId, contactoId } = req.query;
 
-      console.log("📌 Buscando mensajes con:", { usuarioId, contactoId, receptorId });
+    if (!usuarioId || !contactoId) {
+      return res.status(400).json({ error: "Faltan parámetros obligatorios" });
+    }
 
-      const db = await connectDB();
-      const query = {};
+    console.log("📌 Buscando mensajes entre:", { usuarioId, contactoId });
 
-      // Validar IDs antes de convertirlos en ObjectId
-      if (usuarioId && ObjectId.isValid(usuarioId)) {
-          query.$or = [
-              { usuarioId: new ObjectId(usuarioId) },
-              { receptorId: new ObjectId(usuarioId) }
-          ];
-      } else {
-          console.warn("⚠ usuarioId inválido:", usuarioId);
-      }
+    const db = await connectDB();
 
-      if (contactoId && ObjectId.isValid(contactoId)) {
-          query.servicioId = new ObjectId(contactoId);
-      } else {
-          console.warn("⚠ contactoId inválido:", contactoId);
-      }
+    // 🔥 Incluir todos los mensajes (enviados y recibidos)
+    const mensajes = await db.collection("mensajes")
+      .find({
+        $or: [
+          { usuarioId: new ObjectId(usuarioId), receptorId: new ObjectId(contactoId) },
+          { usuarioId: new ObjectId(contactoId), receptorId: new ObjectId(usuarioId) }
+        ]
+      })
+      .sort({ fecha: 1 }) // Orden cronológico
+      .toArray();
 
-      if (receptorId && ObjectId.isValid(receptorId)) {
-          query.receptorId = new ObjectId(receptorId);
-      } else {
-          console.warn("⚠ receptorId inválido:", receptorId);
-      }
-
-      console.log("🔍 Query ejecutada en MongoDB:", query);
-
-      const mensajes = await db.collection("mensajes")
-          .find(query)
-          .sort({ fecha: -1 })
-          .toArray();
-
-      console.log("✅ Mensajes encontrados:", mensajes);
-      res.json(mensajes);
+    console.log("✅ Mensajes encontrados:", mensajes);
+    res.json(mensajes);
 
   } catch (error) {
-      console.error("❌ Error al obtener mensajes:", error);
-      res.status(500).json({ error: "Error interno del servidor" });
+    console.error("❌ Error al obtener mensajes:", error);
+    res.status(500).json({ error: "Error interno del servidor", detalles: error.message });
   }
 });
+
+
+
+
+
+
 
 // 📌 Marcar un mensaje como leído
 app.put('/mensajes/:mensajeId',  async (req, res) => {

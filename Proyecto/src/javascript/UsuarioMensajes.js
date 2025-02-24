@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (servicioGuardado) {
         const servicio = JSON.parse(servicioGuardado);
         console.log('Servicio-->', servicio)
-        abrirChat(servicio._id, servicio.receptorId);
+        abrirChat(servicio._id);
         localStorage.removeItem("servicioSeleccionado"); // 🔥 Limpiamos después de usarlo
     }
     cargarMensajes();
@@ -44,7 +44,7 @@ async function cargarMensajes() {
 
         console.log(`📌 Buscando mensajes para el usuario: ${usuario._id}`);
 
-        const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/mensajes`);
+        const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/read/mensajes`);
 
         if (!response.ok) throw new Error(`Error al obtener mensajes (${response.status})`);
 
@@ -84,23 +84,33 @@ function renderizarListaChats(mensajes, usuarioId) {
         return;
     }
 
-    /** @type {Record<string, { id: string,receptorId: string, nombre: string, ultimoMensaje: string, fecha: string }>} */
+    /** @type {Record<string, { id: string, receptorId: string, nombre: string, ultimoMensaje: string, fecha: string }>} */
     const chats = {};
 
     mensajes.forEach((msg) => {
-        const contactoId = msg.usuarioId === usuarioId ? msg.servicioId : msg.usuarioId;
-        const contactoNombre = msg.usuarioId === usuarioId ? msg.servicio?.nombre || "Servicio" : msg.usuario?.nombre || "Usuario";
-        console.log('Mensaje-->', msg)
-        const receptorId = msg.usuarioId === usuarioId ? msg.receptorId : msg.usuarioId;
+        // Agrupar por `chatId` en lugar de usuarioId o servicioId
+        const chatId = msg.chatId;
 
-        if (!chats[contactoId]) {
-            chats[contactoId] = {
-                id: contactoId,
-                receptorId,
+        // Identificar el contacto correctamente (quién está al otro lado del chat)
+        const contactoId = msg.usuarioId === usuarioId ? msg.receptorId : msg.usuarioId;
+
+        // Nombre del contacto (Usuario o Servicio)
+        const contactoNombre = msg.usuarioId === usuarioId ? "Servicio" : "Usuario";
+
+        console.log('Mensaje-->', msg);
+        
+        if (!chats[chatId]) {
+            chats[chatId] = {
+                id: contactoId, // ID del contacto real
+                receptorId: msg.receptorId,
                 nombre: contactoNombre,
                 ultimoMensaje: msg.contenido,
                 fecha: new Date(msg.fecha).toLocaleString()
             };
+        } else {
+            // Si ya existe el chat, actualizamos el último mensaje
+            chats[chatId].ultimoMensaje = msg.contenido;
+            chats[chatId].fecha = new Date(msg.fecha).toLocaleString();
         }
     });
 
@@ -113,10 +123,11 @@ function renderizarListaChats(mensajes, usuarioId) {
             <p>${chat.ultimoMensaje}</p>
             <span class="fecha">${chat.fecha}</span>
         `;
-        if (chat.receptorId) {
-            chatItem.addEventListener("click", () => abrirChat(chat.id, chat.receptorId));
+
+        if (chat.id) {
+            chatItem.addEventListener("click", () => abrirChat(chat.id));
         } else {
-            console.warn(`⚠ El chat con ${chat.nombre} no tiene un receptorId válido.`);
+            console.warn(`⚠ El chat con ${chat.nombre} no tiene un ID válido.`);
         }
         
         chatList.appendChild(chatItem);
@@ -126,41 +137,37 @@ function renderizarListaChats(mensajes, usuarioId) {
 }
 
 
+
 /**
  * 📌 Abre un chat específico y muestra los mensajes.
  * @param {string} contactoId 
- * @param  {string} receptorId
+
  * 
  */
- export async function abrirChat(contactoId, receptorId) {
+export async function abrirChat(contactoId) {
     console.log(`📌 Intentando abrir el chat con ID: ${contactoId}`);
+
+    if (!contactoId || contactoId === "undefined") {
+        console.error("❌ contactoId es undefined o null. No se puede abrir el chat.");
+        return;
+    }
 
     const chatPopup = document.getElementById("chat-popup");
     const chatMessages = document.getElementById("chat-messages");
     const chatTitulo = document.getElementById("chat-titulo");
-    
 
     if (!chatPopup || !chatMessages || !chatTitulo) return;
 
-    if (!contactoId || contactoId.length !== 24) {
-        console.error("❌ contactoId inválido:", contactoId);
-        return;
-    }
-    
-    
-
     chatPopup.classList.add("active");
     chatTitulo.dataset.contactoId = contactoId;
+    chatTitulo.innerText = `Chat con ${contactoId}`; // Mostrar con quién se está chateando
     chatMessages.innerHTML = "<p>Cargando mensajes...</p>";
 
     try {
         const usuarioGuardado = localStorage.getItem("usuarioRegistrado");
         const usuario = JSON.parse(usuarioGuardado || "{}");
 
-        const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/mensajes?usuarioId=${usuario._id}&contactoId=${contactoId}&receptorId=${receptorId}`
-        
-        )
-
+        const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/mensajes?usuarioId=${usuario._id}&contactoId=${contactoId}`);
 
         if (!response.ok) throw new Error(`Error al obtener mensajes (${response.status})`);
 
@@ -168,22 +175,28 @@ function renderizarListaChats(mensajes, usuarioId) {
         console.log("✅ Mensajes obtenidos:", mensajes);
         chatMessages.innerHTML = "";
 
-        mensajes.forEach((/** @type {{ usuarioId: any; contenido: any; fecha: string | number | Date; }} */ msg) => {
+        mensajes.forEach((msg) => {
             const esMio = msg.usuarioId === usuario._id;
             const msgElement = document.createElement("div");
             msgElement.classList.add("mensaje", esMio ? "mio" : "otro");
+
             msgElement.innerHTML = `
                 <p><strong>${esMio ? "Tú" : "Otro"}:</strong> ${msg.contenido}</p>
                 <span class="fecha">${new Date(msg.fecha).toLocaleString()}</span>
             `;
+
             chatMessages.appendChild(msgElement);
         });
+
         chatMessages.scrollTop = chatMessages.scrollHeight;
 
     } catch (error) {
         console.error("❌ Error al cargar mensajes del chat:", error);
     }
 }
+
+
+
 
 function cerrarChat() {
     const chatPopup = document.getElementById("chat-popup");
@@ -193,8 +206,8 @@ function cerrarChat() {
 }
 
 async function enviarMensaje() {
-    const mensajeInput = /** @type {HTMLInputElement | null} */ (document.getElementById("mensaje-input"));
-    const chatTitulo = /** @type {HTMLElement | null} */ (document.getElementById("chat-titulo"));
+    const mensajeInput =/** @type {HTMLInputElement | null} */( document.getElementById("mensaje-input"));
+    const chatTitulo = document.getElementById("chat-titulo");
 
     if (!mensajeInput || !chatTitulo) return;
 
@@ -207,31 +220,22 @@ async function enviarMensaje() {
     try {
         const usuarioGuardado = localStorage.getItem("usuarioRegistrado");
         const usuario = JSON.parse(usuarioGuardado || "{}");
-        const contactoId = chatTitulo.dataset.contactoId || null; // Puede ser servicio o usuario
+        const contactoId = chatTitulo.dataset.contactoId || null;
 
         console.log("📌 Enviando mensaje con:");
         console.log("Usuario ID:", usuario._id);
         console.log("Destino ID:", contactoId);
         console.log("Contenido:", mensajeTexto);
 
-        // Detectar si el destino es un servicio o un usuario
-        let isServicio = false;
-        if (contactoId) {
-            isServicio = await esUnServicio(contactoId).catch(() => false);
-        }
-        
-        const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/mensajes`, {
+        const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/mensajes`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 usuarioId: usuario._id,
-                servicioId: isServicio ? contactoId : null,
-                receptorId: !isServicio ? contactoId : null, // Si es usuario, se manda como receptorId
+                receptorId: contactoId,
                 contenido: mensajeTexto,
-                leido: false
             })
         });
-        
 
         if (!response.ok) {
             const errorText = await response.text();
@@ -240,23 +244,17 @@ async function enviarMensaje() {
 
         console.log("✅ Mensaje enviado correctamente.");
         mensajeInput.value = ""; 
-        await cargarMensajes();
 
-    } catch (error) {
-        console.error("❌ Error al enviar mensaje:", error);
+        // 🚀 ACTUALIZAR EL CHAT INSTANTÁNEAMENTE DESPUÉS DE ENVIAR EL MENSAJE
+      // ⚠️ Este es el cambio clave: asegurar que contactoId es válido antes de llamar abrirChat
+      if (contactoId) {
+        await abrirChat(contactoId);
+    } else {
+        console.error("❌ Error: contactoId es inválido al actualizar el chat.");
     }
+} catch (error) {
+    console.error("❌ Error al enviar mensaje:", error);
+}
 }
 
-/**
- * 📌 Verifica si el ID pertenece a un servicio o a un usuario
- * @param {string} id 
- * @returns {Promise<boolean>} - `true` si es un servicio, `false` si es un usuario
- */
-async function esUnServicio(id) {
-    try {
-        const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/servicio/${id}`);
-        return response.ok; // Si existe, es un servicio
-    } catch {
-        return false; // Si no existe, asumimos que es un usuario
-    }
-}
+

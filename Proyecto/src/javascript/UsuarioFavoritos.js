@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const usuario = JSON.parse(usuarioGuardado);
             if (!usuario._id) throw new Error("ID de usuario no encontrado");
 
-            const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/users/${usuario._id}/favoritos`);
+            const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/users/${usuario._id}/favoritos`);
             if (!response.ok) throw new Error("Error al obtener favoritos");
 
             const favoritos = await response.json();
@@ -24,7 +24,15 @@ document.addEventListener("DOMContentLoaded", () => {
         } catch (error) {
             console.error("❌ Error al cargar favoritos:", error);
         }
-    }
+    }/**
+     * 📌 Escuchar evento para actualizar favoritos dinámicamente
+     */
+    document.addEventListener("favoritos-actualizados", () => {
+        console.log("📌 Evento 'favoritos-actualizados' recibido. Recargando lista...");
+        cargarFavoritos();
+    });
+
+    cargarFavoritos();
 
    
     /**
@@ -64,7 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     const usuarioGuardado = localStorage.getItem("usuarioRegistrado");
                     const usuario = JSON.parse(usuarioGuardado || "{}");
 
-                    const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/users/${usuario._id}/favoritos/${servicioId}`, {
+                    const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/users/${usuario._id}/favoritos/${servicioId}`, {
                         method: "DELETE",
                         headers: { "Content-Type": "application/json" }
                     });

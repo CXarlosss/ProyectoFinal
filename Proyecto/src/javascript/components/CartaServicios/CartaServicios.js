@@ -72,28 +72,46 @@ class CartaServicio extends HTMLElement {
     return ["_id", "nombre", "descripcion", "ubicacion", "valoracion", "imagen", "emailUsuario"];
   }
 
-  /**
+  connectedCallback() {
+    console.log("✅ <carta-servicio> conectado al DOM.");
+    this.render();
+    this.addEventListeners();
+    setTimeout(() => this.cargarEstadoFavoritos(), 100); // 👈 Llamamos a cargarEstadoFavoritos() después de renderizar
+  }
+ /**
    * @param {string} name
    * @param {string | null} oldValue
    * @param {string | null} newValue
    */
+ 
   attributeChangedCallback(name, oldValue, newValue) {
     console.log(`📌 Atributo cambiado en <carta-servicio>: ${name} = ${newValue}`);
     this.render();
+    setTimeout(() => this.cargarEstadoFavoritos(), 100);
   }
+ 
 
-  connectedCallback() {
-    console.log("✅ <carta-servicio> conectado al DOM.");
-    console.log("📌 Atributos actuales:", {
-        _id: this.getAttribute("_id"),
-        nombre: this.getAttribute("nombre"),
-        emailUsuario: this.getAttribute("emailUsuario"),
-    });
+  /**
+   * 📌 Lee los favoritos desde `localStorage` y actualiza el botón si el servicio está en favoritos.
+   */
+  cargarEstadoFavoritos() {
+    const usuarioGuardado = localStorage.getItem("usuarioRegistrado");
+    if (!usuarioGuardado) return;
+    
+    const usuario = JSON.parse(usuarioGuardado);
+    if (!usuario || !usuario._id) return;
+    
+    const servicioId = this.getAttribute("_id");
+    if (!servicioId) return;
 
-    this.render();
-    this.addEventListeners();
-}
+    const favoritosGuardados = localStorage.getItem(`favoritos_${usuario._id}`);
+    if (!favoritosGuardados) return;
 
+    const favoritos = JSON.parse(favoritosGuardados);
+    const esFavorito = favoritos.some(fav => fav._id === servicioId);
+
+    this.actualizarBotonFavorito(servicioId, esFavorito);
+  }
 
   /**
    * 📌 Obtiene el template del documento.

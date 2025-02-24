@@ -147,26 +147,49 @@ function renderizarListaChats(mensajes, usuarioId) {
 export async function abrirChat(contactoId) {
     console.log(`📌 Intentando abrir el chat con ID: ${contactoId}`);
 
-    if (!contactoId || contactoId === "undefined") {
-        console.error("❌ contactoId es undefined o null. No se puede abrir el chat.");
-        return;
-    }
-
     const chatPopup = document.getElementById("chat-popup");
     const chatMessages = document.getElementById("chat-messages");
     const chatTitulo = document.getElementById("chat-titulo");
 
     if (!chatPopup || !chatMessages || !chatTitulo) return;
 
+    if (!contactoId) {
+        console.error("❌ Error: contactoId es undefined o null. No se puede abrir el chat.");
+        return;
+    }
+
     chatPopup.classList.add("active");
     chatTitulo.dataset.contactoId = contactoId;
-    chatTitulo.innerText = `Chat con ${contactoId}`; // Mostrar con quién se está chateando
     chatMessages.innerHTML = "<p>Cargando mensajes...</p>";
 
     try {
         const usuarioGuardado = localStorage.getItem("usuarioRegistrado");
         const usuario = JSON.parse(usuarioGuardado || "{}");
 
+        // 🛠 Obtener el nombre del contacto antes de cargar mensajes
+        let nombreContacto = "Desconocido"; 
+
+        // Intentamos obtener el nombre como servicio o usuario
+        const servicioResponse = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/read/servicio/${contactoId}`);
+        if (servicioResponse.ok) {
+            const servicioData = await servicioResponse.json();
+            nombreContacto = servicioData.nombre || "Servicio"; 
+        } else {
+            // Si no es un servicio, buscamos en la colección de usuarios
+            const usuarioResponse = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/read/users`);
+            if (usuarioResponse.ok) {
+                const usuarios = await usuarioResponse.json();
+                const usuarioEncontrado = usuarios.find(user => user._id === contactoId);
+                if (usuarioEncontrado) {
+                    nombreContacto = usuarioEncontrado.nombre || usuarioEncontrado.email || "Usuario";
+                }
+            }
+        }
+
+        // 🔥 MOSTRAR NOMBRE EN EL CHAT
+        chatTitulo.innerHTML = `Chat con ${nombreContacto}`;
+
+        // 📨 Obtener los mensajes del chat
         const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/mensajes?usuarioId=${usuario._id}&contactoId=${contactoId}`);
 
         if (!response.ok) throw new Error(`Error al obtener mensajes (${response.status})`);
@@ -194,6 +217,7 @@ export async function abrirChat(contactoId) {
         console.error("❌ Error al cargar mensajes del chat:", error);
     }
 }
+
 
 
 

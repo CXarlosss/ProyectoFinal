@@ -144,24 +144,26 @@ cargarServicios();
 
   // Eventos del buscador
   document.addEventListener("buscar-servicios", (event) => {
-    // ✅ Esperar hasta que `state.servicios` tenga datos
+    // @ts-ignore
+    console.log("📡 Evento 'buscar-servicios' detectado en servicios.js:", event.detail);
+  
     if (!state.servicios || state.servicios.length === 0) {
       console.warn("⚠️ No hay servicios cargados todavía. Esperando...");
       return;
     }
-
+  
     // @ts-ignore
     const { busqueda } = event.detail;
-    console.log("📡 Evento 'buscar-servicios' capturado:", busqueda);
-
+    console.log("📡 Buscando servicios con el término:", busqueda);
+  
     const serviciosFiltrados = state.servicios.filter(
       (servicio) =>
         servicio.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
         servicio.descripcion.toLowerCase().includes(busqueda.toLowerCase()) ||
         servicio.ubicacion.toLowerCase().includes(busqueda.toLowerCase())
     );
-
-    console.log("🔍 Servicios filtrados:", serviciosFiltrados);
+  
+    console.log("🔍 Servicios filtrados encontrados:", serviciosFiltrados);
     renderServicios(serviciosFiltrados);
   });
 
@@ -203,7 +205,7 @@ cargarServicios();
       event.detail.servicios
     );
 
-    let intentos = 0;
+   
     const intervalo = setInterval(() => {
       const cartaServ = document.querySelector("carta-serv");
 
@@ -224,14 +226,9 @@ cargarServicios();
         }
 
         clearInterval(intervalo);
-      } else if (intentos >= 10) {
-        console.error(
-          "❌ No se pudo encontrar `<carta-serv>` después de varios intentos."
-        );
-        clearInterval(intervalo);
       }
-      intentos++;
-    }, 300);
+    },
+  ); 
   });
 
    // Manejo de envío del formulario

@@ -221,7 +221,7 @@ async function cargarServicios() {
 }
 
 // ✅ Escuchar evento para actualizar la lista cuando se cree un servicio
-document.addEventListener("actualizar-lista-servicios", () => {
+/* document.addEventListener("actualizar-lista-servicios", () => {
   console.log("📡 Evento 'actualizar-lista-servicios' capturado. Recargando...");
   cargarServicios();
-});
+}); */

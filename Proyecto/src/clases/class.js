@@ -55,6 +55,7 @@ export class Servicio {
         this.metodoPago = metodoPago;
         this.categoria = categoria;
         this.imagen = imagen;
+        // @ts-ignore
         this.etiquetas = Array.isArray(etiquetas) ? etiquetas : etiquetas.split(",").map(tag => tag.trim());
         this.mensajePredeterminado = mensajePredeterminado;
         this.usuarioId = usuarioId;

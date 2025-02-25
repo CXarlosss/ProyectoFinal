@@ -118,7 +118,7 @@ export class RegistrarForm extends HTMLElement {
       }
   
       try {
-        const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/users`);
+        const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/read/users`);
         if (!response.ok) throw new Error("Error al obtener usuarios");
   
         const usuariosAPI = await response.json();

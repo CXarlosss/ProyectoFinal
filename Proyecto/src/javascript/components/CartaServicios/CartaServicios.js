@@ -1,4 +1,3 @@
-// @ts-check
 import { importTemplate } from "../../../lib/importTemplate.js";
 
 console.log("📌 CartaServicios.js cargado correctamente.");
@@ -23,8 +22,99 @@ const TEMPLATE = {
 
 // 📌 Obtener usuario autenticado desde localStorage
 const usuarioGuardado = localStorage.getItem("usuarioRegistrado");
-const usuario = usuarioGuardado ? /** @type {{email: string} | null} */ (JSON.parse(usuarioGuardado)) : null;
+const usuario = usuarioGuardado ? JSON.parse(usuarioGuardado) : null;
 console.log("📌 Usuario autenticado en localStorage:", usuario);
+
+/**
+ * 📌 Cargar los favoritos del usuario antes de crear las cartas de servicios
+ * @returns {Promise<Set<string>>} Devuelve un Set con los IDs de los servicios favoritos
+ */
+async function obtenerFavoritos() {
+  if (!usuario || !usuario._id) return new Set();
+
+  const API_PORT = location.port ? `:${location.port}` : "";
+  const url = `${location.protocol}//${location.hostname}${API_PORT}/users/${usuario._id}/favoritos`;
+
+  try {
+    console.log("🔄 Cargando favoritos del usuario...");
+    const response = await fetch(url);
+    if (!response.ok) throw new Error("❌ Error al obtener favoritos");
+
+    const favoritos = await response.json();
+    console.log("✅ Favoritos obtenidos:", favoritos);
+
+    return new Set(favoritos.map(fav => fav._id));
+  } catch (error) {
+    console.error("🚨 Error al cargar favoritos:", error);
+    return new Set();
+  }
+}
+
+/**
+ * 📌 Función para cargar los servicios y definir el componente
+ */
+async function cargarServicios() {
+  console.log("⏳ Intentando obtener servicios y favoritos...");
+
+  const API_PORT = location.port ? `:${location.port}` : "";
+  const urlServicios = `${location.protocol}//${location.hostname}${API_PORT}/read/servicios`;
+
+  try {
+    const favoritosSet = await obtenerFavoritos();
+
+    const response = await fetch(urlServicios);
+    if (!response.ok) throw new Error("❌ Error al obtener servicios");
+
+    const servicios = await response.json();
+    console.log("📌 Servicios obtenidos:", servicios);
+
+    if (!Array.isArray(servicios)) throw new Error("⚠️ La API no devolvió un array válido de servicios.");
+
+    // 🔥 Añadir la propiedad `esFavorito` antes de renderizar las cartas
+    const serviciosConFavoritos = servicios.map(servicio => ({
+      ...servicio,
+      esFavorito: favoritosSet.has(servicio._id),
+    }));
+
+    // 🔥 Crear las cartas después de obtener los favoritos
+    renderizarServicios(serviciosConFavoritos);
+  } catch (error) {
+    console.error("🚨 Error al obtener servicios:", error);
+  }
+}
+
+/**
+ * 📌 Renderiza los servicios en el DOM
+ * @param {Servicio[]} servicios
+ */
+function renderizarServicios(servicios) {
+  console.log("📌 Renderizando servicios...");
+
+  const container = document.getElementById("servicios-container");
+  if (!container) {
+    console.error("❌ No se encontró `#servicios-container` en el DOM.");
+    return;
+  }
+
+  container.innerHTML = ""; // Limpiar el contenedor antes de renderizar
+
+  servicios.forEach(servicio => {
+    const cartaServicio = document.createElement("carta-servicio");
+
+    Object.entries(servicio).forEach(([key, value]) => {
+      if (value !== undefined) {
+        cartaServicio.setAttribute(key, value.toString());
+      }
+    });
+
+    container.appendChild(cartaServicio);
+  });
+
+  console.log(`✅ Se han agregado ${servicios.length} servicios.`);
+}
+
+// 📌 Llamar la función para cargar los servicios antes de definir el componente
+cargarServicios();
 
 /**
  * 📌 Función para cargar y definir el componente
@@ -42,7 +132,7 @@ async function loadAndDefineComponent() {
 
   // 🔥 Esperar hasta que el template esté en el DOM
   let checkInterval = setInterval(() => {
-    const template = /** @type {HTMLTemplateElement | null} */ (document.body.querySelector(`#${TEMPLATE.id}`));
+    const template = document.body.querySelector(`#${TEMPLATE.id}`);
 
     if (template) {
       clearInterval(checkInterval);
@@ -60,7 +150,6 @@ async function loadAndDefineComponent() {
 
 // 📌 Llamar la función para cargar y definir el componente
 loadAndDefineComponent();
-
 class CartaServicio extends HTMLElement {
   constructor() {
     super();
@@ -233,66 +322,61 @@ class CartaServicio extends HTMLElement {
   }
   //FAVORITOSSS
 
-  /**
-   * @param {string} servicioId
-   */
+
   /**
    * 📌 Método para alternar el estado de favorito en la base de datos y actualizar la UI
    * @param {string} servicioId - ID del servicio a agregar o quitar de favoritos
    */
   async toggleFavorito(servicioId) {
     const usuarioGuardado = localStorage.getItem("usuarioRegistrado");
-    /** @type {{ _id: string } | null} */
-    const usuario = usuarioGuardado ? JSON.parse(usuarioGuardado) : null;
-
-    if (!usuario || !usuario._id) {
-      console.error("❌ Error: Usuario no autenticado.");
-      return;
+    if (!usuarioGuardado) {
+        console.error("❌ Error: Usuario no autenticado.");
+        return;
     }
 
-    console.log(`📌 Enviando solicitud para actualizar favoritos del usuario ${usuario._id}`);
-
+    const usuario = JSON.parse(usuarioGuardado);
     const API_PORT = location.port ? `:${location.port}` : "";
     const url = `${location.protocol}//${location.hostname}${API_PORT}/users/${usuario._id}/favoritos/${servicioId}`;
-/*     const url = `${location.protocol}//${location.hostname}${API_PORT}/api/users/${usuario._id}/favoritos/${servicioId}`; */
 
-    // Verificar si el servicio ya está en favoritos
     const favoritosGuardados = localStorage.getItem(`favoritos_${usuario._id}`);
-    /** @type {{ _id: string }[]} */
     const favoritos = favoritosGuardados ? JSON.parse(favoritosGuardados) : [];
-    
     const esFavorito = favoritos.some(fav => fav._id === servicioId);
-    const metodo = "PUT";  // 🔥 Se usa PUT en todos los casos
+    const metodo = "PUT";
 
     try {
-      const response = await fetch(url, {
-        method: metodo,
-        headers: { "Content-Type": "application/json" },
-        cache: "no-cache",
-      });
+        const response = await fetch(url, {
+            method: metodo,
+            headers: { "Content-Type": "application/json" },
+            cache: "no-cache",
+        });
 
-      if (!response.ok) {
-        throw new Error(`Error en la solicitud: ${response.statusText}`);
-      }
+        if (!response.ok) {
+            throw new Error(`Error en la solicitud: ${response.statusText}`);
+        }
 
-      console.log(`✅ Favorito ${esFavorito ? "eliminado" : "añadido"} correctamente.`);
+        console.log(`✅ Favorito ${esFavorito ? "eliminado" : "añadido"} correctamente.`);
 
-      // Actualizar el estado de favoritos en localStorage
-      if (esFavorito) {
-        const nuevosFavoritos = favoritos.filter(fav => fav._id !== servicioId);
+        // Actualizar favoritos en `localStorage`
+        let nuevosFavoritos;
+        if (esFavorito) {
+            nuevosFavoritos = favoritos.filter(fav => fav._id !== servicioId);
+        } else {
+            nuevosFavoritos = [...favoritos, { _id: servicioId }];
+        }
         localStorage.setItem(`favoritos_${usuario._id}`, JSON.stringify(nuevosFavoritos));
-      } else {
-        favoritos.push({ _id: servicioId });
-        localStorage.setItem(`favoritos_${usuario._id}`, JSON.stringify(favoritos));
-      }
 
-      // Actualizar la UI
-      this.actualizarBotonFavorito(servicioId, !esFavorito);
+        // ✅ Emitir evento global con el ID del servicio actualizado
+        document.dispatchEvent(new CustomEvent("favoritos-actualizados", { 
+            detail: { usuarioId: usuario._id, servicioId, esFavorito: !esFavorito } 
+        }));
 
+        // Actualizar la UI
+        this.actualizarBotonFavorito(servicioId, !esFavorito);
     } catch (error) {
-      console.error("🚨 Error al actualizar favoritos:", error);
+        console.error("🚨 Error al actualizar favoritos:", error);
     }
 }
+
 
 /**
    * 📌 Método para actualizar el texto del botón de favoritos
@@ -302,9 +386,11 @@ class CartaServicio extends HTMLElement {
 actualizarBotonFavorito(id, esFavorito) {
   const btnFavorito = this.shadowRoot?.querySelector(".btn-favorito");
   if (btnFavorito) {
-    btnFavorito.textContent = esFavorito ? "★ Quitar de Favoritos" : "☆ Añadir a Favoritos";
+      btnFavorito.textContent = esFavorito ? "★ Quitar de Favoritos" : "☆ Añadir a Favoritos";
+      btnFavorito.classList.toggle("favorito", esFavorito); // Opcional: agregar clase CSS para favoritos
   }
 }
+
 /**
  * 📌 Método para editar un servicio
  * @param {string} servicioId - ID del servicio a editar

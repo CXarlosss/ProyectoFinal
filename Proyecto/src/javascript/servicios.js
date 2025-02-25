@@ -206,29 +206,8 @@ cargarServicios();
     );
 
    
-    const intervalo = setInterval(() => {
-      const cartaServ = document.querySelector("carta-serv");
-
-      if (cartaServ) {
-        console.log("✅ <carta-serv> encontrado, asignando servicios...");
-
-        if ("servicios" in cartaServ) {
-          // @ts-ignore
-          cartaServ.servicios = event.detail.servicios;
-          console.log(
-            "✅ Servicios asignados correctamente a `<carta-serv>`:",
-            cartaServ.servicios
-          );
-        } else {
-          console.error(
-            "❌ `<carta-serv>` no tiene una propiedad 'servicios'."
-          );
-        }
-
-        clearInterval(intervalo);
-      }
-    },
-  ); 
+   
+   
   });
 
    // Manejo de envío del formulario

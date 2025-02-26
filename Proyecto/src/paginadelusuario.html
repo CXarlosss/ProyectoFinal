@@ -4,8 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Perfil del Usuario</title>
-    <link rel="stylesheet" href="./css/styles-usuario.css" /> 
-
+    <link rel="stylesheet" href="./css/styles-usuario.css" />
   </head>
   <body>
     <header>
@@ -13,7 +12,6 @@
         <ul>
           <li><a href="index.html">Inicio</a></li>
           <li><a href="servicios.html">Servicios</a></li>
-          
         </ul>
       </nav>
     </header>
@@ -28,20 +26,20 @@
         <h2>Editar Usuario</h2>
         <form id="form-editar-usuario">
           <label>Nombre</label>
-          <input type="text" id="editar-nombre" required /><br>
+          <input type="text" id="editar-nombre" required /><br />
 
           <label>Email</label>
-          <input type="email" id="editar-email" required disabled /><br>
+          <input type="email" id="editar-email" required disabled /><br />
           <!-- No modificable -->
 
           <label>Teléfono</label>
-          <input type="text" id="editar-telefono" required /><br>
+          <input type="text" id="editar-telefono" required /><br />
 
           <label>Dirección</label>
-          <input type="text" id="editar-direccion" required /><br>
+          <input type="text" id="editar-direccion" required /><br />
 
           <label>Contraseña</label>
-          <input type="password" id="editar-password" /><br>
+          <input type="password" id="editar-password" /><br />
 
           <button type="submit">Guardar Cambios</button>
           <button type="button" id="cerrar-modal">Cancelar</button>
@@ -57,48 +55,55 @@
         <div id="chat-list">
           <p>No hay chats aún.</p>
         </div>
-      
 
         <!-- Chat dentro de la sección de chats -->
         <div id="chat-popup" class="hidden">
           <div class="chat-header">
-              <span id="chat-titulo">Chat</span>
-              <button id="cerrar-chat" class="btn-cerrar">X</button>
+            <span id="chat-titulo">Chat</span>
+            <button id="cerrar-chat" class="btn-cerrar">X</button>
           </div>
           <div id="chat-messages"></div>
           <div class="chat-input">
-              <input type="text" id="mensaje-input" placeholder="Escribe un mensaje...">
-              <button id="enviar-mensaje">Enviar</button>
+            <input
+              type="text"
+              id="mensaje-input"
+              placeholder="Escribe un mensaje..."
+            />
+            <button id="enviar-mensaje">Enviar</button>
           </div>
-      </div>
-      
-      
+        </div>
       </div>
 
       <!-- Sección de Servicios y Favoritos -->
       <div class="seccion servicios">
         <h2>Secciones Favoritas</h2>
-      
         <div id="favoritos-list">
           <p>No tienes favoritos aún.</p>
         </div>
-        <button id="btn-ir-secciones">Ir a Secciones</button>
+        <!-- Sección de Servicios Recomendados -->
+        <div class="seccion servicios-recomendados">
+          <h2>Servicios Recomendados</h2>
+          <div id="servicios-recomendados-list">
+            <p>Cargando servicios recomendados...</p>
+          </div>
+          <!-- Botón de refrescar -->
+          <button id="btn-refrescar">Refrescar Servicios</button>
+        </div><button id="btn-ir-secciones">Ir a Secciones</button>
       </div>
+      
     </div>
 
     <!-- Botón de Cerrar Sesión -->
-    <button id="btn-cerrar-sesion" class="btn-cerrar-sesion">
-      Cerrar Sesión
-    </button>
+    <button id="btn-cerrar-sesion" class="btn-cerrar-sesion">Cerrar Sesión</button>
+
+
+
+    
 
     <!-- Vincular el script -->
     <script type="module" src="./javascript/modificarUser.js"></script>
     <script type="module" src="./javascript/paginaUsuario.js"></script>
     <script type="module" src="./javascript/UsuarioFavoritos.js"></script>
     <script type="module" src="./javascript/UsuarioMensajes.js"></script>
-    
-
-
- 
   </body>
 </html>

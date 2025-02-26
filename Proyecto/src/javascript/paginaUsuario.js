@@ -30,6 +30,13 @@ document.addEventListener("DOMContentLoaded", () => {
         console.warn("⚠️ No se encontró el botón de servicios en el DOM.");
     }
     
+
+
+// Función para cargar los servicios recomendados
+  
+  // Función para mostrar los favoritos del usuario
+
+
    /*  // Cargar módulos de favoritos y mensajes
     const scriptFavoritos = document.createElement("script");
     scriptFavoritos.src = "./javascript/UsuarioFavoritos.js";

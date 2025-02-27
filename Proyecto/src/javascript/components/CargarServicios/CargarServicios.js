@@ -99,12 +99,12 @@ export class CargarServicios extends HTMLElement {
       if (!Array.isArray(servicios)) {
         throw new Error("⚠️ La API no devolvió un array válido de servicios.");
       }
-
+      const serviciosLimitados = servicios.slice(0, 10);
       // 🔥 ACTUALIZAR `CartaSERV`
       const cartaServ = document.querySelector("carta-serv");
       if (cartaServ) {
         // @ts-ignore
-        cartaServ.servicios = servicios;
+        cartaServ.servicios = serviciosLimitados;
       } else {
         console.error("❌ No se encontró `<carta-serv>` en el DOM.");
       }

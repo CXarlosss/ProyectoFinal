@@ -105,6 +105,13 @@ button:hover {
   justify-content: center; /* Centra las tarjetas en el espacio disponible */
   align-items: start; /* Evita que las tarjetas se estiren */
 }
+/* Aplica el efecto de desenfoque y opacidad solo a las tarjetas que NO están en hover */
+#servicios-container:hover carta-servicio:not(:hover) {
+  filter: blur(1px);
+  opacity: 0.99;
+  transition: all 0.3s ease-in-out;
+}
+
 
 
 /* 🎨 Tarjetas de servicios ajustadas al grid */
@@ -122,6 +129,7 @@ carta-servicio {
   min-height: 410px; 
   align-self: stretch; 
 }
+
 
 /* 📌 Imagen de la tarjeta */
 carta-servicio img {
@@ -173,24 +181,27 @@ carta-servicio .boton:hover {
 }
 
 /* 📱 Responsividad para móviles */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   #servicios-container {
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); /* 🔹 Ajuste en móvil */
-  }
-
-  carta-servicio {
-    min-height: 480px; /* 🔹 Ajuste en pantallas más pequeñas */
-  }
-
-  carta-servicio img {
-    height: 180px; /* 🔹 Imagen más pequeña en móvil */
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Ajuste para tablets */
+    grid-auto-rows: minmax(380px, auto);
   }
 }
 
+@media (max-width: 768px) {
+  #servicios-container {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Ajuste para móviles */
+    grid-auto-rows: minmax(360px, auto);
+  }
+}
 
-
-
-
+@media (max-width: 480px) {
+  #servicios-container {
+    grid-template-columns: 1fr; /* Una sola columna en pantallas muy pequeñas */
+    grid-auto-rows: minmax(350px, auto);
+    padding: 10px;
+  }
+}
 
 
 /* 🎨 Tarjetas con diferentes alturas */
@@ -212,6 +223,7 @@ carta-servicio .boton:hover {
   transform: scale(1.05);
   box-shadow: 0px 15px 30px rgba(0, 0, 0, 0.2);
 }
+
 
 /* 📌 Imagen de la tarjeta */
 .card-img {
@@ -342,6 +354,90 @@ carta-servicio .boton:hover {
   }
 }
 
+
+
+
+
+
+
+
+
+
+/* 🔹 Estilos del modal de edición */
+.modal-edicion {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6); /* Fondo oscuro semi-transparente */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* 🔹 Contenido del modal */
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 400px;
+  max-width: 90%;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
+
+/* 🔹 Inputs y etiquetas */
+.modal-content label {
+  display: block;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.modal-content input,
+.modal-content textarea {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+/* 🔹 Botones */
+.modal-buttons {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.modal-buttons button {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+#btn-guardar-edicion {
+  background-color: #28a745;
+  color: white;
+}
+
+#btn-guardar-edicion:hover {
+  background-color: #218838;
+}
+
+#btn-cancelar-edicion {
+  background-color: #dc3545;
+  color: white;
+}
+
+#btn-cancelar-edicion:hover {
+  background-color: #c82333;
+}
+
 /* 🏁 Footer con efecto glass */
 footer {
   text-align: center;
@@ -353,3 +449,4 @@ footer {
   bottom: 0;
   width: 100%;
 }
+

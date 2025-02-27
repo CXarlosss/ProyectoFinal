@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // 📌 Configuración de la API
   const API_PORT = location.port ? `:${location.port}` : "";
   esperarContenedorServicios()
-cargarServicios();
+    cargarServicios();
   let serviciosContainer =
     /** @type {HTMLDivElement | null} */ document.getElementById(
       "servicios-container"
@@ -91,9 +91,13 @@ cargarServicios();
 
       if (!Array.isArray(servicios))
         throw new Error("⚠️ La API no devolvió un array válido de servicios.");
+    
 
       // ✅ Guardar en `state.servicios`
-      state.servicios = servicios;
+            
+      const serviciosLimitados = servicios.slice(0, 10);
+      state.servicios = serviciosLimitados;
+
 
       // ✅ Hacer `state` accesible globalmente
       // @ts-ignore
@@ -103,6 +107,8 @@ cargarServicios();
       document.dispatchEvent(
         new CustomEvent("servicios-cargados", { detail: { servicios } })
       );
+      renderServicios(serviciosLimitados);
+
     } catch (error) {
       console.error("❌ Error al obtener servicios:", error);
     }
@@ -273,18 +279,11 @@ cargarServicios();
     }
   });
 });
-  /// 📌 Cargar servicios después de esperar el contenedor
+ 
   
   
  
 
-
-
-
-
-
-  // 📌 Crear nuevo servicio desde el formulario
- 
 
 // @ts-ignore
 

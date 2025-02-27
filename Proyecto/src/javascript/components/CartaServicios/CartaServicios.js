@@ -75,13 +75,16 @@ async function cargarServicios() {
       ...servicio,
       esFavorito: favoritosSet.has(servicio._id),
     }));
+    const serviciosLimitados = serviciosConFavoritos.slice(0, 10);
 
     // 🔥 Crear las cartas después de obtener los favoritos
-    renderizarServicios(serviciosConFavoritos);
+    renderizarServicios(serviciosLimitados);
   } catch (error) {
     console.error("🚨 Error al obtener servicios:", error);
   }
 }
+loadAndDefineComponent();
+cargarServicios();
 
 /**
  * 📌 Renderiza los servicios en el DOM
@@ -173,6 +176,8 @@ class CartaServicio extends HTMLElement {
    * @param {string | null} newValue
    */
  
+  // @ts-ignore
+  // @ts-ignore
   attributeChangedCallback(name, oldValue, newValue) {
     console.log(`📌 Atributo cambiado en <carta-servicio>: ${name} = ${newValue}`);
     this.render();
@@ -383,6 +388,8 @@ class CartaServicio extends HTMLElement {
    * @param {string} id - ID del servicio
    * @param {boolean} esFavorito - Indica si el servicio es favorito o no
    */
+// @ts-ignore
+// @ts-ignore
 actualizarBotonFavorito(id, esFavorito) {
   const btnFavorito = this.shadowRoot?.querySelector(".btn-favorito");
   if (btnFavorito) {
@@ -391,43 +398,101 @@ actualizarBotonFavorito(id, esFavorito) {
   }
 }
 
+
+
+
 /**
  * 📌 Método para editar un servicio
  * @param {string} servicioId - ID del servicio a editar
  */
-async editarServicio(servicioId) {
+async  editarServicio(servicioId) {
   if (!this.shadowRoot) return;
 
-  console.log(`✏️ Editar servicio: ${servicioId}`);
-
-  // @ts-ignore
-  const nuevoNombre = prompt("Nuevo nombre del servicio:", this.getAttribute("nombre"));
-  if (!nuevoNombre) {
-      console.log("✏️ Edición cancelada.");
-      return;
-  }
+  console.log(`✏️ Editando servicio: ${servicioId}`);
 
   const API_PORT = location.port ? `:${location.port}` : "";
-/*   const url = `${location.protocol}//${location.hostname}${API_PORT}/api/update/servicios/${servicioId}`; */
   const url = `${location.protocol}//${location.hostname}${API_PORT}/update/servicios/${servicioId}`;
+
   try {
-      const response = await fetch(url, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ nombre: nuevoNombre }),
+      // 🛠️ Obtener datos actuales del servicio antes de editar
+      const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/read/servicio/${servicioId}`);
+      if (!response.ok) throw new Error("No se pudo obtener el servicio para editar.");
+
+      const servicio = await response.json();
+
+      // 📌 Crear un modal de edición dinámico
+      const modal = document.createElement("div");
+      modal.classList.add("modal-edicion");
+      modal.innerHTML = `
+          <div class="modal-content">
+              <h2>Editar Servicio</h2>
+              <label>Nombre:</label>
+              <input type="text" id="edit-nombre" value="${servicio.nombre}">
+              
+              <label>Descripción:</label>
+              <textarea id="edit-descripcion">${servicio.descripcion}</textarea>
+
+              <label>Ubicación:</label>
+              <input type="text" id="edit-ubicacion" value="${servicio.ubicacion}">
+
+              <label>Precio:</label>
+              <input type="number" id="edit-precio" value="${servicio.precio}">
+
+              <label>Método de Pago:</label>
+              <input type="text" id="edit-metodo-pago" value="${servicio.metodoPago}">
+
+              <label>Etiquetas (separadas por comas):</label>
+              <input type="text" id="edit-etiquetas" value="${servicio.etiquetas.join(", ")}">
+
+              <div class="modal-buttons">
+                  <button id="btn-guardar-edicion">Guardar</button>
+                  <button id="btn-cancelar-edicion">Cancelar</button>
+              </div>
+          </div>
+      `;
+
+      document.body.appendChild(modal);
+
+      // 📌 Evento para cerrar el modal
+      document.getElementById("btn-cancelar-edicion")?.addEventListener("click", () => {
+          modal.remove();
       });
 
-      if (!response.ok) {
-          throw new Error(`Error en la actualización: ${response.statusText}`);
-      }
+      // 📌 Evento para guardar cambios
+      document.getElementById("btn-guardar-edicion")?.addEventListener("click", async () => {
+          const datosEditados = {
+              // @ts-ignore
+              nombre: document.getElementById("edit-nombre")?.value.trim() || servicio.nombre,
+              // @ts-ignore
+              descripcion: document.getElementById("edit-descripcion")?.value.trim() || servicio.descripcion,
+              // @ts-ignore
+              ubicacion: document.getElementById("edit-ubicacion")?.value.trim() || servicio.ubicacion,
+              // @ts-ignore
+              precio: parseFloat(document.getElementById("edit-precio")?.value) || servicio.precio,
+              // @ts-ignore
+              metodoPago: document.getElementById("edit-metodo-pago")?.value.trim() || servicio.metodoPago,
+              // @ts-ignore
+              etiquetas: document.getElementById("edit-etiquetas")?.value.split(",").map(tag => tag.trim()).filter(Boolean) || servicio.etiquetas,
+          };
+          const updateResponse = await fetch(url, {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(datosEditados),
+          });
 
-      console.log(`✅ Servicio con ID ${servicioId} actualizado correctamente.`);
-      this.setAttribute("nombre", nuevoNombre);
-      this.render(); // Actualizar la UI
+          if (!updateResponse.ok) throw new Error("Error al actualizar el servicio.");
+
+          console.log(`✅ Servicio con ID ${servicioId} actualizado correctamente.`);
+          modal.remove(); // Cerrar modal tras editar
+          this.setAttribute("nombre", datosEditados.nombre);
+          this.render(); // Actualizar UI si es necesario
+      });
+
   } catch (error) {
       console.error("🚨 Error al actualizar el servicio:", error);
   }
 }
+
 
 /**
 * 📌 Método para eliminar un servicio

@@ -175,7 +175,19 @@ export class CartaSERV extends HTMLElement {
       return;
     }
 
-    servicios.forEach(servicio => {
+    // 🔥 ACTUALIZAR `CartaSERV`
+    const cartaServContainer = document.querySelector("#servicios-container");
+
+    if (!cartaServContainer) {
+      console.error("❌ No se encontró `#servicios-container` en el DOM.");
+      return;
+    }
+
+    // 📌 Limpiar el contenedor antes de agregar nuevas tarjetas
+    cartaServContainer.innerHTML = "";
+    const serviciosLimitados = servicios.slice(0, 10);
+
+    serviciosLimitados.forEach(servicio => {
       const cartaServicio = document.createElement("carta-servicio");
       cartaServicio.setAttribute("_id", servicio._id || "SIN_ID");
       cartaServicio.setAttribute("nombre", servicio.nombre);
@@ -207,21 +219,16 @@ async function cargarServicios() {
     if (!Array.isArray(servicios)) {
       throw new Error("⚠️ La API no devolvió un array válido de servicios.");
     }
-
     // 🔥 ACTUALIZAR `CartaSERV`
     const cartaServ = document.querySelector("carta-serv");
     if (cartaServ) {
       // @ts-ignore
-      cartaServ.servicios = servicios;
+      cartaServ.servicios = servicios.slice(0, 10);
     }
 
   } catch (error) {
     console.error("❌ Error al obtener servicios:", error);
   }
 }
+cargarServicios();
 
-// ✅ Escuchar evento para actualizar la lista cuando se cree un servicio
-/* document.addEventListener("actualizar-lista-servicios", () => {
-  console.log("📡 Evento 'actualizar-lista-servicios' capturado. Recargando...");
-  cargarServicios();
-}); */

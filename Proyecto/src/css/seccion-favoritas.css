@@ -1,0 +1,427 @@
+.section-lista-usuarios {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;
+  width: 100%;
+}
+/* 📌 Favorito-item ahora más compacto */
+.favorito-item {
+    background: rgba(255, 255, 255, 0.15); /* Fondo translúcido */
+    border-radius: 12px;
+    padding: 10px 15px;
+    margin: 6px 0;
+    backdrop-filter: blur(8px); /* Efecto de desenfoque */
+    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.1), 
+                -3px -3px 10px rgba(255, 255, 255, 0.3);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    align-items: center; /* Alinear los elementos */
+    justify-content: space-between; /* Texto a la izquierda, botones a la derecha */
+    gap: 8px;
+    width: 95%; /* Ajuste del tamaño dentro del grid */
+    max-width: 500px; /* Limitar su expansión */
+    position: relative;
+  }
+  
+  /* 🔥 Efecto WOW en hover */
+  .favorito-item:hover {
+    transform: scale(1.02);
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.12), 
+                -5px -5px 15px rgba(255, 255, 255, 0.4);
+  }
+  
+  /* ✅ Texto alineado a la izquierda */
+  .favorito-texto {
+    flex-grow: 1;
+    text-align: left;
+  }
+  
+  .favorito-texto p {
+    font-size: 13px; /* Texto más pequeño */
+    font-weight: 500;
+    color: #333;
+    margin: 3px 0;
+  }
+  
+  /* 🎯 Contenedor de botones alineados a la derecha */
+  .favorito-buttons {
+    display: flex;
+    justify-content: flex-end; /* Alinea los botones a la derecha */
+    gap: 6px; /* Espacio entre botones */
+  }
+  
+  /* 🎨 Botones más pequeños */
+  .favorito-item button {
+    padding: 6px 10px;
+    font-size: 12px;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    min-width: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    text-transform: uppercase;
+  }
+  
+  /* ❌ Botón de eliminar */
+  .btn-eliminar {
+    background: linear-gradient(135deg, #ff4b2b, #ff416c);
+    color: white;
+    box-shadow: 0px 2px 6px rgba(255, 65, 108, 0.3);
+  }
+  
+  .btn-eliminar:hover {
+    background: linear-gradient(135deg, #ff1e00, #ff0077);
+    box-shadow: 0px 3px 10px rgba(255, 0, 77, 0.5);
+    transform: scale(1.03);
+  }
+  
+  /* 💬 Botón de mensaje */
+  .btn-mensaje {
+    background: linear-gradient(135deg, #17ead9, #6078ea);
+    color: white;
+    box-shadow: 0px 2px 6px rgba(23, 234, 217, 0.3);
+  }
+  
+  .btn-mensaje:hover {
+    background: linear-gradient(135deg, #0ac9c9, #4264db);
+    box-shadow: 0px 3px 10px rgba(23, 234, 217, 0.5);
+    transform: scale(1.03);
+  }
+  
+  /* 📌 Ajustes Responsive */
+  @media (max-width: 600px) {
+    .favorito-item {
+      max-width: 90%; /* Se adapta al contenedor */
+    }
+  
+    .favorito-buttons {
+      justify-content: flex-start;
+      width: 100%;
+    }
+  
+    .favorito-item button {
+      width: auto; /* No ocupa todo el ancho */
+    }
+  }
+  .servicios {
+    background: linear-gradient(135deg, #ffffff, #f8f9fa);
+    border-left: 5px solid #28a745;
+    padding: 25px;
+    border-radius: 18px;
+    box-shadow: 8px 8px 15px rgba(0, 0, 0, 0.1), 
+                -8px -8px 15px rgba(255, 255, 255, 0.6);
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+  
+  /* Estilos para la sección de "Servicios Recomendados" */
+  /* Estilos base */
+  /* Contenedor de la tarjeta de servicio */
+  .servicio-recomendado {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    width: calc(33.333% - 20px); /* Tres por fila */
+    box-sizing: border-box;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+    position: relative;
+    overflow: hidden;
+    
+    /* Hacemos que el contenido se distribuya correctamente */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%; /* Hace que todas las tarjetas tengan la misma altura */
+  }
+  
+  .servicios-recomendados:hover {
+    transform: scale(1.02);
+    box-shadow: 0px 12px 25px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Título */
+  .servicios-recomendados h2 {
+    font-size: 26px;
+    font-weight: 700;
+    color: #222;
+    margin-bottom: 25px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Contenedor de servicios */
+  #servicios-recomendados-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+  }
+  
+  /* Tarjetas de servicios */
+  .servicio-recomendado {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    width: calc(33.333% - 20px); /* Tres por fila */
+    box-sizing: border-box;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  /* Efecto hover en la tarjeta */
+  .servicio-recomendado:hover {
+    transform: translateY(-10px) scale(1.05);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Fondo animado en hover */
+  .servicio-recomendado::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 123, 255, 0.1);
+    transition: left 0.4s ease-in-out;
+  }
+  
+  .servicio-recomendado:hover::before {
+    left: 0;
+  }
+  
+  /* Texto dentro de las tarjetas */
+  .servicio-recomendado p {
+    font-size: 18px;
+    font-weight: 600;
+    color: #444;
+    margin-bottom: 20px;
+  }
+  
+  /* Botón de agregar a favoritos */
+  /* Botón de agregar a favoritos con nuevo color y efecto */
+  .btn-agregar-favorito {
+    background: linear-gradient(135deg, #ffcc00, #ff9900); /* Amarillo a naranja */
+    color: #fff;
+    border: none;
+    padding: 12px 18px;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    font-weight: bold;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    box-shadow: 0px 5px 10px rgba(255, 165, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px; /* Espacio entre el texto y el icono */
+    position: relative;
+    overflow: hidden;
+  }
+  
+  /* Icono de estrella dentro del botón */
+  .btn-agregar-favorito::before {
+    content: "⭐";
+    font-size: 18px;
+    opacity: 0.8;
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  /* Efecto hover en el botón */
+  .btn-agregar-favorito:hover {
+    background: linear-gradient(135deg, #ff8800, #ff5500); /* Naranja más intenso */
+    box-shadow: 0px 8px 20px rgba(255, 85, 0, 0.5);
+    transform: scale(1.05);
+  }
+  
+  /* Efecto hover en el icono de estrella */
+  .btn-agregar-favorito:hover::before {
+    transform: rotate(15deg) scale(1.1);
+    opacity: 1;
+  }
+  
+  /* Efecto de brillo al hacer clic */
+  .btn-agregar-favorito:active {
+    transform: scale(0.95);
+    box-shadow: 0px 4px 8px rgba(255, 165, 0, 0.3);
+  }
+  
+  
+  /* Botón de refrescar con efecto WOW */
+  #btn-refrescar {
+    background: linear-gradient(135deg, #ff416c, #ff4b2b); /* Rojo fucsia a naranja */
+    color: #fff;
+    border: none;
+    padding: 16px 24px;
+    border-radius: 30px 5px 30px 5px; /* Bordes dinámicos */
+    font-size: 20px;
+    width: 100%; /* Ahora ocupa todo el ancho */
+    margin-top: 25px;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    font-weight: bold;
+    text-transform: uppercase;
+    box-shadow: 0px 0px 10px rgba(255, 65, 108, 0.5), 0px 0px 20px rgba(255, 75, 43, 0.3);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px; /* Espacio entre texto e ícono */
+  }
+  
+  /* Agregar un icono animado */
+  #btn-refrescar::before {
+    content: "🔄";
+    font-size: 22px;
+    opacity: 0.8;
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  /* Efecto hover en el botón */
+  #btn-refrescar:hover {
+    background: linear-gradient(135deg, #ff2b5e, #ff6a00); /* Cambio de color en hover */
+    transform: scale(1.05);
+    box-shadow: 0px 0px 15px rgba(255, 65, 108, 0.7), 0px 0px 25px rgba(255, 75, 43, 0.5);
+    animation: pulse 0.5s infinite alternate ease-in-out;
+  }
+  
+  /* Rotación del icono en hover */
+  #btn-refrescar:hover::before {
+    transform: rotate(360deg);
+  }
+  
+  /* Efecto de onda al hacer clic */
+  #btn-refrescar:active {
+    transform: scale(0.95);
+    box-shadow: 0px 0px 10px rgba(255, 65, 108, 0.7), 0px 0px 20px rgba(255, 75, 43, 0.5);
+  }
+  
+  /* Animación de pulso */
+  @keyframes pulse {
+    0% {
+      box-shadow: 0px 0px 10px rgba(255, 65, 108, 0.5), 0px 0px 20px rgba(255, 75, 43, 0.3);
+    }
+    100% {
+      box-shadow: 0px 0px 15px rgba(255, 65, 108, 0.8), 0px 0px 25px rgba(255, 75, 43, 0.6);
+    }
+  }
+  
+  /* Efecto de onda al hacer clic */
+  #btn-refrescar::after {
+    content: "";
+    position: absolute;
+    width: 300%;
+    height: 300%;
+    top: 50%;
+    left: 50%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 80%);
+    transform: translate(-50%, -50%) scale(0);
+    border-radius: 50%;
+    opacity: 0;
+    transition: transform 0.5s ease-out, opacity 0.5s ease-out;
+  }
+  
+  /* Cuando se hace clic, la onda se expande */
+  #btn-refrescar:active::after {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+  
+  
+  /* Responsive: Ajustes para pantallas más pequeñas */
+  @media (max-width: 768px) {
+    .servicio-recomendado {
+      width: calc(50% - 20px); /* Dos por fila en tablets */
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .servicio-recomendado {
+      width: 100%; /* Uno por fila en móviles */
+    }
+  }
+  
+  /* Botón de Ir a Secciones */
+  /* Botón de Ir a Secciones con Estilo WOW */
+  #btn-ir-secciones {
+    background: linear-gradient(135deg, #3ddc97, #1abc9c); /* Verde menta a verde oscuro */
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    font-size: 18px;
+    cursor: pointer;
+    border-radius: 8px 25px 8px 25px; /* Bordes dinámicos */
+    transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    font-weight: bold;
+    text-transform: uppercase;
+    box-shadow: 0px 0px 10px rgba(61, 220, 151, 0.5), 0px 0px 20px rgba(26, 188, 156, 0.3);
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  /* Agregar icono de flecha animada */
+  #btn-ir-secciones::before {
+    content: "⏩";
+    font-size: 20px;
+    opacity: 0.8;
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  /* Efecto hover en el botón */
+  #btn-ir-secciones:hover {
+    background: linear-gradient(135deg, #2ecc71, #16a085); /* Verde más intenso */
+    transform: translateX(5px) scale(1.05); /* Se mueve un poco a la derecha */
+    box-shadow: 0px 0px 15px rgba(61, 220, 151, 0.7), 0px 0px 25px rgba(26, 188, 156, 0.5);
+  }
+  
+  /* Rotación del icono en hover */
+  #btn-ir-secciones:hover::before {
+    transform: rotate(20deg) scale(1.1);
+  }
+  
+  /* Efecto de onda al hacer clic */
+  #btn-ir-secciones:active {
+    transform: scale(0.95);
+    box-shadow: 0px 0px 10px rgba(61, 220, 151, 0.7), 0px 0px 20px rgba(26, 188, 156, 0.5);
+  }
+  
+  /* Efecto de onda al hacer clic */
+  #btn-ir-secciones::after {
+    content: "";
+    position: absolute;
+    width: 300%;
+    height: 300%;
+    top: 50%;
+    left: 50%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 80%);
+    transform: translate(-50%, -50%) scale(0);
+    border-radius: 50%;
+    opacity: 0;
+    transition: transform 0.5s ease-out, opacity 0.5s ease-out;
+  }
+  
+  /* Cuando se hace clic, la onda se expande */
+  #btn-ir-secciones:active::after {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }

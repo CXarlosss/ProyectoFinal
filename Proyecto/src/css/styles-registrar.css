@@ -84,6 +84,14 @@ section {
     transition: all 200ms ease-in-out;
     scale:0.9
 }
+.section-lista-usuarios {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;
+  width: 100%;
+}
 
 
 .hidden {
@@ -223,12 +231,4 @@ input.error {
 
 .usuario-card .btn-mensaje:hover {
   background-color: #d39e00;
-}
-.section-lista-usuarios {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  min-height: 80vh;
-  width: 100%;
 }

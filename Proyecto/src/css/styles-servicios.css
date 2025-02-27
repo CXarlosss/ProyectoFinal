@@ -94,25 +94,119 @@ button:hover {
   box-shadow: 0px 4px 15px rgba(178, 0, 94, 0.5);
 }
 
-/* 📌 Grid para mostrar los servicios */
-.grid {
+
+/* 🔹 Contenedor principal */
+#servicios-container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 20px;
-  padding: 30px;
+  grid-template-columns: repeat(auto-fill, minmax(390px, 1fr)); /* Columnas adaptables */
+  grid-auto-rows: minmax(390px, auto); /* 🔹 Aumentado para evitar cortes */
+  gap: 20px; /* Espaciado uniforme */
+  padding: 20px;
+  justify-content: center; /* Centra las tarjetas en el espacio disponible */
+  align-items: start; /* Evita que las tarjetas se estiren */
 }
 
-/* 🎨 Tarjetas con efecto glass y hover */
+
+/* 🎨 Tarjetas de servicios ajustadas al grid */
+carta-servicio {
+  display: flex;
+  flex-direction: column;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.12);
+  padding: 10px;
+  text-align: center;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  backdrop-filter: blur(5px);
+  min-height: 410px; 
+  align-self: stretch; 
+}
+
+/* 📌 Imagen de la tarjeta */
+carta-servicio img {
+  width: 100%;
+  height: 200px; 
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+/* 📌 Información del servicio */
+carta-servicio h2 {
+  font-size: 1.4rem;
+  margin-top: 10px;
+  font-weight: bold;
+  color: #333;
+}
+
+carta-servicio p {
+  font-size: 1rem;
+  color: #555;
+  margin: 10px 0;
+  flex-grow: 1; /* 🔹 Permite que el contenido crezca sin cortar el botón */
+}
+
+/* 📌 Ubicación y detalles */
+carta-servicio .ubicacion {
+  font-size: 0.9rem;
+  color: #7a6370;
+  margin-top: 8px;
+}
+
+/* 🎯 Botón de acción alineado abajo */
+carta-servicio .boton {
+  display: inline-block;
+  margin-top: auto; /* 🔹 Empuja el botón hacia abajo */
+  padding: 12px 20px; /* 🔹 Más grande */
+  border-radius: 10px;
+  color: #b2005e;
+  font-weight: bold;
+  text-decoration: none;
+  border: 2px solid #b2005e;
+  transition: all 0.3s ease-in-out;
+}
+
+carta-servicio .boton:hover {
+  background: #b2005e;
+  color: white;
+  box-shadow: 0px 4px 15px rgba(178, 0, 94, 0.5);
+}
+
+/* 📱 Responsividad para móviles */
+@media (max-width: 768px) {
+  #servicios-container {
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); /* 🔹 Ajuste en móvil */
+  }
+
+  carta-servicio {
+    min-height: 480px; /* 🔹 Ajuste en pantallas más pequeñas */
+  }
+
+  carta-servicio img {
+    height: 180px; /* 🔹 Imagen más pequeña en móvil */
+  }
+}
+
+
+
+
+
+
+
+/* 🎨 Tarjetas con diferentes alturas */
 .card {
   background: rgba(255, 255, 255, 0.9);
   border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.15);
-  padding: 20px;
+  box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.12);
+  padding: 10px;
   text-align: center;
-  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
   backdrop-filter: blur(5px);
+  max-height: 400px; /* 🔹 Evita que las tarjetas sean muy largas */
+  align-self: start; /* 🔹 Asegura que las tarjetas no crezcan más de lo necesario */
 }
+
 
 .card:hover {
   transform: scale(1.05);

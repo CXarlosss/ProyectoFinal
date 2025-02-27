@@ -17,8 +17,8 @@ body {
 .hero {
   position: relative;
   min-height: 80vh;
-  background: url("https://images.pexels.com/photos/2119903/pexels-photo-2119903.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1")
-    no-repeat center center/cover;
+  background: url("https://images.pexels.com/photos/2119903/pexels-photo-2119903.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1") no-repeat center center;
+  background-size: cover;
 }
 
 .hero-overlay {
@@ -53,7 +53,21 @@ body {
   opacity: 0.9;
   animation: fadeIn 1.5s ease-in-out;
 }
+
+/* Animaciones */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 h2{
+  
   text-align: center;
 }
 /* Botón Principal */

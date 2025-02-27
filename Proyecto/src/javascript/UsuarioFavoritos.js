@@ -58,6 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
         favoritos.forEach(servicio => {
             const favoritoItem = document.createElement("div");
             favoritoItem.classList.add("favorito-item");
+            
             favoritoItem.innerHTML = `
                 <p><strong>${servicio.nombre}</strong></p>
                 <p>${servicio.descripcion}</p>
@@ -138,7 +139,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     serviciosRecomendadosList.innerHTML = serviciosAleatorios.map(servicio => {
                         return `<div class="servicio-recomendado">
                             <p>${servicio.nombre}</p>
-                            <button class="btn-agregar-favorito" data-servicio-id="${servicio._id}">Añadir a Favoritos</button>
+                            <button class="btn-agregar-favorito" data-servicio-id="${servicio._id}">Add </button>
                         </div>`;
                     }).join('');
                 } else {

@@ -27,6 +27,8 @@ document.addEventListener("DOMContentLoaded", () => {
         localStorage.removeItem("servicioSeleccionado"); // 🔥 Limpiamos después de usarlo
     }
     cargarMensajes();
+    cargarMensajesRecibidosPorServicio(); // 🔥 Nueva función agregada
+
 
     
 });
@@ -189,42 +191,61 @@ export async function abrirChat(contactoId) {
     const chatMessages = document.getElementById("chat-messages");
     const chatTitulo = document.getElementById("chat-titulo");
 
-    if (!chatPopup || !chatMessages || !chatTitulo) return;
+    if (!chatPopup || !chatMessages || !chatTitulo) {
+        console.error("❌ Error: No se encontraron elementos en el DOM.");
+        return;
+    }
 
     if (!contactoId) {
-        console.error("❌ Error: contactoId es undefined o null. No se puede abrir el chat.");
+        console.error("❌ Error: contactoId es undefined o null.");
         return;
     }
 
     chatPopup.classList.add("active");
     chatTitulo.dataset.contactoId = contactoId;
-    chatMessages.innerHTML = "<p>Cargando mensajes...</p>";
+    
+    // 🔥 SOLUCIÓN: Limpiar antes de cargar nuevos mensajes
+    chatMessages.innerHTML = "";
 
     try {
         const usuarioGuardado = localStorage.getItem("usuarioRegistrado");
         const usuario = JSON.parse(usuarioGuardado || "{}");
 
-        // 🛠 Obtener el nombre del contacto antes de cargar mensajes
-        let nombreContacto = "Desconocido"; 
+        let nombreContacto = "Desconocido";
+        let esServicio = false;
 
-        // Intentamos obtener el nombre como servicio o usuario
-        const servicioResponse = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/read/servicio/${contactoId}`);
-        if (servicioResponse.ok) {
-            const servicioData = await servicioResponse.json();
-            nombreContacto = servicioData.nombre || "Servicio"; 
-        } else {
-            // Si no es un servicio, buscamos en la colección de usuarios
-            const usuarioResponse = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/read/users`);
-            if (usuarioResponse.ok) {
-                const usuarios = await usuarioResponse.json();
-                const usuarioEncontrado = usuarios.find(user => user._id === contactoId);
-                if (usuarioEncontrado) {
-                    nombreContacto = usuarioEncontrado.nombre || usuarioEncontrado.email || "Usuario";
+        // 🔍 Intentamos encontrar si el contacto es un servicio
+        try {
+            const servicioResponse = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/read/servicios`);
+            if (servicioResponse.ok) {
+                const servicios = await servicioResponse.json();
+                const servicioEncontrado = servicios.find(s => s._id === contactoId);
+                if (servicioEncontrado) {
+                    nombreContacto = servicioEncontrado.nombre || "Servicio";
+                    esServicio = true;
                 }
+            }
+        } catch (error) {
+            console.warn("⚠ No se pudo obtener el servicio", error);
+        }
+
+        // 🔍 Si no es un servicio, buscamos si es un usuario
+        if (!esServicio) {
+            try {
+                const usuarioResponse = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/read/users`);
+                if (usuarioResponse.ok) {
+                    const usuarios = await usuarioResponse.json();
+                    const usuarioEncontrado = usuarios.find(user => user._id === contactoId);
+                    if (usuarioEncontrado) {
+                        nombreContacto = usuarioEncontrado.nombre || usuarioEncontrado.email || "Usuario";
+                    }
+                }
+            } catch (error) {
+                console.warn("⚠ No se pudo obtener el usuario", error);
             }
         }
 
-        // 🔥 MOSTRAR NOMBRE EN EL CHAT
+        // 🔥 Mostrar el nombre en el chat
         chatTitulo.innerHTML = `Chat con ${nombreContacto}`;
 
         // 📨 Obtener los mensajes del chat
@@ -234,6 +255,8 @@ export async function abrirChat(contactoId) {
 
         const mensajes = await response.json();
         console.log("✅ Mensajes obtenidos:", mensajes);
+
+        // 🔥 SOLUCIÓN: Evitar la duplicación limpiando antes de agregar nuevos mensajes
         chatMessages.innerHTML = "";
 
         mensajes.forEach((msg) => {
@@ -257,6 +280,92 @@ export async function abrirChat(contactoId) {
 }
 
 
+
+/**
+ * 📌 Carga los mensajes que han sido enviados a un servicio y los asigna también al creador del servicio.
+ */
+async function cargarMensajesRecibidosPorServicio() {
+    try {
+        console.log("📌 EJECUTANDO cargarMensajesRecibidosPorServicio()...");
+
+        const usuarioGuardado = localStorage.getItem("usuarioRegistrado");
+        if (!usuarioGuardado) throw new Error("❌ Usuario no registrado en localStorage");
+
+        /** @type {{ _id: string, email: string }} */
+        const usuario = JSON.parse(usuarioGuardado);
+        if (!usuario._id) throw new Error("❌ ID de usuario no encontrado");
+
+        console.log(`📌 Buscando servicios creados por el usuario: ${usuario._id}`);
+
+        // 🔥 Obtener servicios creados por el usuario
+        const serviciosResponse = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/read/servicios?usuarioId=${usuario._id}`);
+        if (!serviciosResponse.ok) throw new Error("Error al obtener servicios del usuario");
+
+        const servicios = await serviciosResponse.json();
+        console.log("✅ Servicios obtenidos en cargarMensajesRecibidosPorServicio:", servicios);
+
+        const servicioDueño = new Map();
+        servicios.forEach(servicio => {
+            servicioDueño.set(servicio._id, servicio.usuarioId);
+        });
+
+        console.log("📌 Servicios mapeados:", servicioDueño);
+
+        // 🔥 Obtener mensajes
+        const mensajesResponse = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/read/mensajes`);
+        if (!mensajesResponse.ok) throw new Error("Error al obtener mensajes");
+
+        const mensajes = await mensajesResponse.json();
+        console.log("✅ Mensajes obtenidos en cargarMensajesRecibidosPorServicio:", mensajes);
+
+        // 🔥 Filtrar mensajes que pertenecen a los servicios del usuario
+        const mensajesParaUsuario = mensajes.filter(mensaje => servicioDueño.has(mensaje.receptorId));
+
+        console.log("📌 Mensajes filtrados:", mensajesParaUsuario);
+
+        if (mensajesParaUsuario.length === 0) {
+            console.log("⚠ No hay mensajes recibidos en servicios creados por el usuario.");
+            return;
+        }
+
+        // 🔥 Reenviar mensajes al dueño del servicio
+        for (const mensaje of mensajesParaUsuario) {
+           
+            const dueñoId = servicioDueño.get(mensaje.receptorId)?.toString(); // Asegura que es string
+
+            
+
+            console.log(`📌 Reenviando mensaje al dueño del servicio (ID: ${dueñoId})`);
+            console.log("📌 Enviando mensaje al backend con datos:");
+            console.log("usuarioId:", mensaje.usuarioId);
+            console.log("receptorId:", dueñoId);
+            console.log("contenido:", mensaje.contenido);
+            
+            // Verifica si dueñoId es un ObjectId válido antes de enviarlo
+            if (!/^[a-fA-F0-9]{24}$/.test(dueñoId)) {
+                console.error("❌ ERROR: dueñoId no es un ObjectId válido:", dueñoId);
+                return;
+            }
+            const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/mensajes`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    usuarioId: mensaje.usuarioId,
+                    receptorId: dueñoId, 
+                    contenido: mensaje.contenido
+                })
+            });
+
+            const result = await response.json();
+            console.log(`✅ Mensaje reenviado a ${dueñoId}:`, result);
+
+            if (!response.ok) throw new Error(`Error al reenviar mensaje (${response.status})`);
+        }
+
+    } catch (error) {
+        console.error("❌ Error en cargarMensajesRecibidosPorServicio:", error);
+    }
+}
 
 
 
@@ -284,39 +393,47 @@ async function enviarMensaje() {
         const usuario = JSON.parse(usuarioGuardado || "{}");
         const contactoId = chatTitulo.dataset.contactoId || null;
 
-        console.log("📌 Enviando mensaje con:");
-        console.log("Usuario ID:", usuario._id);
-        console.log("Destino ID:", contactoId);
-        console.log("Contenido:", mensajeTexto);
+        if (!usuario._id || !contactoId) {
+            console.error("❌ Error: Falta usuarioId o contactoId", { usuarioId: usuario._id, contactoId });
+            return;
+        }
+
+        const mensajeData = {
+            usuarioId: usuario._id,
+            receptorId: contactoId,
+            contenido: mensajeTexto,
+        };
+
+        console.log("📌 Datos enviados al servidor:", mensajeData);
 
         const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/mensajes`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                usuarioId: usuario._id,
-                receptorId: contactoId,
-                contenido: mensajeTexto,
-            })
+            body: JSON.stringify(mensajeData),
         });
 
+        const responseData = await response.json();
+        console.log("📌 Respuesta del servidor:", responseData);
+
         if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`Error al enviar mensaje (${response.status}): ${errorText}`);
+            console.error(`❌ Error al enviar mensaje (${response.status}):`, responseData);
+            return;
         }
 
         console.log("✅ Mensaje enviado correctamente.");
         mensajeInput.value = ""; 
 
-        // 🚀 ACTUALIZAR EL CHAT INSTANTÁNEAMENTE DESPUÉS DE ENVIAR EL MENSAJE
-      // ⚠️ Este es el cambio clave: asegurar que contactoId es válido antes de llamar abrirChat
-      if (contactoId) {
-        await abrirChat(contactoId);
-    } else {
-        console.error("❌ Error: contactoId es inválido al actualizar el chat.");
+        if (contactoId) {
+            await abrirChat(contactoId);
+        } else {
+            console.error("❌ Error: contactoId es inválido al actualizar el chat.");
+        }
+    } catch (error) {
+        console.error("❌ Error al enviar mensaje:", error);
     }
-} catch (error) {
-    console.error("❌ Error al enviar mensaje:", error);
 }
-}
+
+
+
 
 

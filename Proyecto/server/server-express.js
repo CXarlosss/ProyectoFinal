@@ -382,10 +382,15 @@ app.post("/mensajes", async (req, res) => {
     console.log("📌 Recibiendo mensaje en el servidor...");
     console.log("Datos recibidos:", req.body);
 
-    const { usuarioId, receptorId, contenido } = req.body;
+    let { usuarioId, receptorId, contenido } = req.body;
 
     if (!usuarioId || !receptorId || !contenido) {
       return res.status(400).json({ error: "Datos incompletos para crear un mensaje" });
+    }
+
+    // Validar si usuarioId y receptorId son ObjectId válidos
+    if (!ObjectId.isValid(usuarioId) || !ObjectId.isValid(receptorId)) {
+      return res.status(400).json({ error: "usuarioId o receptorId no son ObjectId válidos" });
     }
 
     const db = await connectDB();
@@ -461,12 +466,6 @@ app.get('/mensajes', async (req, res) => {
   }
 });
 
-
-
-
-
-
-
 // 📌 Marcar un mensaje como leído
 app.put('/mensajes/:mensajeId',  async (req, res) => {
   try {
@@ -489,6 +488,47 @@ app.put('/mensajes/:mensajeId',  async (req, res) => {
     res.status(500).json({ error: "Error interno del servidor" });
   }
 });
+
+app.delete('/delete/mensajes', async (req, res) => {
+  try {
+    const { chatId } = req.query;
+
+    if (!chatId) {
+      return res.status(400).json({ error: "ID de chat no proporcionado" });
+    }
+
+    console.log(`📌 Intentando eliminar mensajes con chatId: ${chatId}`);
+
+    const db = await connectDB();
+
+    // Verificar si existen mensajes antes de eliminar
+    const chatExists = await db.collection("mensajes").findOne({ chatId });
+
+    if (!chatExists) {
+      console.warn(`⚠ No se encontró el chat con ID: ${chatId}.`);
+      return res.status(404).json({ error: "Chat no encontrado" });
+    }
+
+    // Intentar eliminar todos los mensajes con ese chatId
+    const result = await db.collection("mensajes").deleteMany({ chatId });
+
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ error: "No se encontraron mensajes para eliminar" });
+    }
+
+    console.log(`✅ Chat ${chatId} eliminado correctamente.`);
+    res.json({ message: "Chat eliminado correctamente", result });
+
+  } catch (error) {
+    console.error("❌ Error al eliminar chat:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+});
+
+
+
+
+
 // 📌 Eliminar un mensaje
 app.delete('/mensajes/:mensajeId', async (req, res) => {
   try {

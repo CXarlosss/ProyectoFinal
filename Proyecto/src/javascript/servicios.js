@@ -1,16 +1,13 @@
 // @ts-check
 
-
-
-// @ts-check
-
 document.addEventListener("DOMContentLoaded", () => {
   console.log("📌 DOM cargado correctamente.");
 
   // 📌 Configuración de la API
   const API_PORT = location.port ? `:${location.port}` : "";
+  
   esperarContenedorServicios()
-    cargarServicios();
+  cargarServicios();
   let serviciosContainer =
     /** @type {HTMLDivElement | null} */ document.getElementById(
       "servicios-container"
@@ -78,25 +75,41 @@ document.addEventListener("DOMContentLoaded", () => {
     favoritos: [],
   };
 
-  // Luego dentro de `iniciarApp()`
 
-  async function cargarServicios() {
-    try {
-      const serviciosAPI = await fetch(
-        `${location.protocol}//${location.hostname}${API_PORT}/read/servicios`
-      );
+  // @ts-ignore
+  document.addEventListener("favoritos-actualizados", ({ detail: { servicioId, esFavorito } }) => {
+    console.log("📌 Evento 'favoritos-actualizados' recibido en servicios.js. Actualizando botones...");
+
+    // Buscar el botón correspondiente en la UI y actualizarlo
+    document.querySelectorAll(`.btn-favorito[data-servicio-id="${servicioId}"]`).forEach(btn => {
+      btn.textContent = esFavorito ? "★ Quitar de Favoritos" : "☆ Añadir a Favoritos";
+      btn.classList.toggle("favorito", esFavorito);
+    });
+});
+
+
+async function cargarServicios() {
+  try {
+      const serviciosAPI = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/read/servicios`);
       const servicios = await serviciosAPI.json();
 
       console.log("📌 Servicios obtenidos después de actualizar:", servicios);
 
       if (!Array.isArray(servicios))
-        throw new Error("⚠️ La API no devolvió un array válido de servicios.");
-    
+          throw new Error("⚠️ La API no devolvió un array válido de servicios.");
 
-      // ✅ Guardar en `state.servicios`
-            
-      state.servicios = servicios; // Guardar TODOS los servicios
+      // 🔥 Obtener favoritos desde localStorage
+      const usuarioGuardado = localStorage.getItem("usuarioRegistrado");
+      const usuario = usuarioGuardado ? JSON.parse(usuarioGuardado) : null;
+      const favoritos = usuario ? JSON.parse(localStorage.getItem(`favoritos_${usuario._id}`) || "[]") : [];
 
+      // 🔥 Marcar los servicios como favoritos si están en la lista
+      const serviciosConFavoritos = servicios.map(servicio => ({
+          ...servicio,
+          esFavorito: favoritos.some(fav => fav._id === servicio._id)
+      }));
+
+      state.servicios = serviciosConFavoritos;
 
       // ✅ Hacer `state` accesible globalmente
       // @ts-ignore
@@ -104,15 +117,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // ✅ Disparar evento para que `CartaSERV` reciba los servicios
       document.dispatchEvent(
-        new CustomEvent("servicios-cargados", { detail: { servicios } })
+          new CustomEvent("servicios-cargados", { detail: { servicios: serviciosConFavoritos } })
       );
-      renderServicios(state.servicios.slice(0, 10));
-      // ✅ Crear botón para cargar más servicios
+
+      renderServicios(serviciosConFavoritos.slice(0, 10));
       agregarBotonCargarMas();
-    } catch (error) {
+  } catch (error) {
       console.error("❌ Error al obtener servicios:", error);
-    }
   }
+}
+
 
   // 📌 Renderizar servicios en el DOM
   /**

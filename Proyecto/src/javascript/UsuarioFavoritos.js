@@ -3,6 +3,8 @@ import {abrirChat} from "./UsuarioMensajes.js";
 const API_PORT = location.port ? `:${location.port}` : ''
 
 document.addEventListener("DOMContentLoaded", () => {
+    cargarFavoritos(); // Recargar la lista de favoritos
+
     console.log("📌 Cargando módulo de favoritos...");
 
     const favoritosList = document.getElementById("favoritos-list");
@@ -13,26 +15,33 @@ document.addEventListener("DOMContentLoaded", () => {
         console.error("❌ No se encontró el ID del usuario.");
         return;
       }
-    async function cargarFavoritos() {
+      async function cargarFavoritos() {
         try {
             const usuarioGuardado = localStorage.getItem("usuarioRegistrado");
             if (!usuarioGuardado) throw new Error("Usuario no registrado");
-
+    
             const usuario = JSON.parse(usuarioGuardado);
             if (!usuario._id) throw new Error("ID de usuario no encontrado");
-
+    
             const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/users/${usuario._id}/favoritos`);
             if (!response.ok) throw new Error("Error al obtener favoritos");
-
+    
             const favoritos = await response.json();
             console.log("✅ Favoritos obtenidos:", favoritos);
+    
+            // 🔥 Guardar favoritos en localStorage para sincronizar con la página de servicios
+            localStorage.setItem(`favoritos_${usuario._id}`, JSON.stringify(favoritos));
+    
             renderizarListaFavoritos(favoritos);
             mostrarServiciosRecomendados();
-
+    
         } catch (error) {
             console.error("❌ Error al cargar favoritos:", error);
         }
-    }/**
+    }
+    
+    
+    /**
      * 📌 Escuchar evento para actualizar favoritos dinámicamente
      */
     document.addEventListener("favoritos-actualizados", () => {

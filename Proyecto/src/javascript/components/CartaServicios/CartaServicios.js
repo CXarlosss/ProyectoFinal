@@ -328,58 +328,58 @@ class CartaServicio extends HTMLElement {
   //FAVORITOSSS
 
 
-  /**
-   * 📌 Método para alternar el estado de favorito en la base de datos y actualizar la UI
-   * @param {string} servicioId - ID del servicio a agregar o quitar de favoritos
-   */
-  async toggleFavorito(servicioId) {
-    const usuarioGuardado = localStorage.getItem("usuarioRegistrado");
-    if (!usuarioGuardado) {
-        console.error("❌ Error: Usuario no autenticado.");
-        return;
-    }
+ /**
+ * 📌 Método para alternar el estado de favorito en la base de datos y actualizar la UI
+ * @param {string} servicioId - ID del servicio a agregar o quitar de favoritos
+ */
+async toggleFavorito(servicioId) {
+  const usuarioGuardado = localStorage.getItem("usuarioRegistrado");
+  if (!usuarioGuardado) {
+      console.error("❌ Error: Usuario no autenticado.");
+      return;
+  }
 
-    const usuario = JSON.parse(usuarioGuardado);
-    const API_PORT = location.port ? `:${location.port}` : "";
-    const url = `${location.protocol}//${location.hostname}${API_PORT}/users/${usuario._id}/favoritos/${servicioId}`;
+  const usuario = JSON.parse(usuarioGuardado);
+  const API_PORT = location.port ? `:${location.port}` : "";
+  const url = `${location.protocol}//${location.hostname}${API_PORT}/users/${usuario._id}/favoritos/${servicioId}`;
 
-    const favoritosGuardados = localStorage.getItem(`favoritos_${usuario._id}`);
-    const favoritos = favoritosGuardados ? JSON.parse(favoritosGuardados) : [];
-    const esFavorito = favoritos.some(fav => fav._id === servicioId);
-    const metodo = "PUT";
+  const favoritosGuardados = localStorage.getItem(`favoritos_${usuario._id}`);
+  const favoritos = favoritosGuardados ? JSON.parse(favoritosGuardados) : [];
+  const esFavorito = favoritos.some(fav => fav._id === servicioId);
+  const metodo = "PUT"; // PUT para alternar favoritos
 
-    try {
-        const response = await fetch(url, {
-            method: metodo,
-            headers: { "Content-Type": "application/json" },
-            cache: "no-cache",
-        });
+  try {
+      const response = await fetch(url, {
+          method: metodo,
+          headers: { "Content-Type": "application/json" },
+          cache: "no-cache",
+      });
 
-        if (!response.ok) {
-            throw new Error(`Error en la solicitud: ${response.statusText}`);
-        }
+      if (!response.ok) {
+          throw new Error(`Error en la solicitud: ${response.statusText}`);
+      }
 
-        console.log(`✅ Favorito ${esFavorito ? "eliminado" : "añadido"} correctamente.`);
+      console.log(`✅ Favorito ${esFavorito ? "eliminado" : "añadido"} correctamente.`);
 
-        // Actualizar favoritos en `localStorage`
-        let nuevosFavoritos;
-        if (esFavorito) {
-            nuevosFavoritos = favoritos.filter(fav => fav._id !== servicioId);
-        } else {
-            nuevosFavoritos = [...favoritos, { _id: servicioId }];
-        }
-        localStorage.setItem(`favoritos_${usuario._id}`, JSON.stringify(nuevosFavoritos));
+      // Actualizar favoritos en `localStorage`
+      let nuevosFavoritos;
+      if (esFavorito) {
+          nuevosFavoritos = favoritos.filter(fav => fav._id !== servicioId);
+      } else {
+          nuevosFavoritos = [...favoritos, { _id: servicioId }];
+      }
+      localStorage.setItem(`favoritos_${usuario._id}`, JSON.stringify(nuevosFavoritos));
 
-        // ✅ Emitir evento global con el ID del servicio actualizado
-        document.dispatchEvent(new CustomEvent("favoritos-actualizados", { 
-            detail: { usuarioId: usuario._id, servicioId, esFavorito: !esFavorito } 
-        }));
+      // ✅ Emitir evento global con el ID del servicio actualizado
+      document.dispatchEvent(new CustomEvent("favoritos-actualizados", { 
+          detail: { usuarioId: usuario._id, servicioId, esFavorito: !esFavorito } 
+      }));
 
-        // Actualizar la UI
-        this.actualizarBotonFavorito(servicioId, !esFavorito);
-    } catch (error) {
-        console.error("🚨 Error al actualizar favoritos:", error);
-    }
+      // Actualizar la UI
+      this.actualizarBotonFavorito(servicioId, !esFavorito);
+  } catch (error) {
+      console.error("🚨 Error al actualizar favoritos:", error);
+  }
 }
 
 

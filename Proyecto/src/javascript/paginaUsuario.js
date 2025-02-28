@@ -8,6 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
+
     // 🔥 SOLUCIÓN: Mostrar qué datos se están guardando
     console.log("✅ Usuario cargado desde localStorage:", usuarioGuardado);
 
@@ -21,6 +22,17 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     console.log("✅ Usuario autenticado:", usuario);
+    // 📌 Mostrar el nombre del usuario en la bienvenida
+        // 📌 Mostrar el nombre del usuario en la bienvenida
+    const nombreSpan = document.getElementById("nombre");
+
+    if (usuario.nombre && nombreSpan) {
+        nombreSpan.textContent = usuario.nombre; // 🔥 Insertar nombre en el HTML
+    } else {
+        console.warn("⚠️ No se encontró el elemento #nombre o el usuario no tiene un nombre registrado.");
+    }
+
+
 
     const btnServicios = document.getElementById("btn-ir-secciones"); 
 
@@ -31,23 +43,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     
 
-
-// Función para cargar los servicios recomendados
-  
-  // Función para mostrar los favoritos del usuario
-
-
-   /*  // Cargar módulos de favoritos y mensajes
-    const scriptFavoritos = document.createElement("script");
-    scriptFavoritos.src = "./javascript/UsuarioFavoritos.js";
-    document.body.appendChild(scriptFavoritos);
-
-    const scriptMensajes = document.createElement("script");
-    scriptMensajes.src = "./javascript/UsuarioMensajes.js";
-    document.body.appendChild(scriptMensajes); */
-
-    // 📌 Función para cerrar sesión
-    function cerrarSesion() {
+  // 📌 Función para cerrar sesión
+ function cerrarSesion() {
         if (confirm("¿Estás seguro de que quieres cerrar sesión?")) {
             localStorage.removeItem("usuarioRegistrado"); // Eliminar usuario
             window.location.href = "registrar.html"; // Redirigir a la página de inicio de sesión
@@ -55,13 +52,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // 📌 Agregar evento al botón de cerrar sesión
-    const btnCerrarSesion = document.getElementById("btn-cerrar-sesion");
+const btnCerrarSesion = document.getElementById("btn-cerrar-sesion");
     if (btnCerrarSesion) {
         btnCerrarSesion.addEventListener("click", cerrarSesion);
     }
 
-    function irAServicios() {
-        if (confirm("¿Estás seguro de que quieres ir a Servicios?")) {
+function irAServicios() {
+    if (confirm("¿Estás seguro de que quieres ir a Servicios?")) {
             window.location.href = "servicios.html";
         }
     }

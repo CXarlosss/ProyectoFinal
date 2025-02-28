@@ -1,13 +1,4 @@
-/* 🎯 Reset de estilos */
 
-  
-  body {
-    font-family: "Poppins", sans-serif !important;
-    background: linear-gradient(to right, #bbc9cf, #dde4e8) !important;
-    color: #383434 !important;
-    line-height: 1.6 !important;
-    padding-top: 90px !important; /* 🚀 Forzamos el espacio para el header */
-  }
   
   /* 🌟 HEADER FIJO SIN SOLAPAMIENTO */
   header {
@@ -26,20 +17,7 @@
     align-items: center !important;
   }
   
-  /* 📌 Ajustar margen del contenido para evitar solapamiento */
-  .container {
-    width: 80% !important;
-    max-width: 1200px !important;
-    display: flex !important;
-    gap: 20px !important;
-    margin-top: 20px !important; /* Asegurar margen después del header */
-    padding-bottom: 80px !important; /* Para evitar que se solape con elementos fijos */
-  }
-  
-  /* 🎯 Si el primer elemento sube, lo empujamos hacia abajo */
-  .container:first-child {
-    margin-top: 20px !important;
-  }
+
   
   /* 🔥 Navbar con hover dinámico */
   nav ul {

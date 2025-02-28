@@ -10,27 +10,28 @@ html {
 body {
   margin: 0;
   padding: 0;
-  font-family: 'Arial', sans-serif;
-  background-color: #f4f4f4;
+  font-family: 'Arial', sans-serif; 
+  background: linear-gradient(to right, #bbc9cf, #dde4e8) !important;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 80px; /* Espacio para el header fijo */
+   padding-top: 90px !important; /* 🚀 Forzamos el espacio para el header */
+ 
 }
 
 /* 📌 Ajustar margen del contenido para evitar solapamiento */
 .container {
-  width: 80%;
-  max-width: 1200px;
-  display: flex;
-  gap: 20px;
-  margin-top: 20px; /* Asegurar margen después del header */
-  padding-bottom: 80px; /* Para evitar que se solape con elementos fijos */
+  width: 80% !important;
+  max-width: 1200px !important;
+  display: flex !important;
+  gap: 20px !important;
+  margin-top: 20px !important; /* Asegurar margen después del header */
+  padding-bottom: 80px !important; /* Para evitar que se solape con elementos fijos */
 }
 
 /* 🎯 Si el primer elemento sube, lo empujamos hacia abajo */
 .container:first-child {
-  margin-top: 100px; /* Mayor margen para compensar el header */
+  margin-top: 120px; /* Mayor margen para compensar el header */
 }
 
 /* 🔥 Corregir salto cuando cambia de vista */

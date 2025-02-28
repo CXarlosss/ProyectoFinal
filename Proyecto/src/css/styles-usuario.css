@@ -1,4 +1,47 @@
 
+/* 🌟 NAVBAR FIJO SIN SOLAPAR EL CONTENIDO */
+
+
+/* 🚀 Evitar que el contenido se oculte debajo del header */
+html {
+  scroll-padding-top: 100px; /* Ajuste para anclajes y navegación */
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Arial', sans-serif;
+  background-color: #f4f4f4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 80px; /* Espacio para el header fijo */
+}
+
+/* 📌 Ajustar margen del contenido para evitar solapamiento */
+.container {
+  width: 80%;
+  max-width: 1200px;
+  display: flex;
+  gap: 20px;
+  margin-top: 20px; /* Asegurar margen después del header */
+  padding-bottom: 80px; /* Para evitar que se solape con elementos fijos */
+}
+
+/* 🎯 Si el primer elemento sube, lo empujamos hacia abajo */
+.container:first-child {
+  margin-top: 100px; /* Mayor margen para compensar el header */
+}
+
+/* 🔥 Corregir salto cuando cambia de vista */
+section {
+  scroll-margin-top: 120px; /* Ajuste si usas enlaces internos */
+}
+
+/* 🎯 Si hay modales que suben y se solapan */
+.modal {
+  z-index: 2000;
+}
 
 /* 📌 Distribución de botones */
 .main-buttons {
@@ -94,19 +137,45 @@ body {
 
 /* Estilos para la ventana emergente de detalles del servicio */
 .modal {
-  position:fixed;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5); /* Oscurece el fondo */
-  backdrop-filter: blur(10px); /* Desenfoque de fondo */
+  background: rgba(0, 0, 0, 0.5); /* Oscurece solo el fondo */
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
   transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
 }
+.modal::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(20px); /* 🔥 Solo el fondo tendrá blur */
+  z-index: -1; /* Envía el efecto detrás del modal */
+}
+.modal-content {
+  background: rgba(255, 255, 255, 0.95); /* Fondo sólido SIN desenfoque */
+  position: relative;
+  left: 35%;
+  top: 25%;
+  border-radius: 15px;
+  padding: 25px;
+  width: 90%;
+  max-width: 420px;
+  text-align: center;
+  box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.3);
+  animation: fadeIn 0.3s ease-in-out;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  max-height: 90vh;
+  overflow-y: auto; /* Permitir desplazamiento interno */
+}
+
 #modal-editar-usuario {
   display: none; /* ⬅ Ocultar al inicio */
   position: fixed;
@@ -179,21 +248,7 @@ body {
   margin-top: 15px;
 }
 
-.modal-content {
-  background: rgba(255, 255, 255); /* Fondo translúcido */
-  backdrop-filter: blur(15px);
-  left: 35%;
-  top: 25%;
-  border-radius: 15px;
-  padding: 25px;
-  width: 90%;
-  max-width: 420px;
-  text-align: center;
-  box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.3);
-  animation: fadeIn 0.3s ease-in-out;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  position: relative;
-}
+
 
 
 /* 🔄 Si el contenido es grande, aseguramos que no se salga */

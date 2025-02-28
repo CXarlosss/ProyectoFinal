@@ -71,7 +71,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const usuario = JSON.parse(usuarioGuardado);
   console.log("📌 Usuario cargado desde localStorage:", usuario);
 
-  /** @type {{ servicios: { _id: string, nombre: string, descripcion: string, ubicacion: string, valoracion: string, imagen: string, categoria: string }[], favoritos: { _id: string, nombre: string }[] }} */
+  /** @type {{ servicios: { _id: string, nombre: string, descripcion: string, ubicacion: string, imagen: string, categoria: string }[], favoritos: { _id: string, nombre: string }[] }} */
 
   const state = {
     servicios: [],
@@ -95,8 +95,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // ✅ Guardar en `state.servicios`
             
-      const serviciosLimitados = servicios.slice(0, 10);
-      state.servicios = serviciosLimitados;
+      state.servicios = servicios; // Guardar TODOS los servicios
 
 
       // ✅ Hacer `state` accesible globalmente
@@ -107,8 +106,9 @@ document.addEventListener("DOMContentLoaded", () => {
       document.dispatchEvent(
         new CustomEvent("servicios-cargados", { detail: { servicios } })
       );
-      renderServicios(serviciosLimitados);
-
+      renderServicios(state.servicios.slice(0, 10));
+      // ✅ Crear botón para cargar más servicios
+      agregarBotonCargarMas();
     } catch (error) {
       console.error("❌ Error al obtener servicios:", error);
     }
@@ -136,7 +136,7 @@ document.addEventListener("DOMContentLoaded", () => {
       cartaServicio.setAttribute("nombre", servicio.nombre);
       cartaServicio.setAttribute("descripcion", servicio.descripcion);
       cartaServicio.setAttribute("ubicacion", servicio.ubicacion);
-      cartaServicio.setAttribute("valoracion", servicio.valoracion);
+
       cartaServicio.setAttribute("imagen", servicio.imagen);
       cartaServicio.setAttribute("emailUsuario", servicio.emailUsuario);
 
@@ -235,8 +235,7 @@ document.addEventListener("DOMContentLoaded", () => {
       descripcion: formCrearServicio.querySelector("#descripcion-servicio").value.trim(),
       // @ts-ignore
       ubicacion: formCrearServicio.querySelector("#ubicacion-servicio").value.trim(),
-      // @ts-ignore
-      valoracion: parseFloat(formCrearServicio.querySelector("#valoracion-servicio").value) || 0,
+      
       // @ts-ignore
       precio: parseFloat(formCrearServicio.querySelector("#precio-servicio").value) || 0,
       // @ts-ignore
@@ -270,6 +269,7 @@ document.addEventListener("DOMContentLoaded", () => {
       alert("✅ Servicio creado con éxito");
 
       document.dispatchEvent(new CustomEvent("servicio-creado", { detail: apiData }));
+      
       // @ts-ignore
       formCrearServicio.reset();
       modalCrearServicio.classList.add("hidden");
@@ -278,6 +278,36 @@ document.addEventListener("DOMContentLoaded", () => {
       alert("❌ Hubo un error al crear el servicio.");
     }
   });
+  cargarServicios();
+
+function agregarBotonCargarMas() {
+  let botonCargarMas = document.getElementById("btn-cargar-mas");
+  
+  // Si ya existe el botón, no lo agregamos de nuevo
+  if (botonCargarMas) return;
+
+  botonCargarMas = document.createElement("button");
+  botonCargarMas.id = "btn-cargar-mas";
+  botonCargarMas.textContent = "Cargar más";
+  botonCargarMas.style.display = "block";
+  botonCargarMas.style.margin = "5px auto";
+  botonCargarMas.style.padding = "10px 15px";
+  botonCargarMas.style.cursor = "pointer";
+
+  // Agregar evento para mostrar más servicios
+  let cantidadMostrada = 10;
+  botonCargarMas.addEventListener("click", () => {
+    cantidadMostrada += 10;
+    renderServicios(state.servicios.slice(0, cantidadMostrada));
+
+    // Si ya se mostraron todos, ocultar el botón
+    if (cantidadMostrada >= state.servicios.length) {
+      botonCargarMas.style.display = "none";
+    }
+  });
+
+  document.body.appendChild(botonCargarMas);
+}
 });
  
   

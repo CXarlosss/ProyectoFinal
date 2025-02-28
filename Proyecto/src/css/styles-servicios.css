@@ -16,7 +16,7 @@ body {
 header {
   text-align: center;
   padding: 20px;
-  background: rgba(51, 20, 40, 0.8); /* 🔥 Fondo con glass effect */
+  background: rgba(51, 51, 51, 0.8); /* 🎭 Efecto Glassmorphism */
   backdrop-filter: blur(10px);
   color: white;
   box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
@@ -51,7 +51,7 @@ nav ul li a::after {
   content: "";
   width: 0;
   height: 3px;
-  background: #ff4d7d;
+  background: #ffcc00; /* Amarillo vibrante */
   position: absolute;
   bottom: -5px;
   left: 50%;
@@ -60,7 +60,7 @@ nav ul li a::after {
 }
 
 nav ul li a:hover {
-  color: #ff4d7d;
+  color: #ffcc00;
   transform: scale(1.1);
 }
 

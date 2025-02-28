@@ -4,50 +4,6 @@
     padding: 0;
     box-sizing: border-box;
 }
-header {
-    height: 100%;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background: black; /* Fondo negro */
-    padding: 20px;
-  }
-  
-  header h1 {
-    color: white; /* Texto blanco para el título */
-    margin-bottom: 10px;
-  }
-  
-  header nav ul {
-    font-size: 1.4rem;
-    margin-top: 10px;
-    list-style: none;
-    padding: 0;
-    display: flex;
-    gap: 20px; /* Espaciado entre los elementos del menú */
-  }
-  
-  header nav ul li {
-    display: inline-block;
-    transition: transform 0.3s ease; /* Animación para el hover */
-  }
-  
-  header nav ul li:hover {
-    transform: scale(1.1); /* Crecimiento al pasar el cursor */
-  }
-  
-  header nav ul li a {
-    text-decoration: none;
-    color: white; /* Texto blanco */
-    font-weight: bold;
-    transition: color 0.3s ease, transform 0.3s ease;
-  }
-  
-  header nav ul li a:hover {
-    color: #b2005e; /* Color diferente al hacer hover */
-  }
 
 body {
     font-family: Arial, Helvetica, sans-serif;

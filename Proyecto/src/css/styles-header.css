@@ -1,0 +1,63 @@
+/* 🌟 NAVBAR MEJORADO */
+header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: rgba(51, 51, 51, 0.8); /* 🎭 Efecto Glassmorphism */
+    backdrop-filter: blur(10px);
+    padding: 15px 0;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    animation: slideDown 0.8s ease-in-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: white;
+    font-size: 1.2rem;
+    padding: 10px 15px;
+    border-radius: 5px;
+    position: relative;
+    transition: color 0.3s ease-in-out;
+}
+
+/* ✨ Efecto de subrayado animado */
+nav ul li a::after {
+    content: "";
+    display: block;
+    width: 0;
+    height: 3px;
+    background: #ffcc00; /* Amarillo vibrante */
+    transition: width 0.3s ease-in-out;
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+nav ul li a:hover::after {
+    width: 100%;
+}
+
+nav ul li a:hover {
+    color: #ffcc00;
+    transform: scale(1.1);
+}

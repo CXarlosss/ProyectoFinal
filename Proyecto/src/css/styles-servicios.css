@@ -180,28 +180,7 @@ carta-servicio .boton:hover {
   box-shadow: 0px 4px 15px rgba(178, 0, 94, 0.5);
 }
 
-/* 📱 Responsividad para móviles */
-@media (max-width: 1024px) {
-  #servicios-container {
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Ajuste para tablets */
-    grid-auto-rows: minmax(380px, auto);
-  }
-}
 
-@media (max-width: 768px) {
-  #servicios-container {
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Ajuste para móviles */
-    grid-auto-rows: minmax(360px, auto);
-  }
-}
-
-@media (max-width: 480px) {
-  #servicios-container {
-    grid-template-columns: 1fr; /* Una sola columna en pantallas muy pequeñas */
-    grid-auto-rows: minmax(350px, auto);
-    padding: 10px;
-  }
-}
 
 
 /* 🎨 Tarjetas con diferentes alturas */
@@ -282,23 +261,38 @@ carta-servicio .boton:hover {
 }
 
 .modal {
-  display: flex;
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   background: rgba(255, 255, 255, 0.95);
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-  padding: 30px;
+  padding: 20px;
   border-radius: 12px;
   z-index: 1000;
-  animation: fadeIn 0.3s ease-in-out;
+  width: auto; /* 🔹 Ahora mide la mitad */
+  max-height: 50vh; /* 🔹 No sobrepasa la pantalla */
+  overflow-y: auto; /* 🔹 Permite scroll interno si es necesario */
 }
 
 /* 🏆 Formulario en modal */
-.modal-content {
+modal-content {
   width: 100%;
-  max-width: 400px;
+  max-width: 300px; /* 🔹 Más pequeño */
+  text-align: center;
+}
+
+/* 📝 INPUTS y TEXTAREA */
+.modal-content input,
+.modal-content textarea,
+.modal-content select {
+  width: 90%;
+  font-size: 0.8rem; /* 🔹 Más pequeño */
+  padding: 6px;
+  margin-bottom: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  transition: border-color 0.3s ease;
 }
 
 .modal-content h2 {
@@ -309,15 +303,7 @@ carta-servicio .boton:hover {
   margin-bottom: 15px;
 }
 
-.modal-content input,
-.modal-content textarea {
-  width: calc(100% - 20px);
-  padding: 10px;
-  font-size: 14px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  transition: border-color 0.3s ease;
-}
+
 
 .modal-content input:focus,
 .modal-content textarea:focus {
@@ -337,22 +323,6 @@ carta-servicio .boton:hover {
   }
 }
 
-/* 📱 Responsividad */
-@media (max-width: 768px) {
-  .grid {
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      padding: 20px;
-  }
-
-  .card {
-      padding: 15px;
-  }
-
-  button {
-      font-size: 0.9rem;
-      padding: 10px 15px;
-  }
-}
 
 
 
@@ -448,5 +418,163 @@ footer {
   position: fixed;
   bottom: 0;
   width: 100%;
+}
+/* 📱 RESPONSIVIDAD UNIFICADA */
+
+/* 🌍 Para pantallas grandes (mínimo 1025px) */
+@media (min-width: 1025px) {
+  #servicios-container {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    margin-bottom: 50px; /* 🔹 Más espacio debajo */
+  }
+  header {
+    padding: 15px;
+  }
+  .modal-content {
+    width: 90%;
+    max-width: 400px;
+    padding: 18px;
+  }
+  .modal-content input,
+  .modal-content textarea,
+  .modal-content select {
+    font-size: 0.95rem;
+    padding: 9px;
+  }
+  .modal-content button {
+    font-size: 0.95rem;
+    padding: 10px;
+  }
+}
+
+/* 🖥️ Para pantallas medianas (hasta 1024px) */
+@media (max-width: 1024px) {
+  #servicios-container {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-auto-rows: minmax(380px, auto);
+    margin-bottom: 50px; /* 🔹 Más espacio debajo */
+  }
+  header {
+    padding: 15px;
+  }
+  
+  .modal-content {
+    align-items: center;
+   
+    max-width: 400px;
+    padding: 18px;
+  }
+  .modal-content input,
+  .modal-content textarea,
+  .modal-content select {
+    font-size: 0.95rem;
+    padding: 9px;
+  }
+  .modal-content button {
+    font-size: 0.95rem;
+    padding: 10px;
+  }
+}
+
+/* 📱 Para tablets (hasta 768px) */
+@media (max-width: 768px) {
+  header {
+    padding: 10px 15px;
+  }
+  nav ul {
+    display: none;
+    flex-direction: column;
+    background: rgba(51, 51, 51, 0.95);
+    position: absolute;
+    top: 70px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    gap: 10px;
+    padding: 10px 0;
+  }
+  nav ul.show {
+    display: flex;
+  }
+  .menu-toggle {
+    display: block;
+  }
+  #servicios-container {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-auto-rows: minmax(360px, auto);
+    margin-bottom: 50px; /* 🔹 Más espacio debajo */
+  }
+  .modal-content {
+    width: 90%;
+    max-width: 400px;
+    padding: 18px;
+  }
+  .modal-content input,
+  .modal-content textarea,
+  .modal-content select {
+    font-size: 0.95rem;
+    padding: 9px;
+  }
+  .modal-content button {
+    font-size: 0.95rem;
+    padding: 10px;
+  }
+}
+
+/* 📱 Para móviles medianos (hasta 600px) */
+@media (max-width: 600px) {
+  #servicios-container {
+    margin-bottom: 60px; /* 🔹 Un poco más de margen en móviles */
+  }
+  .modal-content {
+    width: 95%;
+    max-width: 380px;
+    padding: 15px;
+  }
+  .modal-content input,
+  .modal-content textarea,
+  .modal-content select {
+    font-size: 0.9rem;
+    padding: 8px;
+  }
+  .modal-content button {
+    font-size: 0.9rem;
+    padding: 10px;
+  }
+}
+
+/* 📱 Para móviles pequeños (hasta 480px) */
+@media (max-width: 480px) {
+  body {
+    padding-top: 80px;
+  }
+  header {
+    padding: 10px;
+  }
+  nav ul li a {
+    font-size: 1rem;
+    padding: 6px 10px;
+  }
+  #servicios-container {
+    grid-template-columns: 1fr;
+    grid-auto-rows: minmax(350px, auto);
+    padding: 10px;
+    margin-bottom: 70px; /* 🔹 Aún más espacio debajo */
+  }
+  .modal-content {
+    width: 90%;
+    max-width: 360px;
+    padding: 12px;
+  }
+  .modal-content input,
+  .modal-content textarea,
+  .modal-content select {
+    font-size: 0.85rem;
+    padding: 7px;
+  }
+  .modal-content button {
+    font-size: 0.85rem;
+    padding: 9px;
+  }
 }
 

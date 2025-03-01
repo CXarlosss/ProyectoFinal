@@ -298,3 +298,14 @@
     padding: 12px 15px;
     margin-left: 10px;
   }
+
+  /* 📌 RESPONSIVIDAD */
+@media (max-width: 600px) {
+  .chats {
+    width: 95%;
+  }
+  .chat-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
         window.location.href = "registrar.html"; 
         return;
     }
+    
 
 
     // 🔥 SOLUCIÓN: Mostrar qué datos se están guardando
@@ -51,6 +52,14 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    const menuToggle = document.querySelector(".menu-toggle");
+    const navMenu = document.querySelector("nav ul");
+
+    if (menuToggle && navMenu) {
+        menuToggle.addEventListener("click", () => {
+            navMenu.classList.toggle("show");
+        });
+    }
     // 📌 Agregar evento al botón de cerrar sesión
 const btnCerrarSesion = document.getElementById("btn-cerrar-sesion");
     if (btnCerrarSesion) {

@@ -270,10 +270,47 @@ body {
 }
 
 /* 📌 Ajustes Responsive */
+
+/* 📌 Hacemos que las secciones sean más amplias en pantallas pequeñas */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column; /* 🔥 Apilamos los elementos en móvil */
+    align-items: center; /* 🔥 Evita que el contenido se cierre */
+  }
+
+  .seccion {
+    width: 95%; /* 🔥 Que ocupe más espacio en móvil */
+  }
+}
+
+/* 📌 Ventana emergente de detalles del servicio */
+.modal-content {
+  background: rgba(255, 255, 255, 0.95);
+  position: relative;
+  border-radius: 15px;
+  padding: 25px;
+  max-width: 420px; /* 🔥 Limitamos el tamaño del modal */
+  width: 90%;
+  text-align: center;
+  box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.3);
+  animation: fadeIn 0.3s ease-in-out;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  max-height: 90vh;
+  overflow-y: auto; /* Permitir desplazamiento interno */
+}
+
+/* 📌 Ajustes para dispositivos móviles */
 @media (max-width: 600px) {
+  .modal {
+    align-items: flex-start; /* 🔥 Permite que el modal se posicione mejor */
+    padding-top: 10vh; /* 🔥 Espaciado superior */
+  }
+
   .modal-content {
+    left: 20%;
     width: 95%;
     max-width: 350px;
+    height: auto; /* 🔥 Para que no se corte el contenido */
     padding: 20px;
   }
 }

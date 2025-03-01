@@ -250,3 +250,47 @@ input.error {
 .usuario-card .btn-mensaje:hover {
   background-color: #d39e00;
 }
+/* 📱 RESPONSIVE PARA PANTALLAS PEQUEÑAS */
+@media screen and (max-width: 768px) {
+  header {
+    padding: 15px;
+  }
+  
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  nav ul {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  nav ul li a {
+    font-size: 1rem;
+  }
+  
+  main {
+    width: 95%;
+  }
+  
+  section {
+    padding: 15px;
+    width: 100%;
+  }
+}
+
+/* 📱 RESPONSIVE PARA TELÉFONOS MÁS PEQUEÑOS */
+@media screen and (max-width: 480px) {
+  h1 {
+    font-size: 1.2rem;
+  }
+  
+  nav ul {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  nav ul li a {
+    font-size: 0.9rem;
+  }
+}

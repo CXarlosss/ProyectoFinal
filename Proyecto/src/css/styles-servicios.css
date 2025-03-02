@@ -98,11 +98,10 @@ button:hover {
 /* 🔹 Contenedor principal */
 #servicios-container {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(390px, 1fr)); /* Columnas adaptables */
-  grid-auto-rows: minmax(390px, auto); /* 🔹 Aumentado para evitar cortes */
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  grid-auto-rows: minmax(430px, auto); /* 🔹 Aumentado para evitar cortes */
   gap: 20px; /* Espaciado uniforme */
-  padding: 20px;
-  justify-content: center; /* Centra las tarjetas en el espacio disponible */
+  padding: 10px;
   align-items: start; /* Evita que las tarjetas se estiren */
 }
 /* Aplica el efecto de desenfoque y opacidad solo a las tarjetas que NO están en hover */
@@ -116,7 +115,7 @@ button:hover {
 
 /* 🎨 Tarjetas de servicios ajustadas al grid */
 carta-servicio {
-  display: flex;
+  display: block;
   flex-direction: column;
   background: rgba(255, 255, 255, 0.9);
   border-radius: 10px;
@@ -189,11 +188,11 @@ carta-servicio .boton:hover {
   border-radius: 10px;
   overflow: hidden;
   box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.12);
-  padding: 10px;
+  
   text-align: center;
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
   backdrop-filter: blur(5px);
-  max-height: 400px; /* 🔹 Evita que las tarjetas sean muy largas */
+
   align-self: start; /* 🔹 Asegura que las tarjetas no crezcan más de lo necesario */
 }
 

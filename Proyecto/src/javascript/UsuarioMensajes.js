@@ -109,9 +109,6 @@ async function cargarMensajes() {
 
 
 
-
-
-
 /**
  * 📌 Renderiza la lista de chats en la UI con nombres reales.
  * @param {any[]} mensajes
@@ -139,7 +136,11 @@ function renderizarListaChats(mensajes, usuarioId) {
     mensajes.forEach((msg) => {
         const chatId = msg.chatId;
         const contactoId = msg.usuarioId === usuarioId ? msg.receptorId : msg.usuarioId;
-        const contactoNombre = msg.usuarioId === usuarioId ? msg.nombreReceptor : msg.nombreEmisor;
+     const contactoNombre = msg.usuarioId === usuarioId 
+    ? (msg.nombreReceptor || `Usuario ${msg.receptorId}`) 
+    : (msg.nombreEmisor || `Usuario ${msg.usuarioId}`);
+
+console.log(`📌 Renderizando chat con: ${contactoNombre} (ID: ${contactoId})`);
 
         console.log(`📌 Renderizando chat con: ${contactoNombre} (ID: ${contactoId})`);
 
@@ -176,8 +177,6 @@ function renderizarListaChats(mensajes, usuarioId) {
 
 
 
-
-
 /**
  * 📌 Abre un chat específico y muestra los mensajes.
  * @param {string} contactoId 
@@ -201,10 +200,12 @@ export async function abrirChat(contactoId) {
         return;
     }
 
+    // 🔥 Guardamos el chat abierto en localStorage
+    localStorage.setItem("chatAbierto", contactoId);
+
     chatPopup.classList.add("active");
     chatTitulo.dataset.contactoId = contactoId;
-    
-    // 🔥 SOLUCIÓN: Limpiar antes de cargar nuevos mensajes
+
     chatMessages.innerHTML = "";
 
     try {
@@ -256,7 +257,6 @@ export async function abrirChat(contactoId) {
         const mensajes = await response.json();
         console.log("✅ Mensajes obtenidos:", mensajes);
 
-        // 🔥 SOLUCIÓN: Evitar la duplicación limpiando antes de agregar nuevos mensajes
         chatMessages.innerHTML = "";
 
         mensajes.forEach((msg) => {
@@ -278,6 +278,7 @@ export async function abrirChat(contactoId) {
         console.error("❌ Error al cargar mensajes del chat:", error);
     }
 }
+
 
 
 
@@ -306,10 +307,12 @@ async function cargarMensajesRecibidosPorServicio() {
 
         const servicioDueño = new Map();
         servicios.forEach(servicio => {
-            servicioDueño.set(servicio._id, servicio.usuarioId);
+            if (/^[a-fA-F0-9]{24}$/.test(servicio.usuarioId)) { 
+                servicioDueño.set(String(servicio._id), String(servicio.usuarioId));
+            } else {
+                console.warn(`⚠ El servicio ${servicio._id} tiene un usuarioId inválido: ${servicio.usuarioId}`);
+            }
         });
-
-        console.log("📌 Servicios mapeados:", servicioDueño);
 
         // 🔥 Obtener mensajes
         const mensajesResponse = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/read/mensajes`);
@@ -319,7 +322,7 @@ async function cargarMensajesRecibidosPorServicio() {
         console.log("✅ Mensajes obtenidos en cargarMensajesRecibidosPorServicio:", mensajes);
 
         // 🔥 Filtrar mensajes que pertenecen a los servicios del usuario
-        const mensajesParaUsuario = mensajes.filter(mensaje => servicioDueño.has(mensaje.receptorId));
+        const mensajesParaUsuario = mensajes.filter(mensaje => servicioDueño.has(String(mensaje.receptorId)));
 
         console.log("📌 Mensajes filtrados:", mensajesParaUsuario);
 
@@ -328,39 +331,27 @@ async function cargarMensajesRecibidosPorServicio() {
             return;
         }
 
-        // 🔥 Reenviar mensajes al dueño del servicio
-        for (const mensaje of mensajesParaUsuario) {
-           
-            const dueñoId = servicioDueño.get(mensaje.receptorId)?.toString(); // Asegura que es string
+        // 🔥 Asignar el dueño del servicio como receptor sin hacer un request innecesario
+        const mensajesAsignados = mensajesParaUsuario.map(mensaje => {
+            const dueñoId = servicioDueño.get(String(mensaje.receptorId));
 
-            
-
-            console.log(`📌 Reenviando mensaje al dueño del servicio (ID: ${dueñoId})`);
-            console.log("📌 Enviando mensaje al backend con datos:");
-            console.log("usuarioId:", mensaje.usuarioId);
-            console.log("receptorId:", dueñoId);
-            console.log("contenido:", mensaje.contenido);
-            
-            // Verifica si dueñoId es un ObjectId válido antes de enviarlo
-            if (!/^[a-fA-F0-9]{24}$/.test(dueñoId)) {
+            if (!dueñoId || !/^[a-fA-F0-9]{24}$/.test(dueñoId)) {
                 console.error("❌ ERROR: dueñoId no es un ObjectId válido:", dueñoId);
-                return;
+                return null; // Evitar agregar mensajes incorrectos
             }
-            const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/mensajes`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    usuarioId: mensaje.usuarioId,
-                    receptorId: dueñoId, 
-                    contenido: mensaje.contenido
-                })
-            });
 
-            const result = await response.json();
-            console.log(`✅ Mensaje reenviado a ${dueñoId}:`, result);
+            console.log(`📌 Reasignando mensaje al dueño del servicio (ID: ${dueñoId})`);
 
-            if (!response.ok) throw new Error(`Error al reenviar mensaje (${response.status})`);
-        }
+            return {
+                ...mensaje,
+                receptorId: dueñoId, // Asignamos el dueño como receptor
+            };
+        }).filter(Boolean); // Filtramos mensajes inválidos
+
+        console.log("📌 Mensajes listos para ser mostrados:", mensajesAsignados);
+
+        // 🔥 Mostrar en la UI en lugar de reenviar al backend
+        renderizarListaChats(mensajesAsignados, usuario._id);
 
     } catch (error) {
         console.error("❌ Error en cargarMensajesRecibidosPorServicio:", error);

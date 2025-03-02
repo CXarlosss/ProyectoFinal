@@ -1,5 +1,7 @@
 //@ts-check
 
+
+
 const API_PORT = location.port ? `:${location.port}` : '';
 document.addEventListener("DOMContentLoaded", () => {
     
@@ -66,7 +68,7 @@ async function cargarMensajes() {
         // Si no hay mensajes después de filtrar, detenemos aquí
         if (mensajesFiltrados.length === 0) {
             console.warn("⚠ No hay mensajes para este usuario.");
-            renderizarListaChats([], usuario._id);
+            renderizarListaChats([], usuario._id, {});
             return;
         }
 
@@ -100,7 +102,7 @@ async function cargarMensajes() {
 
         console.log("✅ Mensajes después de asignar nombres:", mensajesFiltrados);
 
-        renderizarListaChats(mensajesFiltrados, usuario._id);
+        renderizarListaChats(mensajesFiltrados, usuario._id, mapaNombres);
 
     } catch (error) {
         console.error("❌ Error al cargar mensajes:", error);
@@ -114,9 +116,11 @@ async function cargarMensajes() {
  * @param {any[]} mensajes
  * @param {string} usuarioId
  */
-function renderizarListaChats(mensajes, usuarioId) {
+function renderizarListaChats(mensajes, usuarioId, mapaNombres) {
     console.log("📌 Ejecutando renderizarListaChats()...");
     console.log("📌 Datos recibidos en renderizarListaChats:", mensajes);
+    console.log("📌 Mapa de nombres recibido:", mapaNombres);
+
     const chatList = document.getElementById("chat-list");
     if (!chatList) {
         console.error("❌ No se encontró el contenedor de mensajes.");
@@ -136,23 +140,18 @@ function renderizarListaChats(mensajes, usuarioId) {
     mensajes.forEach((msg) => {
         const chatId = msg.chatId;
         const contactoId = msg.usuarioId === usuarioId ? msg.receptorId : msg.usuarioId;
-     const contactoNombre = msg.usuarioId === usuarioId 
-    ? (msg.nombreReceptor || `Usuario ${msg.receptorId}`) 
-    : (msg.nombreEmisor || `Usuario ${msg.usuarioId}`);
-
-console.log(`📌 Renderizando chat con: ${contactoNombre} (ID: ${contactoId})`);
+        const contactoNombre = mapaNombres[contactoId] || `Usuario ${contactoId}`;
 
         console.log(`📌 Renderizando chat con: ${contactoNombre} (ID: ${contactoId})`);
 
         if (!chats[chatId]) {
             chats[chatId] = {
                 id: contactoId,
-                nombre: contactoNombre,  // 🔥 Asegurar que se usa el nombre real
+                nombre: contactoNombre,
                 ultimoMensaje: msg.contenido,
                 fecha: new Date(msg.fecha).toLocaleString()
             };
         } else {
-            // Si ya existe el chat, actualizamos el último mensaje
             chats[chatId].ultimoMensaje = msg.contenido;
             chats[chatId].fecha = new Date(msg.fecha).toLocaleString();
         }
@@ -350,8 +349,24 @@ async function cargarMensajesRecibidosPorServicio() {
 
         console.log("📌 Mensajes listos para ser mostrados:", mensajesAsignados);
 
+        // 🔥 Obtener datos de usuarios y servicios antes de crear el mapa de nombres
+        const [usuariosResponse, serviciosResponse2] = await Promise.all([
+            fetch(`${location.protocol}//${location.hostname}${API_PORT}/read/users`),
+            fetch(`${location.protocol}//${location.hostname}${API_PORT}/read/servicios`)
+        ]);
+
+        const usuarios = usuariosResponse.ok ? await usuariosResponse.json() : [];
+        const servicios2 = serviciosResponse2.ok ? await serviciosResponse2.json() : [];
+
+        // 🔥 Crear un mapa de nombres reales
+        const mapaNombres = {};
+        usuarios.forEach(user => mapaNombres[user._id] = user.nombre || user.email);
+        servicios2.forEach(servicio => mapaNombres[servicio._id] = servicio.nombre);
+
+        console.log("📌 Mapa de nombres cargado en cargarMensajesRecibidosPorServicio():", mapaNombres);
+
         // 🔥 Mostrar en la UI en lugar de reenviar al backend
-        renderizarListaChats(mensajesAsignados, usuario._id);
+        renderizarListaChats(mensajesAsignados, usuario._id, mapaNombres);
 
     } catch (error) {
         console.error("❌ Error en cargarMensajesRecibidosPorServicio:", error);

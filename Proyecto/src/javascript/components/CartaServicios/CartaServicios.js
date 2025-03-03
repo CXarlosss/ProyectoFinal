@@ -325,9 +325,9 @@ class CartaServicio extends HTMLElement {
       console.error("🚨 Error al cargar detalles:", error);
     }
   }
-  //FAVORITOSSS
+  
 
-
+//FAVORITOSSS
  /**
  * 📌 Método para alternar el estado de favorito en la base de datos y actualizar la UI
  * @param {string} servicioId - ID del servicio a agregar o quitar de favoritos
@@ -384,12 +384,11 @@ async toggleFavorito(servicioId) {
 
 
 /**
-   * 📌 Método para actualizar el texto del botón de favoritos
-   * @param {string} id - ID del servicio
-   * @param {boolean} esFavorito - Indica si el servicio es favorito o no
-   */
-// @ts-ignore
-// @ts-ignore
+  * 📌 Método para actualizar el texto del botón de favoritos
+  * @param {string} id - ID del servicio
+  * @param {boolean} esFavorito - Indica si el servicio es favorito o no
+*/
+
 actualizarBotonFavorito(id, esFavorito) {
   const btnFavorito = this.shadowRoot?.querySelector(".btn-favorito");
   if (btnFavorito) {
@@ -397,10 +396,6 @@ actualizarBotonFavorito(id, esFavorito) {
       btnFavorito.classList.toggle("favorito", esFavorito); // Opcional: agregar clase CSS para favoritos
   }
 }
-
-
-
-
 /**
  * 📌 Método para editar un servicio
  * @param {string} servicioId - ID del servicio a editar
@@ -416,6 +411,7 @@ async  editarServicio(servicioId) {
   try {
       // 🛠️ Obtener datos actuales del servicio antes de editar
       const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/read/servicio/${servicioId}`);
+      //const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/servicio/${servicioId}`);
       if (!response.ok) throw new Error("No se pudo obtener el servicio para editar.");
 
       const servicio = await response.json();
@@ -492,8 +488,6 @@ async  editarServicio(servicioId) {
       console.error("🚨 Error al actualizar el servicio:", error);
   }
 }
-
-
 /**
 * 📌 Método para eliminar un servicio
 * @param {string} servicioId - ID del servicio a eliminar
@@ -507,8 +501,9 @@ async eliminarServicio(servicioId) {
   console.log(`🗑 Eliminando servicio con ID: ${servicioId}...`);
 
   const API_PORT = location.port ? `:${location.port}` : "";
- /*  const url = `${location.protocol}//${location.hostname}${API_PORT}/api/delete/servicios/${servicioId}`; */
+ 
   const url = `${location.protocol}//${location.hostname}${API_PORT}/delete/servicios/${servicioId}`;
+  // const url = `${location.protocol}//${location.hostname}${API_PORT}/api/delete/servicios/${servicioId}`; 
   try {
       const response = await fetch(url, { method: "DELETE" });
 
@@ -522,11 +517,8 @@ async eliminarServicio(servicioId) {
       console.error("🚨 Error al eliminar el servicio:", error);
   }
 }
-
-
-
   /** 📌 Agrega eventos a los botones de la carta */
-  addEventListeners() {
+addEventListeners() {
     if (!this.shadowRoot) return;
 
     const id = this.getAttribute("_id");
@@ -569,7 +561,7 @@ async eliminarServicio(servicioId) {
           this.eliminarServicio(id);
       });
         }
-      }
+    }
 
 }
 customElements.define("carta-servicio", CartaServicio);

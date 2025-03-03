@@ -75,8 +75,7 @@ document.addEventListener("DOMContentLoaded", () => {
     favoritos: [],
   };
 
-
-  // @ts-ignore
+//@ts-ignore
   document.addEventListener("favoritos-actualizados", ({ detail: { servicioId, esFavorito } }) => {
     console.log("📌 Evento 'favoritos-actualizados' recibido en servicios.js. Actualizando botones...");
 
@@ -91,6 +90,7 @@ document.addEventListener("DOMContentLoaded", () => {
 async function cargarServicios() {
   try {
       const serviciosAPI = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/read/servicios`);
+      //const serviciosAPI = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/servicios`);
       const servicios = await serviciosAPI.json();
 
       console.log("📌 Servicios obtenidos después de actualizar:", servicios);
@@ -164,6 +164,7 @@ async function cargarServicios() {
 
   // Eventos del buscador
   document.addEventListener("buscar-servicios", (event) => {
+    
     // @ts-ignore
     console.log("📡 Evento 'buscar-servicios' detectado en servicios.js:", event.detail);
   
@@ -224,10 +225,6 @@ async function cargarServicios() {
       // @ts-ignore
       event.detail.servicios
     );
-
-   
-   
-   
   });
 
    // Manejo de envío del formulario
@@ -268,7 +265,9 @@ async function cargarServicios() {
     }
 
     try {
-      const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/create/servicios`, {
+      const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/create/servicios`,
+      // const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/create/servicios`, 
+      {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(nuevoServicio),
@@ -323,11 +322,4 @@ function agregarBotonCargarMas() {
   document.body.appendChild(botonCargarMas);
 }
 });
- 
-  
-  
- 
-
-
-// @ts-ignore
 

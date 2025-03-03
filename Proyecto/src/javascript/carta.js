@@ -1,26 +1,28 @@
 // @ts-check
 
 document.addEventListener("DOMContentLoaded", async () => {
-  const servicioContainer = /** @type {HTMLDivElement | null} */ document.getElementById("servicio-container");
-const API_PORT = location.port ? `:${location.port}` : ''
-  if (!servicioContainer) {
+    const servicioContainer = /** @type {HTMLDivElement | null} */ document.getElementById("servicio-container");
+    const API_PORT = location.port ? `:${location.port}` : ''
+    if (!servicioContainer) {
       console.error("❌ No se encontró el contenedor de servicio en el DOM.");
       return;
-  }
+    }
 
-  const urlParams = new URLSearchParams(window.location.search);
-  const servicioId = urlParams.get("_id");
+    const urlParams = new URLSearchParams(window.location.search);
+    const servicioId = urlParams.get("_id");
 
-  console.log("📌 _id del servicio obtenido de la URL:", servicioId);
+    console.log("📌 _id del servicio obtenido de la URL:", servicioId);
 
-  if (!servicioId) {
-      console.error("❌ No se encontró el _id del servicio en la URL.");
-      return;
-  }
+    if (!servicioId) {
+        console.error("❌ No se encontró el _id del servicio en la URL.");
+        return;
+    }
 
-  /**
-   * Carga el servicio desde el servidor MongoDB y lo muestra en la UI.
-   */
+ 
+/** 
+ * Carga un servicio desde la API y lo muestra en la UI.
+ * @returns {Promise<void>}
+ */
   async function cargarServicioDesdeAPI() {
       try {
           console.log("🔄 Cargando servicio desde la API backend...");
@@ -37,6 +39,7 @@ const API_PORT = location.port ? `:${location.port}` : ''
           console.log("📌 Servicio encontrado:", servicio);
 
           if (!servicio) {
+             
               // @ts-ignore
               servicioContainer.innerHTML = `
                   <div class="error-message">

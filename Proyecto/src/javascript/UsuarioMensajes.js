@@ -1,13 +1,11 @@
 //@ts-check
 
-
-
 const API_PORT = location.port ? `:${location.port}` : '';
 document.addEventListener("DOMContentLoaded", () => {
     
-
-   /*  cargarMensajes(); */
-   /*  setInterval(cargarMensajes, 5000); // Recarga los mensajes cada 5 segundos */
+    //Captura elementos clave del DOM como botones y el área del chat.
+    //Recupera el servicio guardado en localStorage y abre el chat si hay un servicio seleccionado.
+    //Llama a cargarMensajes() y cargarMensajesRecibidosPorServicio() para obtener mensajes existentes.
 
     const btnCerrarChat = document.getElementById("cerrar-chat");
     const btnEnviarMensaje = document.getElementById("enviar-mensaje");
@@ -30,11 +28,15 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     cargarMensajes();
     cargarMensajesRecibidosPorServicio(); // 🔥 Nueva función agregada
-
-
     
 });
 
+//CargarMensajes
+//Obtiene el ID del usuario desde localStorage.
+//Hace una solicitud al servidor para recuperar mensajes donde el usuario es emisor o receptor.
+//Filtra mensajes relevantes y obtiene datos de usuarios y servicios.
+//Asigna nombres reales a los mensajes.
+//Llama a renderizarListaChats() para actualizar la UI.
 async function cargarMensajes() {
     try {
         console.log("📌 Ejecutando cargarMensajes()...");
@@ -52,6 +54,7 @@ async function cargarMensajes() {
 
         // 🔥 Obtener los mensajes filtrados solo para este usuario
         const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/read/mensajes?usuarioId=${usuario._id}`);
+        //const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/mensajes?usuarioId=${usuario._id}`);
 
         if (!response.ok) throw new Error(`Error al obtener mensajes (${response.status})`);
 
@@ -71,14 +74,12 @@ async function cargarMensajes() {
             renderizarListaChats([], usuario._id, {});
             return;
         }
-
-        // 🔥 Extraer los IDs únicos de usuarios y servicios involucrados en los chats
-        
-
         // Obtener datos de usuarios y servicios
         const [usuariosResponse, serviciosResponse] = await Promise.all([
             fetch(`${location.protocol}//${location.hostname}${API_PORT}/read/users`),
             fetch(`${location.protocol}//${location.hostname}${API_PORT}/read/servicios`)
+            //fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/users`),
+            //fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/servicios`)
         ]);
 
         const usuarios = usuariosResponse.ok ? await usuariosResponse.json() : [];
@@ -108,9 +109,10 @@ async function cargarMensajes() {
         console.error("❌ Error al cargar mensajes:", error);
     }
 }
-
-
-
+//RenderizarListaChats
+//Recibe los mensajes y los organiza en una lista de chats únicos.
+//Muestra el último mensaje enviado en cada chat y la fecha del mensaje más reciente.
+//Permite abrir un chat al hacer clic en un contacto.
 /**
  * 📌 Renderiza la lista de chats en la UI con nombres reales.
  * @param {any[]} mensajes
@@ -173,9 +175,11 @@ function renderizarListaChats(mensajes, usuarioId, mapaNombres) {
 
     console.log("✅ Chats renderizados correctamente.");
 }
-
-
-
+//AbrirChats
+//Recupera el chat guardado en localStorage.
+//Busca si el contactoId es un servicio o un usuario y obtiene su nombre.
+//Recupera los mensajes entre el usuario y el contacto del servidor.
+//Renderiza los mensajes en la interfaz.
 /**
  * 📌 Abre un chat específico y muestra los mensajes.
  * @param {string} contactoId 
@@ -217,6 +221,7 @@ export async function abrirChat(contactoId) {
         // 🔍 Intentamos encontrar si el contacto es un servicio
         try {
             const servicioResponse = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/read/servicios`);
+            //const servicioResponse = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/servicios`);
             if (servicioResponse.ok) {
                 const servicios = await servicioResponse.json();
                 const servicioEncontrado = servicios.find(s => s._id === contactoId);
@@ -233,6 +238,7 @@ export async function abrirChat(contactoId) {
         if (!esServicio) {
             try {
                 const usuarioResponse = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/read/users`);
+                //const usuarioResponse = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/users`);
                 if (usuarioResponse.ok) {
                     const usuarios = await usuarioResponse.json();
                     const usuarioEncontrado = usuarios.find(user => user._id === contactoId);
@@ -250,7 +256,7 @@ export async function abrirChat(contactoId) {
 
         // 📨 Obtener los mensajes del chat
         const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/mensajes?usuarioId=${usuario._id}&contactoId=${contactoId}`);
-
+        //const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/mensajes?usuarioId=${usuario._id}&contactoId=${contactoId}`);
         if (!response.ok) throw new Error(`Error al obtener mensajes (${response.status})`);
 
         const mensajes = await response.json();
@@ -277,10 +283,10 @@ export async function abrirChat(contactoId) {
         console.error("❌ Error al cargar mensajes del chat:", error);
     }
 }
-
-
-
-
+//CargarMensajesRecibidosPorServicio
+//Obtiene los servicios creados por el usuario.
+//Filtra mensajes donde el receptor es un servicio del usuario y reasigna estos mensajes al dueño del servicio.
+//Llama a renderizarListaChats() para mostrarlos en la interfaz.
 /**
  * 📌 Carga los mensajes que han sido enviados a un servicio y los asigna también al creador del servicio.
  */
@@ -299,6 +305,7 @@ async function cargarMensajesRecibidosPorServicio() {
 
         // 🔥 Obtener servicios creados por el usuario
         const serviciosResponse = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/read/servicios?usuarioId=${usuario._id}`);
+        //const serviciosResponse = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/servicios?usuarioId=${usuario._id}`);
         if (!serviciosResponse.ok) throw new Error("Error al obtener servicios del usuario");
 
         const servicios = await serviciosResponse.json();
@@ -315,6 +322,7 @@ async function cargarMensajesRecibidosPorServicio() {
 
         // 🔥 Obtener mensajes
         const mensajesResponse = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/read/mensajes`);
+        //const mensajesResponse = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/mensajes`);
         if (!mensajesResponse.ok) throw new Error("Error al obtener mensajes");
 
         const mensajes = await mensajesResponse.json();
@@ -353,6 +361,8 @@ async function cargarMensajesRecibidosPorServicio() {
         const [usuariosResponse, serviciosResponse2] = await Promise.all([
             fetch(`${location.protocol}//${location.hostname}${API_PORT}/read/users`),
             fetch(`${location.protocol}//${location.hostname}${API_PORT}/read/servicios`)
+            //fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/users`),
+            //fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/servicios`)
         ]);
 
         const usuarios = usuariosResponse.ok ? await usuariosResponse.json() : [];
@@ -372,16 +382,18 @@ async function cargarMensajesRecibidosPorServicio() {
         console.error("❌ Error en cargarMensajesRecibidosPorServicio:", error);
     }
 }
-
-
-
+//CerrarChat
+//Oculta el chat en la interfaz.
 function cerrarChat() {
     const chatPopup = document.getElementById("chat-popup");
     console.log("📌 Cerrando el chat...");
     chatPopup?.classList.remove("active");
 
 }
-
+//EnviarMensaje
+//Captura el texto ingresado por el usuario.
+//Envía el mensaje al servidor mediante una solicitud POST.
+//Si el mensaje se envía con éxito, se recarga el chat para mostrar el nuevo mensaje.
 async function enviarMensaje() {
     const mensajeInput =/** @type {HTMLInputElement | null} */( document.getElementById("mensaje-input"));
     const chatTitulo = document.getElementById("chat-titulo");
@@ -412,7 +424,9 @@ async function enviarMensaje() {
 
         console.log("📌 Datos enviados al servidor:", mensajeData);
 
-        const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/mensajes`, {
+        const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/mensajes`, 
+        // const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/mensajes`, 
+        {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(mensajeData),

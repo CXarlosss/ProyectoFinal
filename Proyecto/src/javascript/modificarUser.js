@@ -44,16 +44,16 @@ document.addEventListener("DOMContentLoaded", () => {
   btnEditarUsuario?.addEventListener("click", () => {
       if (!usuario) return;
       if (modalEditarUsuario) {
-        modalEditarUsuario.style.display = "block"; // Asegurar visibilidad
+        modalEditarUsuario.style.display = "block"; 
         }
       // Rellenar datos
       if (inputNombre) inputNombre.value = usuario.nombre;
       if (inputTelefono) inputTelefono.value = usuario.telefono;
       if (inputDireccion) inputDireccion.value = usuario.direccion;
-      if (inputPassword) inputPassword.value = ""; // No mostrar la contraseña actual
+      if (inputPassword) inputPassword.value = ""; 
       if (inputCorreo) {
           inputCorreo.value = usuario.email;
-          inputCorreo.disabled = true; // Deshabilitar la edición del correo
+          inputCorreo.disabled = true; 
       }
   });
   console.log("📌 Enviando actualización para el usuario _id:", usuario._id);
@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
   /**
    * 📌 Guardar cambios al hacer submit en el formulario
    */
-  formEditarUsuario?.addEventListener("submit", async (e) => {
+formEditarUsuario?.addEventListener("submit", async (e) => {
       e.preventDefault();
 
       if (!usuario || !usuario._id) {
@@ -82,7 +82,9 @@ document.addEventListener("DOMContentLoaded", () => {
       console.log("📩 Datos enviados al backend:", datosActualizados);
 
       try {
-          const resultado = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/update/users/${usuario._id}`, {
+          const resultado = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/update/users/${usuario._id}`,
+          // const resultado = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/update/users/${usuario._id}`, 
+          {
               method: "PUT",
               headers: {
                   "Content-Type": "application/json",
@@ -118,22 +120,14 @@ document.addEventListener("DOMContentLoaded", () => {
           console.error("❌ Error al actualizar usuario:", error);
           alert("❌ No se pudo actualizar el usuario.");
       }
-  });
+});
 
-  /**
-   * 📌 Cerrar modal sin guardar cambios
-   */    /**
-     * 📌 Función para cerrar el modal
-     */
-    function cerrarModal() {
+function cerrarModal() {
         if (modalEditarUsuario) {
             modalEditarUsuario.classList.remove("active");
             modalEditarUsuario.style.display = "none";
         }
-    }
+}
 
-    /**
-     * 📌 Cerrar modal sin guardar cambios
-     */
-    btnCerrarModal?.addEventListener("click", cerrarModal);
+btnCerrarModal?.addEventListener("click", cerrarModal);
 });

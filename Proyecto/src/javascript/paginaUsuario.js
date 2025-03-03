@@ -24,7 +24,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     console.log("✅ Usuario autenticado:", usuario);
     // 📌 Mostrar el nombre del usuario en la bienvenida
-        // 📌 Mostrar el nombre del usuario en la bienvenida
     const nombreSpan = document.getElementById("nombre");
 
     if (usuario.nombre && nombreSpan) {
@@ -32,8 +31,6 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
         console.warn("⚠️ No se encontró el elemento #nombre o el usuario no tiene un nombre registrado.");
     }
-
-
 
     const btnServicios = document.getElementById("btn-ir-secciones"); 
 

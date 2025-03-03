@@ -142,7 +142,6 @@ export class CartaSERV extends HTMLElement {
     console.log("🔍 Servicios filtrados:", serviciosFiltrados);
     this.render(serviciosFiltrados);
   }
-
   /**
    * 🔍 Filtra los servicios por categoría (actividad o comercio).
    * @param {string} categoria
@@ -152,7 +151,6 @@ export class CartaSERV extends HTMLElement {
     const serviciosFiltrados = this._servicios.filter(servicio => servicio.categoria === categoria);
     this.render(serviciosFiltrados);
   }
-
   /**
    * 📌 Renderiza los servicios en el DOM.
    * @param {Array<any>} [servicios=this._servicios]
@@ -212,6 +210,7 @@ async function cargarServicios() {
   try {
     const API_PORT = location.port ? `:${location.port}` : "";
     const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/read/servicios`);
+    //const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/servicios`);
     const servicios = await response.json();
 
     console.log("📡 Servicios obtenidos después de actualizar:", servicios);

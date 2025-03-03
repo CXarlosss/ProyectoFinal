@@ -24,6 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!usuario._id) throw new Error("ID de usuario no encontrado");
     
             const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/users/${usuario._id}/favoritos`);
+            //const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/users/${usuario._id}/favoritos`);
             if (!response.ok) throw new Error("Error al obtener favoritos");
     
             const favoritos = await response.json();
@@ -91,7 +92,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     const usuarioGuardado = localStorage.getItem("usuarioRegistrado");
                     const usuario = JSON.parse(usuarioGuardado || "{}");
 
-                    const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/users/${usuario._id}/favoritos/${servicioId}`, {
+                    const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/users/${usuario._id}/favoritos/${servicioId}`, 
+                    //const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/users/${usuario._id}/favoritos/${servicioId}`, 
+                     {
                         method: "DELETE",
                         headers: { "Content-Type": "application/json" }
                     });
@@ -124,10 +127,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-    //LiSTA
+//LiSTA
   // Mostrar servicios recomendados basados en los favoritos
 
-    async function mostrarServiciosRecomendados() {
+async function mostrarServiciosRecomendados() {
         const serviciosRecomendadosList = document.getElementById("servicios-recomendados-list");
 
         if (!serviciosRecomendadosList) {
@@ -136,14 +139,12 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         fetch(`${location.protocol}//${location.hostname}${API_PORT}/read/servicios`)
+        //fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/servicios`)
             .then(response => response.json())
             .then(servicios => {
                 // Filtramos los servicios recomendados basados en la categoría de los favoritos
                 const serviciosAleatorios = obtenerServiciosAleatorios(servicios, 3);
-
                 // Mostrar solo los primeros 3 servicios recomendados
-           
-
                 if (serviciosAleatorios.length > 0) {
                     serviciosRecomendadosList.innerHTML = serviciosAleatorios.map(servicio => {
                         return `<div class="servicio-recomendado">
@@ -169,7 +170,7 @@ document.addEventListener("DOMContentLoaded", () => {
             .catch(error => {
                 console.error("❌ Error al cargar los servicios recomendados:", error);
             });
-    }
+}
         /**
          * Función para obtener un número aleatorio de servicios de la lista
          * @param {Array} servicios - Lista de todos los servicios disponibles
@@ -192,7 +193,9 @@ document.addEventListener("DOMContentLoaded", () => {
     // Agregar un servicio a favoritos
     async function agregarAFavoritos(usuarioId, servicioId, nombreServicio) {
         console.log(`📌 Agregando a favoritos el servicio ${nombreServicio}...`);
-        fetch(`${location.protocol}//${location.hostname}${API_PORT}/users/${usuarioId}/favoritos/${servicioId}`, {
+        fetch(`${location.protocol}//${location.hostname}${API_PORT}/users/${usuarioId}/favoritos/${servicioId}`, 
+        //fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/users/${usuarioId}/favoritos/${servicioId}`,
+        {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
         })

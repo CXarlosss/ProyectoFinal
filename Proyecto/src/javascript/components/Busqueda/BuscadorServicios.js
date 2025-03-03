@@ -129,7 +129,6 @@ export class BuscadorServicios extends HTMLElement {
     }, 500); // Esperamos 500ms para asegurar que el Shadow DOM esté listo
   }
   
-
   /**
    * 📌 Filtra los servicios en base a la búsqueda
    * @param {string} query - Texto a buscar

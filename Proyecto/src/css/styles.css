@@ -146,3 +146,86 @@ footer {
     background-color: #331428; 
     color: white;
 }
+
+
+/* =============================== */
+/* 🎬 ANIMACIONES DE APARICIÓN AL HACER SCROLL */
+/* =============================== */
+
+/* 🌟 Ocultar elementos inicialmente */
+/* Oculta elementos inicialmente */
+.scroll-hidden {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(50px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+/* ✅ Aplica la animación cuando el elemento entra en pantalla */
+.scroll-visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/* 🎬 Animaciones específicas */
+.scroll-visible.fade-in-up {
+    animation: fadeInUp 0.8s ease-out;
+}
+
+.scroll-visible.fade-in-left {
+    animation: fadeInLeft 0.8s ease-out;
+}
+
+.scroll-visible.fade-in-scale {
+    animation: fadeInScale 0.8s ease-out;
+}
+
+/* 🔥 Animación de entrada con desvanecimiento y desplazamiento */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 🔥 Animación de entrada con desplazamiento lateral */
+@keyframes fadeInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* 🔥 Animación de entrada con escala */
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* ✨ Clases específicas para aplicar diferentes efectos */
+.fade-in-up {
+    animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.fade-in-left {
+    animation: fadeInLeft 0.8s ease-out forwards;
+}
+
+.fade-in-scale {
+    animation: fadeInScale 0.8s ease-out forwards;
+}

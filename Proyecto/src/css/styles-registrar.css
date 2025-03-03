@@ -1,5 +1,6 @@
-/* Reinicio y configuración básica */
-/* 🔹 Reset y configuración general */
+/* ======================================= */
+/* 🌎 RESET Y CONFIGURACIÓN GLOBAL */
+/* ======================================= */
 * {
   margin: 0;
   padding: 0;
@@ -8,100 +9,105 @@
 
 body {
   font-family: 'Arial', sans-serif;
-  background: linear-gradient(to right, #bbc9cf, #dde4e8) !important;
+  background: linear-gradient(to right, #bbc9cf, #dde4e8);
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 100px !important; /* Espacio para el header */
+  padding-top: 100px; /* Espacio para el header */
 }
 
-/* 🌟 HEADER FIJO CON ESTILO MODERNO */
+/* ======================================= */
+/* 🌟 HEADER Y NAVBAR */
+/* ======================================= */
 header {
   display: flex;
-  flex-direction: column; /* 📌 Poner elementos en columna */
-  align-items: center; /* 📌 Centrar los elementos horizontalmente */
+  flex-direction: column;
+  align-items: center;
   background: rgba(5, 5, 5, 0.9);
   color: white;
   padding: 25px 0;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
   width: 100%;
-  position: fixed; /* Opcional: Si quieres que se quede fijo arriba */
+  position: fixed;
   top: 0;
   z-index: 1000;
 }
 
 h1 {
-  margin-bottom: 10px; /* 📌 Espaciado entre título y menú */
+  margin-bottom: 10px;
 }
+
 /* 🔥 NAVBAR DINÁMICO */
 nav ul {
-  list-style: none !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  display: flex !important;
-  justify-content: center !important;
-  gap: 25px !important;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  gap: 25px;
 }
 
 nav ul li {
-  display: inline !important;
+  display: inline;
 }
 
 nav ul li a {
-  text-decoration: none !important;
-  color: white !important;
-  font-weight: bold !important;
-  font-size: 1.2rem !important;
-  padding: 10px 15px !important;
-  transition: color 0.3s ease-in-out, transform 0.2s !important;
-  position: relative !important;
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+  font-size: 1.2rem;
+  padding: 10px 15px;
+  transition: color 0.3s ease-in-out, transform 0.2s;
+  position: relative;
 }
 
 /* ✨ EFECTO DE SUBRAYADO */
 nav ul li a::after {
-  content: "" !important;
-  width: 0 !important;
-  height: 3px !important;
-  background: #ffcc00 !important;
-  position: absolute !important;
-  bottom: -5px !important;
-  left: 50% !important;
-  transform: translateX(-50%) !important;
-  transition: width 0.3s ease-in-out !important;
+  content: "";
+  width: 0;
+  height: 3px;
+  background: #ffcc00;
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  transition: width 0.3s ease-in-out;
 }
 
 nav ul li a:hover {
-  color: #ffcc00 !important;
-  transform: scale(1.1) !important;
+  color: #ffcc00;
+  transform: scale(1.1);
 }
 
 nav ul li a:hover::after {
-  width: 100% !important;
+  width: 100%;
 }
 
-/* Estructura general */
+/* ======================================= */
+/* 🏗️ ESTRUCTURA GENERAL */
+/* ======================================= */
 main {
-    margin-top:50px;
-    display: block;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    min-height: 80vh;
-    width:50%;
-    height: 50%;
+  margin-top: 50px;
+  display: block;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;
+  width: 50%;
+  height: 50%;
 }
 
 section {
-    background: #fff;
-    padding: 20px 30px;
-    border-radius: 12px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    
-    width: 100%;
-    text-align: center;
-    transition: all 200ms ease-in-out;
-    scale:0.9
+  background: #fff;
+  padding: 20px 30px;
+  border-radius: 12px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  text-align: center;
+  transition: all 200ms ease-in-out;
+  scale: 0.9;
 }
+
 .section-lista-usuarios {
   display: flex;
   flex-direction: column;
@@ -111,82 +117,52 @@ section {
   width: 100%;
 }
 
+/* ======================================= */
+/* 🎨 BOTONES Y EFECTOS */
+/* ======================================= */
+.toggle-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
 
-.hidden {
-    display: none;
-} 
-/* Formularios */
+
+
+/* ======================================= */
+/* 📝 FORMULARIOS */
+/* ======================================= */
 form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
 
 input {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    font-size: 1rem;
-}
-.toggle-buttons{
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-}
-button {
-    background-color: #b2005e;
-    color: #fff;
-    font-weight: bold;
-    border: none;
-    border-radius: 8px;
-    padding: 10px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
 }
 
-button:hover {
-    background-color: #8e004a;
+/* Ocultar formularios inicialmente */
+.hidden {
+  display: none;
 }
 
-/* Modal */
-.modal.hidden {
-    display: none;
+/* Aplicar animaciones al formulario cuando se muestra */
+.formulario-activo {
+  display: block;
+  animation: slideUp 0.5s ease-out forwards;
 }
 
-.modal {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: #fff;
-    border-radius: 12px;
-    padding: 30px;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-    z-index: 1000;
-    width: 90%;
-    max-width: 400px;
-    text-align: center;
+/* Efecto adicional para deslizamiento lateral */
+.formulario-entrada {
+  animation: fadeInLeft 0.5s ease-out forwards;
 }
 
-.modal-content h2 {
-    margin-bottom: 10px;
-    color: #b2005e;
-}
-
-.modal-content button {
-    margin-top: 15px;
-    background-color: #b2005e;
-}
-.error {
-  color: red;
-  font-size: 0.9rem;
-  margin-top: 5px;
-  display: none; /* Oculto por defecto */
-}
-
-input.error {
-  border: 2px solid red;
-}
+/* ======================================= */
+/* 📌 TARJETAS DE USUARIO */
+/* ======================================= */
 .grid-container {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -209,53 +185,138 @@ input.error {
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
 }
 
-.usuario-card h4 {
-  margin-bottom: 8px;
+/* ======================================= */
+/* 📍 MODALES (POP-UPS) */
+/* ======================================= */
+.modal.hidden {
+  display: none;
 }
 
-.usuario-card p {
-  margin: 8px 0;
-  font-size: 0.9em;
-  color: #555;
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
 }
 
-.usuario-card button {
-  margin: 10px 5px;
-  padding: 8px 16px;
-  font-size: 0.9em;
-  color: white;
-  background-color: #007bff;
+.modal-content h2 {
+  margin-bottom: 10px;
+  color: #b2005e;
+}
+
+.modal-content button {
+  margin-top: 15px;
+  background-color: #b2005e;
+}
+
+
+/* ======================================= */
+/* 🎬 WOW! ANIMACIONES IMPACTANTES */
+/* ======================================= */
+
+/* 🔥 ANIMACIÓN DE ENTRADA: Zoom suave con subida y glow */
+@keyframes zoomIn {
+  from {
+    transform: scale(0.7) translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+.zoom-in {
+  animation: zoomIn 0.6s ease-out forwards;
+}
+
+/* 💨 ANIMACIÓN DE SALIDA: Desvanecimiento con giro */
+@keyframes zoomOut {
+  from {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+  to {
+    transform: scale(0.8) rotate(-8deg);
+    opacity: 0;
+  }
+}
+
+.zoom-out {
+  animation: zoomOut 0.4s ease-in forwards;
+}
+
+/* ⚡ EFECTO DE DESTELLO AL APARECER */
+@keyframes glowEffect {
+  from {
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.9);
+  }
+  to {
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+  }
+}
+
+.glow {
+  animation: glowEffect 0.6s ease-in-out;
+}
+
+
+/* 🌟 EFECTO DE BOTÓN INTERACTIVO ÉPICO */
+/* 🌊 EFECTO DE LLENADO LÍQUIDO EN BOTONES */
+button {
+  position: relative;
+  overflow: hidden;
+  background: #b2005e;
+  color: #fff;
+  font-size: 1.1rem;
+  padding: 12px 20px;
+  border-radius: 8px;
   border: none;
-  border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: transform 0.2s, box-shadow 0.3s;
+  text-transform: uppercase;
+  font-weight: bold;
+  letter-spacing: 1px;
 }
 
-.usuario-card button:hover {
-  background-color: #0056b3;
+button:hover {
+  transform: scale(1.05);
+  box-shadow: 0px 0px 15px rgba(255, 65, 108, 0.8);
 }
 
-.usuario-card .btn-editar {
-  background-color: #28a745;
+/* 🌊 EFECTO INTERNO DE LLENADO LÍQUIDO */
+button::before {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(247, 1, 1, 0.2);
+  transition: top 0.7s ease-in-out;
 }
 
-.usuario-card .btn-editar:hover {
-  background-color: #1e7e34;
+button:hover::before {
+  top: 0;
 }
 
-.usuario-card .btn-mensaje {
-  background-color: #ffc107;
-}
 
-.usuario-card .btn-mensaje:hover {
-  background-color: #d39e00;
-}
-/* 📱 RESPONSIVE PARA PANTALLAS PEQUEÑAS */
+/* ======================================= */
+/* 📱 RESPONSIVE DESIGN */
+/* ======================================= */
 @media screen and (max-width: 768px) {
   header {
     padding: 15px;
   }
-  
+
   h1 {
     font-size: 1.5rem;
   }
@@ -268,28 +329,27 @@ input.error {
   nav ul li a {
     font-size: 1rem;
   }
-  
+
   main {
     width: 95%;
   }
-  
+
   section {
     padding: 15px;
     width: 100%;
   }
 }
 
-/* 📱 RESPONSIVE PARA TELÉFONOS MÁS PEQUEÑOS */
 @media screen and (max-width: 480px) {
   h1 {
     font-size: 1.2rem;
   }
-  
+
   nav ul {
     flex-direction: column;
     align-items: center;
   }
-  
+
   nav ul li a {
     font-size: 0.9rem;
   }

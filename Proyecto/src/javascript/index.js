@@ -1,53 +1,7 @@
 // @ts-check
 
-document.addEventListener("DOMContentLoaded", () => {
-    /* ==========================
-      Carrusel de Servicios 
-    =========================== */
-    const sliderServicios = /** @type {HTMLElement | null} */ (document.querySelector(".business-slider"));
-    const prevBtnServicios = /** @type {HTMLButtonElement | null} */ (document.querySelector(".prev"));
-    const nextBtnServicios = /** @type {HTMLButtonElement | null} */ (document.querySelector(".next"));
+// @ts-check
 
-    if (!sliderServicios || !prevBtnServicios || !nextBtnServicios) {
-        console.error("❌ Error: No se encontraron elementos del carrusel de servicios.");
-        return;
-    }
-
-    let indexServicios = 0;
-    let cardWidthServicios = 0;
-    let totalCardsServicios = 0;
-    let visibleCardsServicios = 0;
-
-    setTimeout(() => {
-        const businessCards = /** @type {NodeListOf<HTMLElement>} */ (document.querySelectorAll(".business-card"));
-
-        if (businessCards.length === 0) {
-            console.warn("⚠️ No hay tarjetas de negocios disponibles.");
-            return;
-        }
-
-        const cardStyles = window.getComputedStyle(businessCards[0]);
-        const cardMargin = parseFloat(cardStyles.marginRight) + parseFloat(cardStyles.marginLeft);
-        cardWidthServicios = businessCards[0].offsetWidth + cardMargin;
-
-        totalCardsServicios = businessCards.length;
-        visibleCardsServicios = Math.floor(sliderServicios.offsetWidth / cardWidthServicios);
-
-        nextBtnServicios.addEventListener("click", () => {
-            if (indexServicios < totalCardsServicios - visibleCardsServicios) {
-                indexServicios++;
-                sliderServicios.style.transform = `translateX(-${indexServicios * cardWidthServicios}px)`;
-            }
-        });
-
-        prevBtnServicios.addEventListener("click", () => {
-            if (indexServicios > 0) {
-                indexServicios--;
-                sliderServicios.style.transform = `translateX(-${indexServicios * cardWidthServicios}px)`;
-            }
-        });
-    }, 300); // Pequeño retraso para que cargue correctamente
-});
 
 /* ==========================
   Carrusel de Testimonios

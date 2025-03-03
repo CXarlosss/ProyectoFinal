@@ -8,7 +8,8 @@
     "server:express:start": "node --env-file=.env --watch server/server-express.js",
     "server:statics:start": "node --env-file=.env --watch server/server-statics.js",
     "server:api:start": "node --env-file=.env --watch server/server-api.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll",
     "lint": "eslint ."
   },
   "repository": {
@@ -22,7 +23,9 @@
     "@types/node": "^22.13.4",
     "eslint": "^9.19.0",
     "eslint-plugin-react": "^7.37.4",
-    "globals": "^15.14.0"
+    "globals": "^15.14.0",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0"
   },
   "dependencies": {
     "@netlify/functions": "^3.0.0",

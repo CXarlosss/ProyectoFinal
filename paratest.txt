@@ -1,0 +1,11 @@
+Cambiar aqui en type module para realizar test por que sino no inicia
+ {
+    "name": "proyecto",
+    "version": "1.0.0",
+    "type": "module",
+    "main": "index.js"
+} 
+
+en el type module poner commonjs  
+
+ "type": "commonjs" 

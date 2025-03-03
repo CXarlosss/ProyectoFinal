@@ -89,8 +89,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 async function cargarServicios() {
   try {
-      const serviciosAPI = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/read/servicios`);
-      //const serviciosAPI = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/servicios`);
+      //const serviciosAPI = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/read/servicios`);
+      const serviciosAPI = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/servicios`);
       const servicios = await serviciosAPI.json();
 
       console.log("📌 Servicios obtenidos después de actualizar:", servicios);
@@ -265,8 +265,8 @@ async function cargarServicios() {
     }
 
     try {
-      const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/create/servicios`,
-      // const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/create/servicios`, 
+      //const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/create/servicios`,
+      const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/create/servicios`, 
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },

@@ -406,12 +406,12 @@ async  editarServicio(servicioId) {
   console.log(`✏️ Editando servicio: ${servicioId}`);
 
   const API_PORT = location.port ? `:${location.port}` : "";
-  const url = `${location.protocol}//${location.hostname}${API_PORT}/update/servicios/${servicioId}`;
+  const url = `${location.protocol}//${location.hostname}${API_PORT}/api/update/servicios/${servicioId}`;
 
   try {
       // 🛠️ Obtener datos actuales del servicio antes de editar
-      const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/read/servicio/${servicioId}`);
-      //const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/servicio/${servicioId}`);
+      //const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/read/servicio/${servicioId}`);
+      const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/servicio/${servicioId}`);
       if (!response.ok) throw new Error("No se pudo obtener el servicio para editar.");
 
       const servicio = await response.json();
@@ -502,8 +502,8 @@ async eliminarServicio(servicioId) {
 
   const API_PORT = location.port ? `:${location.port}` : "";
  
-  const url = `${location.protocol}//${location.hostname}${API_PORT}/delete/servicios/${servicioId}`;
-  // const url = `${location.protocol}//${location.hostname}${API_PORT}/api/delete/servicios/${servicioId}`; 
+  //const url = `${location.protocol}//${location.hostname}${API_PORT}/delete/servicios/${servicioId}`;
+ const url = `${location.protocol}//${location.hostname}${API_PORT}/api/delete/servicios/${servicioId}`; 
   try {
       const response = await fetch(url, { method: "DELETE" });
 

@@ -43,7 +43,7 @@ app.use("/javascript", express.static("javascript")); // Si "javascript" está e
 
 
 // 📌 Crear un nuevo servicio
- app.post('/create/servicios', async (req, res) => {
+ app.post('/api/create/servicios', async (req, res) => {
   try {
     const db = await connectDB();  // 💡 Asegura que tienes acceso a la DB
     const result = await db.collection("Servicios").insertOne(req.body);
@@ -54,7 +54,7 @@ app.use("/javascript", express.static("javascript")); // Si "javascript" está e
   }
 });
 // 📌 Obtener todos los servicios
-app.get("/read/servicios", async (req, res) => {
+app.get("/api/read/servicios", async (req, res) => {
   try {
     const db = await connectDB();
     const servicios = await db.collection("Servicios").find().toArray();
@@ -68,7 +68,7 @@ app.get("/read/servicios", async (req, res) => {
 });
 // 📌 Obtener un único servicio por su ID
 // @ts-ignore
-app.get("/read/servicio/:id", async (req, res) => {
+app.get("/api/read/servicio/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -90,7 +90,7 @@ app.get("/read/servicio/:id", async (req, res) => {
   }
 });
 // 📌 Actualizar un servicio
-app.put('/update/servicios/:_id', async (req, res) => {
+app.put('/api/update/servicios/:_id', async (req, res) => {
   try {
     const { _id } = req.params;
     console.log(`📌 Recibiendo actualización para servicio _id: ${_id}`, req.body);
@@ -124,7 +124,7 @@ app.put('/update/servicios/:_id', async (req, res) => {
   }
 });
 // 📌 Eliminar un servicio
-app.delete('/delete/servicios/:_id', async (req, res) => {
+app.delete('/api/delete/servicios/:_id', async (req, res) => {
   try {
     const { _id } = req.params;
     console.log(`📌 Intentando eliminar servicio con _id: ${_id}`);
@@ -154,7 +154,7 @@ app.delete('/delete/servicios/:_id', async (req, res) => {
 
 //USUARIOS
 // 📌 Crear un nuevo usuario
-app.post('/create/users', async (req, res) => {
+app.post('/api/create/users', async (req, res) => {
   const db = await connectDB();
   const result = await db.collection("Users").insertOne(req.body);
   res.json(result);
@@ -171,7 +171,7 @@ app.get('/read/users', async (req, res) => {
   }
 });
 // 📌 Actualizar un usuario
-app.put('/update/users/:_id', async (req, res) => {
+app.put('/api/update/users/:_id', async (req, res) => {
   try {
     const { _id } = req.params;
 
@@ -205,7 +205,7 @@ app.put('/update/users/:_id', async (req, res) => {
   }
 });
 // 📌 Eliminar un usuario
-app.delete('/delete/users/:_id', async (req, res) => {
+app.delete('/api/delete/users/:_id', async (req, res) => {
   try {
     const { _id } = req.params;
 
@@ -231,7 +231,7 @@ app.delete('/delete/users/:_id', async (req, res) => {
 
 // 📌 Leer Cuantos hay
 // 📌 Agregar o quitar un favorito
-app.put('/users/:userId/favoritos/:servicioId', async (req, res) => {
+app.put('/api/users/:userId/favoritos/:servicioId', async (req, res) => {
   try {
     const { userId, servicioId } = req.params;
 
@@ -268,7 +268,7 @@ app.put('/users/:userId/favoritos/:servicioId', async (req, res) => {
   }
 });
 // 📌 Obtener la lista de favoritos de un usuario
-app.get('/users/:userId/favoritos', async (req, res) => {
+app.get('/api/users/:userId/favoritos', async (req, res) => {
   try {
     const { userId } = req.params;
 
@@ -305,7 +305,7 @@ app.get('/users/:userId/favoritos', async (req, res) => {
 //FAVoritosMensajes
 
 // 📌 Marcar como leídos los mensajes de un usuario en un chat
-app.put('/mensajes/:servicioId/leidos', async (req, res) => {
+app.put('/api/mensajes/:servicioId/leidos', async (req, res) => {
   try {
       const { servicioId } = req.params;
       const usuarioGuardado = req.query.usuarioId; // Obtiene el usuario desde la query
@@ -331,7 +331,7 @@ app.put('/mensajes/:servicioId/leidos', async (req, res) => {
 });
 
 // 📌 Quitar de favoritos
-app.delete('/users/:userId/favoritos/:servicioId', async (req, res) => {
+app.delete('/api/users/:userId/favoritos/:servicioId', async (req, res) => {
   try {
     const { userId, servicioId } = req.params;
 
@@ -377,7 +377,7 @@ app.delete('/users/:userId/favoritos/:servicioId', async (req, res) => {
 
 //MENSAJES
 // 📌 Crear un nuevo mensaje
-app.post("/mensajes", async (req, res) => {
+app.post("/api/mensajes", async (req, res) => {
   try {
     console.log("📌 Recibiendo mensaje en el servidor...");
     console.log("Datos recibidos:", req.body);
@@ -420,7 +420,7 @@ app.post("/mensajes", async (req, res) => {
 
 
 
-app.get("/read/mensajes", async (req, res) => {
+app.get("/api/read/mensajes", async (req, res) => {
   try {
     const db = await connectDB();
     const mensajes = await db.collection("mensajes").find().toArray();
@@ -467,7 +467,7 @@ app.get('/mensajes', async (req, res) => {
 });
 
 // 📌 Marcar un mensaje como leído
-app.put('/mensajes/:mensajeId',  async (req, res) => {
+app.put('/api/mensajes/:mensajeId',  async (req, res) => {
   try {
     const { mensajeId } = req.params;
 
@@ -489,7 +489,7 @@ app.put('/mensajes/:mensajeId',  async (req, res) => {
   }
 });
 
-app.delete('/delete/mensajes', async (req, res) => {
+app.delete('/api/delete/mensajes', async (req, res) => {
   try {
     const { chatId } = req.query;
 
@@ -530,7 +530,7 @@ app.delete('/delete/mensajes', async (req, res) => {
 
 
 // 📌 Eliminar un mensaje
-app.delete('/mensajes/:mensajeId', async (req, res) => {
+app.delete('/api/mensajes/:mensajeId', async (req, res) => {
   try {
     const { mensajeId } = req.params;
 

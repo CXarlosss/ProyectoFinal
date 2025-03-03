@@ -82,8 +82,8 @@ formEditarUsuario?.addEventListener("submit", async (e) => {
       console.log("📩 Datos enviados al backend:", datosActualizados);
 
       try {
-          const resultado = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/update/users/${usuario._id}`,
-          // const resultado = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/update/users/${usuario._id}`, 
+          //const resultado = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/update/users/${usuario._id}`,
+           const resultado = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/update/users/${usuario._id}`, 
           {
               method: "PUT",
               headers: {

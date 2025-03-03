@@ -29,7 +29,8 @@ export { connectDB, ObjectId };
 
  // SERVICIOS
  // 📌 Crear un nuevo servicio
- router.post('/create/servicios', async (req, res) => {
+// 📌 Crear un nuevo servicio
+router.post('/api/create/servicios', async (req, res) => {
   try {
     const db = await connectDB();  // 💡 Asegura que tienes acceso a la DB
     const result = await db.collection("Servicios").insertOne(req.body);
@@ -368,56 +369,44 @@ router.post("/mensajes", async (req, res) => {
     console.log("📌 Recibiendo mensaje en el servidor...");
     console.log("Datos recibidos:", req.body);
 
-    const { usuarioId, servicioId, receptorId, contenido } = req.body;
+    let { usuarioId, receptorId, contenido } = req.body;
 
-    if (!usuarioId || !contenido) {
+    if (!usuarioId || !receptorId || !contenido) {
       return res.status(400).json({ error: "Datos incompletos para crear un mensaje" });
+    }
+
+    // Validar si usuarioId y receptorId son ObjectId válidos
+    if (!ObjectId.isValid(usuarioId) || !ObjectId.isValid(receptorId)) {
+      return res.status(400).json({ error: "usuarioId o receptorId no son ObjectId válidos" });
     }
 
     const db = await connectDB();
 
-    let receptorFinal = receptorId ? new ObjectId(receptorId) : null;
-    let servicioFinal = servicioId ? new ObjectId(servicioId) : null;
-
-    if (servicioId) {
-      const servicio = await db.collection("Servicios").findOne({ _id: servicioFinal });
-      if (!servicio) {
-        console.error("❌ Servicio no encontrado:", servicioId);
-        return res.status(404).json({ error: "Servicio no encontrado" });
-      }
-      receptorFinal = servicio.usuarioId;
-    } else if (receptorId) {
-      const usuarioReceptor = await db.collection("Users").findOne({ _id: receptorFinal });
-      if (!usuarioReceptor) {
-        return res.status(404).json({ error: "Usuario receptor no encontrado" });
-      }
-    } else {
-      return res.status(400).json({ error: "Debe haber un servicioId o un receptorId" });
-    }
-    const chatIdFinal = receptorFinal 
-    ? [usuarioId.toString(), receptorFinal.toString()].sort().join("_") // ✅ Ordenado para asegurar siempre el mismo ID
-    : `${usuarioId}_${servicioFinal}`;
+    // 🔥 Generar un ID de chat único para ambos usuarios
+    const chatIdFinal = [usuarioId.toString(), receptorId.toString()].sort().join("_");
 
     const mensajeData = {
-        chatId: chatIdFinal,
-        usuarioId: new ObjectId(usuarioId),
-        servicioId: servicioFinal,
-        receptorId: receptorFinal,
-        contenido,
-        leido: false,
-        fecha: new Date(),
+      chatId: chatIdFinal,
+      usuarioId: new ObjectId(usuarioId),
+      receptorId: new ObjectId(receptorId),
+      contenido,
+      leido: false,
+      fecha: new Date(),
     };
 
-
+    // 🚀 Insertar mensaje en la base de datos
     const resultado = await db.collection("mensajes").insertOne(mensajeData);
     console.log("✅ Mensaje guardado correctamente:", resultado);
     res.json({ mensaje: "Mensaje guardado correctamente", resultado });
 
   } catch (error) {
     console.error("❌ Error al guardar mensaje:", error);
-    res.status(500).json({ error: "Error interno del servidor" });
+    res.status(500).json({ error: "Error interno del servidor", detalles: error.message });
   }
 });
+
+
+
 router.get("/read/mensajes", async (req, res) => {
   try {
     const db = await connectDB();
@@ -434,30 +423,36 @@ router.get("/read/mensajes", async (req, res) => {
 // 📌 Obtener mensajes de un usuario o servicio
 router.get('/mensajes', async (req, res) => {
   try {
-      const { usuarioId, contactoId ,receptorId} = req.query;
+    const { usuarioId, contactoId } = req.query;
 
-      if (!usuarioId || !ObjectId.isValid(usuarioId)) {
-          return res.status(400).json({ error: "ID de usuario inválido o no proporcionado" });
-      }
+    if (!usuarioId || !contactoId) {
+      return res.status(400).json({ error: "Faltan parámetros obligatorios" });
+    }
 
-      console.log("📌 Buscando mensajes con usuarioId:", usuarioId);
-      
-      const db = await connectDB();
-      const mensajes = await db.collection("mensajes").find({
-          $and: [
-              { usuarioId: new ObjectId(usuarioId) }, 
-              { receptorId: new ObjectId(receptorId) }, 
-              { servicioId: new ObjectId(contactoId) } 
-          ]
-      }).sort({ fecha: -1 }).toArray();
+    console.log("📌 Buscando mensajes entre:", { usuarioId, contactoId });
 
-      console.log("✅ Mensajes encontrados:", mensajes);
-      res.json(mensajes);
+    const db = await connectDB();
+
+    // 🔥 Incluir todos los mensajes (enviados y recibidos)
+    const mensajes = await db.collection("mensajes")
+      .find({
+        $or: [
+          { usuarioId: new ObjectId(usuarioId), receptorId: new ObjectId(contactoId) },
+          { usuarioId: new ObjectId(contactoId), receptorId: new ObjectId(usuarioId) }
+        ]
+      })
+      .sort({ fecha: 1 }) // Orden cronológico
+      .toArray();
+
+    console.log("✅ Mensajes encontrados:", mensajes);
+    res.json(mensajes);
+
   } catch (error) {
-      console.error("❌ Error al obtener mensajes:", error);
-      res.status(500).json({ error: "Error interno del servidor" });
+    console.error("❌ Error al obtener mensajes:", error);
+    res.status(500).json({ error: "Error interno del servidor", detalles: error.message });
   }
 });
+
 // 📌 Marcar un mensaje como leído
 router.put('/mensajes/:mensajeId',  async (req, res) => {
   try {
@@ -480,6 +475,47 @@ router.put('/mensajes/:mensajeId',  async (req, res) => {
     res.status(500).json({ error: "Error interno del servidor" });
   }
 });
+
+router.delete('/delete/mensajes', async (req, res) => {
+  try {
+    const { chatId } = req.query;
+
+    if (!chatId) {
+      return res.status(400).json({ error: "ID de chat no proporcionado" });
+    }
+
+    console.log(`📌 Intentando eliminar mensajes con chatId: ${chatId}`);
+
+    const db = await connectDB();
+
+    // Verificar si existen mensajes antes de eliminar
+    const chatExists = await db.collection("mensajes").findOne({ chatId });
+
+    if (!chatExists) {
+      console.warn(`⚠ No se encontró el chat con ID: ${chatId}.`);
+      return res.status(404).json({ error: "Chat no encontrado" });
+    }
+
+    // Intentar eliminar todos los mensajes con ese chatId
+    const result = await db.collection("mensajes").deleteMany({ chatId });
+
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ error: "No se encontraron mensajes para eliminar" });
+    }
+
+    console.log(`✅ Chat ${chatId} eliminado correctamente.`);
+    res.json({ message: "Chat eliminado correctamente", result });
+
+  } catch (error) {
+    console.error("❌ Error al eliminar chat:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+});
+
+
+
+
+
 // 📌 Eliminar un mensaje
 router.delete('/mensajes/:mensajeId', async (req, res) => {
   try {
@@ -498,6 +534,7 @@ router.delete('/mensajes/:mensajeId', async (req, res) => {
     res.status(500).json({ error: "Error interno del servidor" });
   }
 });
+
 // for parsing application/json
 api.use(bodyParser.json())
 // for parsing application/x-www-form-urlencoded

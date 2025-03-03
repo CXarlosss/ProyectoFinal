@@ -360,8 +360,6 @@ async function cargarMensajesRecibidosPorServicio(usuario, mapaNombres) {
         console.error("❌ Error en cargarMensajesRecibidosPorServicio:", error);
     }
 }
-
-
 //CerrarChat
 //Oculta el chat en la interfaz.
 function cerrarChat() {

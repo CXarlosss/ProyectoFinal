@@ -23,8 +23,8 @@ document.addEventListener("DOMContentLoaded", () => {
             const usuario = JSON.parse(usuarioGuardado);
             if (!usuario._id) throw new Error("ID de usuario no encontrado");
     
-            const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/users/${usuario._id}/favoritos`);
-            //const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/users/${usuario._id}/favoritos`);
+            //const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/users/${usuario._id}/favoritos`);
+            const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/users/${usuario._id}/favoritos`);
             if (!response.ok) throw new Error("Error al obtener favoritos");
     
             const favoritos = await response.json();
@@ -92,8 +92,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     const usuarioGuardado = localStorage.getItem("usuarioRegistrado");
                     const usuario = JSON.parse(usuarioGuardado || "{}");
 
-                    const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/users/${usuario._id}/favoritos/${servicioId}`, 
                     //const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/users/${usuario._id}/favoritos/${servicioId}`, 
+                    const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/users/${usuario._id}/favoritos/${servicioId}`, 
                      {
                         method: "DELETE",
                         headers: { "Content-Type": "application/json" }
@@ -138,8 +138,8 @@ async function mostrarServiciosRecomendados() {
             return;
         }
 
-        fetch(`${location.protocol}//${location.hostname}${API_PORT}/read/servicios`)
-        //fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/servicios`)
+        //fetch(`${location.protocol}//${location.hostname}${API_PORT}/read/servicios`)
+        fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/servicios`)
             .then(response => response.json())
             .then(servicios => {
                 // Filtramos los servicios recomendados basados en la categoría de los favoritos
@@ -193,8 +193,8 @@ async function mostrarServiciosRecomendados() {
     // Agregar un servicio a favoritos
     async function agregarAFavoritos(usuarioId, servicioId, nombreServicio) {
         console.log(`📌 Agregando a favoritos el servicio ${nombreServicio}...`);
-        fetch(`${location.protocol}//${location.hostname}${API_PORT}/users/${usuarioId}/favoritos/${servicioId}`, 
-        //fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/users/${usuarioId}/favoritos/${servicioId}`,
+        //fetch(`${location.protocol}//${location.hostname}${API_PORT}/users/${usuarioId}/favoritos/${servicioId}`, 
+        fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/users/${usuarioId}/favoritos/${servicioId}`,
         {
             method: "PUT",
             headers: { "Content-Type": "application/json" },

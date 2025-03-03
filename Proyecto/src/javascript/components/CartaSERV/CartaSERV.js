@@ -209,8 +209,8 @@ export class CartaSERV extends HTMLElement {
 async function cargarServicios() {
   try {
     const API_PORT = location.port ? `:${location.port}` : "";
-    const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/read/servicios`);
-    //const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/servicios`);
+    //const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/read/servicios`);
+    const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/servicios`);
     const servicios = await response.json();
 
     console.log("📡 Servicios obtenidos después de actualizar:", servicios);

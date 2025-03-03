@@ -33,7 +33,7 @@ async function obtenerFavoritos() {
   if (!usuario || !usuario._id) return new Set();
 
   const API_PORT = location.port ? `:${location.port}` : "";
-  const url = `${location.protocol}//${location.hostname}${API_PORT}/users/${usuario._id}/favoritos`;
+  const url = `${location.protocol}//${location.hostname}${API_PORT}/api/users/${usuario._id}/favoritos`;
 
   try {
     console.log("🔄 Cargando favoritos del usuario...");
@@ -57,7 +57,7 @@ async function cargarServicios() {
   console.log("⏳ Intentando obtener servicios y favoritos...");
 
   const API_PORT = location.port ? `:${location.port}` : "";
-  const urlServicios = `${location.protocol}//${location.hostname}${API_PORT}/read/servicios`;
+  const urlServicios = `${location.protocol}//${location.hostname}${API_PORT}/api/read/servicios`;
 
   try {
     const favoritosSet = await obtenerFavoritos();
@@ -301,7 +301,7 @@ class CartaServicio extends HTMLElement {
 
     const servicioId = this.getAttribute("_id");
     const API_PORT = location.port ? `:${location.port}` : "";
-    const API_URL = `${location.protocol}//${location.hostname}${API_PORT}/read/servicio/${servicioId}`;
+    const API_URL = `${location.protocol}//${location.hostname}${API_PORT}/api/read/servicio/${servicioId}`;
 
     try {
       console.log("🔄 Cargando detalles del servicio...");
@@ -341,7 +341,7 @@ async toggleFavorito(servicioId) {
 
   const usuario = JSON.parse(usuarioGuardado);
   const API_PORT = location.port ? `:${location.port}` : "";
-  const url = `${location.protocol}//${location.hostname}${API_PORT}/users/${usuario._id}/favoritos/${servicioId}`;
+  const url = `${location.protocol}//${location.hostname}${API_PORT}/api/users/${usuario._id}/favoritos/${servicioId}`;
 
   const favoritosGuardados = localStorage.getItem(`favoritos_${usuario._id}`);
   const favoritos = favoritosGuardados ? JSON.parse(favoritosGuardados) : [];

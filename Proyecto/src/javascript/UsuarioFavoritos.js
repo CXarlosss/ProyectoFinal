@@ -93,7 +93,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     const usuario = JSON.parse(usuarioGuardado || "{}");
 
                     //const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/users/${usuario._id}/favoritos/${servicioId}`, 
-                    const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/users/${usuario._id}/favoritos/${servicioId}`, 
+                    const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/users/${usuario._id}/favoritos/${servicioId}`, 
                      {
                         method: "DELETE",
                         headers: { "Content-Type": "application/json" }

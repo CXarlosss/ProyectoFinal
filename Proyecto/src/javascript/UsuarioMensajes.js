@@ -54,7 +54,7 @@ async function cargarMensajes() {
         console.log(`📌 Buscando mensajes para el usuario: ${usuario._id}`);
 
         // 🔥 Obtener los mensajes filtrados solo para este usuario
-        const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/read/mensajes?usuarioId=${usuario._id}`);
+        const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/mensajes?usuarioId=${usuario._id}`);
         if (!response.ok) throw new Error(`Error al obtener mensajes (${response.status})`);
 
         const mensajes = await response.json();
@@ -68,8 +68,8 @@ async function cargarMensajes() {
 
         // Obtener datos de usuarios y servicios
         const [usuariosResponse, serviciosResponse] = await Promise.all([
-            fetch(`${location.protocol}//${location.hostname}${API_PORT}/read/users`),
-            fetch(`${location.protocol}//${location.hostname}${API_PORT}/read/servicios`)
+            fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/users`),
+            fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/servicios`)
         ]);
 
         const usuarios = usuariosResponse.ok ? await usuariosResponse.json() : [];
@@ -221,7 +221,7 @@ export async function abrirChat(contactoId) {
 
         // 🔍 Intentamos encontrar si el contacto es un servicio
         try {
-            const servicioResponse = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/read/servicios`);
+            const servicioResponse = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/servicios`);
             //const servicioResponse = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/servicios`);
             if (servicioResponse.ok) {
                 const servicios = await servicioResponse.json();
@@ -238,7 +238,7 @@ export async function abrirChat(contactoId) {
         // 🔍 Si no es un servicio, buscamos si es un usuario
         if (!esServicio) {
             try {
-                const usuarioResponse = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/read/users`);
+                const usuarioResponse = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/users`);
                 //const usuarioResponse = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/users`);
                 if (usuarioResponse.ok) {
                     const usuarios = await usuarioResponse.json();
@@ -256,7 +256,7 @@ export async function abrirChat(contactoId) {
         chatTitulo.innerHTML = `Chat con ${nombreContacto}`;
 
         // 📨 Obtener los mensajes del chat
-        const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/mensajes?usuarioId=${usuario._id}&contactoId=${contactoId}`);
+        const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/mensajes?usuarioId=${usuario._id}&contactoId=${contactoId}`);
         //const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/mensajes?usuarioId=${usuario._id}&contactoId=${contactoId}`);
         if (!response.ok) throw new Error(`Error al obtener mensajes (${response.status})`);
 
@@ -298,7 +298,7 @@ async function cargarMensajesRecibidosPorServicio(usuario, mapaNombres) {
         console.log(`📌 Buscando servicios creados por el usuario: ${usuario._id}`);
 
         // 🔥 Obtener servicios creados por el usuario actual
-        const serviciosResponse = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/read/servicios?usuarioId=${usuario._id}`);
+        const serviciosResponse = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/servicios?usuarioId=${usuario._id}`);
         if (!serviciosResponse.ok) throw new Error("Error al obtener servicios del usuario");
 
         const servicios = await serviciosResponse.json();
@@ -315,7 +315,7 @@ async function cargarMensajesRecibidosPorServicio(usuario, mapaNombres) {
         console.log("📌 Mapa de servicios creados por el usuario:", servicioDueño);
 
         // 🔥 Obtener TODOS los mensajes
-        const mensajesResponse = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/read/mensajes`);
+        const mensajesResponse = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/mensajes`);
         if (!mensajesResponse.ok) throw new Error("Error al obtener mensajes");
 
         const mensajes = await mensajesResponse.json();
@@ -402,7 +402,7 @@ async function enviarMensaje() {
 
         console.log("📌 Datos enviados al servidor:", mensajeData);
 
-        const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/mensajes`, 
+        const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/mensajes`, 
         // const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/mensajes`, 
         {
             method: "POST",

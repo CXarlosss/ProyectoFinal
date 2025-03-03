@@ -120,8 +120,8 @@ export class LoginForm extends HTMLElement {
       try {
           console.log("📡 Enviando petición a la API...");
   
-          const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/read/users`);
-          //const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/users`);
+          //const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/read/users`);
+          const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/users`);
           console.log("📡 Respuesta recibida:", response);
   
           if (!response.ok) throw new Error("Error al obtener usuarios");

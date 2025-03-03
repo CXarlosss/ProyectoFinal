@@ -110,8 +110,8 @@ export class RegistrarForm extends HTMLElement {
     }
 
     try {
-      const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/read/users`);
-      //const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/users`);
+      //const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/read/users`);
+      const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/users`);
       if (!response.ok) throw new Error("Error al obtener usuarios");
 
       const usuariosAPI = await response.json();
@@ -126,8 +126,8 @@ export class RegistrarForm extends HTMLElement {
 
       const nuevoUsuario = { nombre, email, password, telefono, direccion };
 
-      const apiResponse = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/create/users`,
-     // const apiResponse = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/create/users`,
+      //const apiResponse = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/create/users`,
+     const apiResponse = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/create/users`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

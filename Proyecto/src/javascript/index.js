@@ -1,8 +1,5 @@
 // @ts-check
 
-// @ts-check
-
-
 /* ==========================
   Carrusel de Testimonios
 =========================== */
@@ -19,12 +16,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const testimonialItems = /** @type {NodeListOf<HTMLElement>} */ (document.querySelectorAll(".testimonial-item"));
     const totalSlidesTestimonios = testimonialItems.length;
-
     let indexTestimonios = 0;
 
     // Crear indicadores dinámicos
     for (let i = 0; i < totalSlidesTestimonios; i++) {
         const indicator = document.createElement("div");
+        indicator.classList.add("testimonial-dot");
+        indicator.dataset.index = i.toString();
         if (i === 0) indicator.classList.add("active");
         indicatorsContainer.appendChild(indicator);
     }
@@ -38,39 +36,93 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function moveSlideTestimonios() {
-        const sliderTestimonios = /** @type {HTMLElement | null} */ (document.querySelector(".testimonial-slider"));
-    
-        if (!sliderTestimonios) {
-            console.error("❌ Error: No se encontró el contenedor .testimonial-slider en el DOM.");
-            return;
-        }
-    
-        sliderTestimonios.style.transform = `translateX(-${indexTestimonios * 100}vw)`; // Utilizar vw para que se ajuste al ancho de la pantalla
+        if (!sliderTestimonios) return;
+        sliderTestimonios.style.transform = `translateX(-${indexTestimonios * 100}%)`;
         updateIndicatorsTestimonios();
     }
-
-    moveSlideTestimonios();    
 
     nextBtnTestimonios.addEventListener("click", () => {
         indexTestimonios = (indexTestimonios + 1) % totalSlidesTestimonios;
         moveSlideTestimonios();
+        resetAutoSlideTestimonios();
     });
 
     prevBtnTestimonios.addEventListener("click", () => {
         indexTestimonios = (indexTestimonios - 1 + totalSlidesTestimonios) % totalSlidesTestimonios;
         moveSlideTestimonios();
+        resetAutoSlideTestimonios();
     });
 
-    indicatorsTestimonios.forEach((dot, i) => {
+    indicatorsTestimonios.forEach((dot) => {
         dot.addEventListener("click", () => {
-            indexTestimonios = i;
-            moveSlideTestimonios();
+            const index = parseInt(dot.dataset.index || "0", 10);
+            if (!isNaN(index)) {
+                indexTestimonios = index;
+                moveSlideTestimonios();
+                resetAutoSlideTestimonios();
+            }
         });
     });
 
-    // ⏳ Auto desplazamiento de testimonios cada 7 segundos
-    setInterval(() => {
+    let autoSlideTestimonios = setInterval(() => {
         indexTestimonios = (indexTestimonios + 1) % totalSlidesTestimonios;
         moveSlideTestimonios();
     }, 7000);
+
+    function resetAutoSlideTestimonios() {
+        clearInterval(autoSlideTestimonios);
+        autoSlideTestimonios = setInterval(() => {
+            indexTestimonios = (indexTestimonios + 1) % totalSlidesTestimonios;
+            moveSlideTestimonios();
+        }, 7000);
+    }
+});
+
+/* ==========================
+  Carrusel de Negocios Destacados
+=========================== */
+document.addEventListener("DOMContentLoaded", () => {
+    const sliderNegocios = /** @type {HTMLElement | null} */ (document.querySelector(".business-slider"));
+    const prevBtnNegocios = /** @type {HTMLButtonElement | null} */ (document.querySelector(".carousel-btn.prev"));
+    const nextBtnNegocios = /** @type {HTMLButtonElement | null} */ (document.querySelector(".carousel-btn.next"));
+
+    if (!sliderNegocios || !prevBtnNegocios || !nextBtnNegocios) {
+        console.error("❌ Error: No se encontraron elementos del carrusel de negocios.");
+        return;
+    }
+
+    const negocioItems = /** @type {NodeListOf<HTMLElement>} */ (document.querySelectorAll(".business-card"));
+    const totalSlidesNegocios = negocioItems.length;
+    let indexNegocios = 0;
+
+    function moveSlideNegocios() {
+        if (!sliderNegocios) return;
+        const cardWidth = negocioItems[0]?.offsetWidth || 300;
+        sliderNegocios.style.transform = `translateX(-${indexNegocios * cardWidth}px)`;
+    }
+
+    nextBtnNegocios.addEventListener("click", () => {
+        indexNegocios = (indexNegocios + 1) % totalSlidesNegocios;
+        moveSlideNegocios();
+        resetAutoSlideNegocios();
+    });
+
+    prevBtnNegocios.addEventListener("click", () => {
+        indexNegocios = (indexNegocios - 1 + totalSlidesNegocios) % totalSlidesNegocios;
+        moveSlideNegocios();
+        resetAutoSlideNegocios();
+    });
+
+    let autoSlideNegocios = setInterval(() => {
+        indexNegocios = (indexNegocios + 1) % totalSlidesNegocios;
+        moveSlideNegocios();
+    }, 7000);
+
+    function resetAutoSlideNegocios() {
+        clearInterval(autoSlideNegocios);
+        autoSlideNegocios = setInterval(() => {
+            indexNegocios = (indexNegocios + 1) % totalSlidesNegocios;
+            moveSlideNegocios();
+        }, 7000);
+    }
 });

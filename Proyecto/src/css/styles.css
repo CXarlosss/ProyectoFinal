@@ -147,6 +147,49 @@ footer {
     color: white;
 }
 
+/* 🌟 Carrusel de Negocios Destacados */
+.carousel {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+}
+
+.business-slider {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+    width: max-content; /* Se ajusta al contenido */
+}
+
+.business-card {
+    min-width: 300px; /* Ajusta el tamaño de la tarjeta según necesidad */
+    flex: 0 0 auto;
+    margin: 10px;
+    background: white;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Botones del carrusel */
+.carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.carousel-btn.prev {
+    left: 10px;
+}
+
+.carousel-btn.next {
+    right: 10px;
+}
 
 /* =============================== */
 /* 🎬 ANIMACIONES DE APARICIÓN AL HACER SCROLL */
@@ -228,4 +271,65 @@ footer {
 
 .fade-in-scale {
     animation: fadeInScale 0.8s ease-out forwards;
+}
+/* 🌟 Estilos del Carrusel de Testimonios */
+.testimonial-carousel {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+}
+
+.testimonial-slider {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+    width: 100%;
+}
+
+.testimonial-item {
+    min-width: 100%;
+    flex: 0 0 100%;
+    box-sizing: border-box;
+    text-align: center;
+    padding: 20px;
+}
+
+/* 🔘 Botones de navegación */
+.testimonial-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.prev-testimonial {
+    left: 10px;
+}
+
+.next-testimonial {
+    right: 10px;
+}
+
+/* 🔘 Indicadores del carrusel */
+.testimonial-indicators {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.testimonial-indicators div {
+    width: 12px;
+    height: 12px;
+    background-color: gray;
+    border-radius: 50%;
+    margin: 0 5px;
+    cursor: pointer;
+}
+
+.testimonial-indicators div.active {
+    background-color: black;
 }

@@ -126,8 +126,8 @@ export class RegistrarForm extends HTMLElement {
 
       const nuevoUsuario = { nombre, email, password, telefono, direccion };
 
-      const apiResponse = await fetch(
-        `${location.protocol}//${location.hostname}${API_PORT}/create/users`,
+      const apiResponse = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/create/users`,
+     // const apiResponse = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/create/users`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

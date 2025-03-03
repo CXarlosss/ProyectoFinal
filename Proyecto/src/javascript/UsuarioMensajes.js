@@ -24,11 +24,10 @@ document.addEventListener("DOMContentLoaded", () => {
         const servicio = JSON.parse(servicioGuardado);
         console.log('Servicio-->', servicio)
         abrirChat(servicio._id);
-        localStorage.removeItem("servicioSeleccionado"); // 🔥 Limpiamos después de usarlo
+        localStorage.removeItem("servicioSeleccionado"); 
     }
     cargarMensajes();
-    cargarMensajesRecibidosPorServicio(); // 🔥 Nueva función agregada
-    
+    cargarMensajesRecibidosPorServicio(); 
 });
 
 //CargarMensajes
@@ -37,6 +36,8 @@ document.addEventListener("DOMContentLoaded", () => {
 //Filtra mensajes relevantes y obtiene datos de usuarios y servicios.
 //Asigna nombres reales a los mensajes.
 //Llama a renderizarListaChats() para actualizar la UI.
+let mensajesUsuario = []; // Variable global temporal para fusionar mensajes
+
 async function cargarMensajes() {
     try {
         console.log("📌 Ejecutando cargarMensajes()...");
@@ -54,32 +55,21 @@ async function cargarMensajes() {
 
         // 🔥 Obtener los mensajes filtrados solo para este usuario
         const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/read/mensajes?usuarioId=${usuario._id}`);
-        //const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/mensajes?usuarioId=${usuario._id}`);
-
         if (!response.ok) throw new Error(`Error al obtener mensajes (${response.status})`);
 
         const mensajes = await response.json();
-        console.log("✅ Mensajes obtenidos:", mensajes);
+        console.log("📌 Mensajes obtenidos de la API (antes de filtrar):", mensajes);
 
         // 🔥 Filtrar solo los mensajes en los que el usuario es emisor o receptor
-        const mensajesFiltrados = mensajes.filter(m => 
-            m.usuarioId === usuario._id || m.receptorId === usuario._id
+        mensajesUsuario = mensajes.filter(m => 
+            String(m.usuarioId) === String(usuario._id) || String(m.receptorId) === String(usuario._id)
         );
+        console.log("📌 Mensajes después de filtrar:", mensajesUsuario);
 
-        console.log("✅ Mensajes después de filtrar:", mensajesFiltrados);
-
-        // Si no hay mensajes después de filtrar, detenemos aquí
-        if (mensajesFiltrados.length === 0) {
-            console.warn("⚠ No hay mensajes para este usuario.");
-            renderizarListaChats([], usuario._id, {});
-            return;
-        }
         // Obtener datos de usuarios y servicios
         const [usuariosResponse, serviciosResponse] = await Promise.all([
             fetch(`${location.protocol}//${location.hostname}${API_PORT}/read/users`),
             fetch(`${location.protocol}//${location.hostname}${API_PORT}/read/servicios`)
-            //fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/users`),
-            //fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/servicios`)
         ]);
 
         const usuarios = usuariosResponse.ok ? await usuariosResponse.json() : [];
@@ -91,24 +81,31 @@ async function cargarMensajes() {
         // 🔥 Crear un mapa de nombres reales
         const mapaNombres = {};
         usuarios.forEach(user => mapaNombres[user._id] = user.nombre || user.email);
-        servicios.forEach(servicio => mapaNombres[servicio._id] = servicio.nombre);
+        servicios.forEach(servicio => {
+            if (servicio.usuarioId === usuario._id) {
+                mapaNombres[servicio._id] = servicio.nombre;
+                console.log(`📌 Agregado servicio al mapa: ${servicio.nombre} (ID: ${servicio._id})`);
+            }
+        });
 
-        console.log("📌 Mapa de nombres cargado:", mapaNombres); 
+        console.log("📌 Mapa de nombres cargado:", mapaNombres);
 
         // Asignar nombres reales a los mensajes
-        mensajesFiltrados.forEach(msg => {
+        mensajesUsuario.forEach(msg => {
             msg.nombreEmisor = mapaNombres[msg.usuarioId] || "Usuario Desconocido";
             msg.nombreReceptor = mapaNombres[msg.receptorId] || "Usuario Desconocido";
         });
 
-        console.log("✅ Mensajes después de asignar nombres:", mensajesFiltrados);
+        console.log("✅ Mensajes después de asignar nombres:", mensajesUsuario);
 
-        renderizarListaChats(mensajesFiltrados, usuario._id, mapaNombres);
+        // 🔥 Llamar a `cargarMensajesRecibidosPorServicio()` para fusionar mensajes
+        await cargarMensajesRecibidosPorServicio(usuario, mapaNombres);
 
     } catch (error) {
         console.error("❌ Error al cargar mensajes:", error);
     }
 }
+
 //RenderizarListaChats
 //Recibe los mensajes y los organiza en una lista de chats únicos.
 //Muestra el último mensaje enviado en cada chat y la fecha del mensaje más reciente.
@@ -140,25 +137,28 @@ function renderizarListaChats(mensajes, usuarioId, mapaNombres) {
     const chats = {};
 
     mensajes.forEach((msg) => {
-        const chatId = msg.chatId;
+        // 🔥 Ahora agrupamos por contactoId en lugar de chatId para evitar múltiples chats con la misma persona
         const contactoId = msg.usuarioId === usuarioId ? msg.receptorId : msg.usuarioId;
         const contactoNombre = mapaNombres[contactoId] || `Usuario ${contactoId}`;
 
         console.log(`📌 Renderizando chat con: ${contactoNombre} (ID: ${contactoId})`);
 
-        if (!chats[chatId]) {
-            chats[chatId] = {
+        // Si el chat con este contacto no existe, lo creamos
+        if (!chats[contactoId]) {
+            chats[contactoId] = {
                 id: contactoId,
                 nombre: contactoNombre,
                 ultimoMensaje: msg.contenido,
                 fecha: new Date(msg.fecha).toLocaleString()
             };
         } else {
-            chats[chatId].ultimoMensaje = msg.contenido;
-            chats[chatId].fecha = new Date(msg.fecha).toLocaleString();
+            // Si ya existe, actualizamos solo el último mensaje y la fecha
+            chats[contactoId].ultimoMensaje = msg.contenido;
+            chats[contactoId].fecha = new Date(msg.fecha).toLocaleString();
         }
     });
 
+    // 🔥 Renderizar cada chat en la UI
     Object.values(chats).forEach(chat => {
         const chatItem = document.createElement("div");
         chatItem.classList.add("chat-item");
@@ -175,6 +175,7 @@ function renderizarListaChats(mensajes, usuarioId, mapaNombres) {
 
     console.log("✅ Chats renderizados correctamente.");
 }
+
 //AbrirChats
 //Recupera el chat guardado en localStorage.
 //Busca si el contactoId es un servicio o un usuario y obtiene su nombre.
@@ -290,61 +291,51 @@ export async function abrirChat(contactoId) {
 /**
  * 📌 Carga los mensajes que han sido enviados a un servicio y los asigna también al creador del servicio.
  */
-async function cargarMensajesRecibidosPorServicio() {
+async function cargarMensajesRecibidosPorServicio(usuario, mapaNombres) {
     try {
         console.log("📌 EJECUTANDO cargarMensajesRecibidosPorServicio()...");
 
-        const usuarioGuardado = localStorage.getItem("usuarioRegistrado");
-        if (!usuarioGuardado) throw new Error("❌ Usuario no registrado en localStorage");
-
-        /** @type {{ _id: string, email: string }} */
-        const usuario = JSON.parse(usuarioGuardado);
-        if (!usuario._id) throw new Error("❌ ID de usuario no encontrado");
-
         console.log(`📌 Buscando servicios creados por el usuario: ${usuario._id}`);
 
-        // 🔥 Obtener servicios creados por el usuario
+        // 🔥 Obtener servicios creados por el usuario actual
         const serviciosResponse = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/read/servicios?usuarioId=${usuario._id}`);
-        //const serviciosResponse = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/servicios?usuarioId=${usuario._id}`);
         if (!serviciosResponse.ok) throw new Error("Error al obtener servicios del usuario");
 
         const servicios = await serviciosResponse.json();
         console.log("✅ Servicios obtenidos en cargarMensajesRecibidosPorServicio:", servicios);
 
+        // Crear un mapa de servicios cuyo dueño sea el usuario actual
         const servicioDueño = new Map();
         servicios.forEach(servicio => {
-            if (/^[a-fA-F0-9]{24}$/.test(servicio.usuarioId)) { 
+            if (String(servicio.usuarioId) === String(usuario._id)) {
                 servicioDueño.set(String(servicio._id), String(servicio.usuarioId));
-            } else {
-                console.warn(`⚠ El servicio ${servicio._id} tiene un usuarioId inválido: ${servicio.usuarioId}`);
             }
         });
 
-        // 🔥 Obtener mensajes
+        console.log("📌 Mapa de servicios creados por el usuario:", servicioDueño);
+
+        // 🔥 Obtener TODOS los mensajes
         const mensajesResponse = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/read/mensajes`);
-        //const mensajesResponse = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/mensajes`);
         if (!mensajesResponse.ok) throw new Error("Error al obtener mensajes");
 
         const mensajes = await mensajesResponse.json();
         console.log("✅ Mensajes obtenidos en cargarMensajesRecibidosPorServicio:", mensajes);
 
-        // 🔥 Filtrar mensajes que pertenecen a los servicios del usuario
-        const mensajesParaUsuario = mensajes.filter(mensaje => servicioDueño.has(String(mensaje.receptorId)));
+        // 🔥 Filtrar mensajes donde el receptor sea un servicio creado por el usuario actual
+        const mensajesServicios = mensajes.filter(mensaje =>
+            servicioDueño.has(String(mensaje.receptorId)) &&
+            String(servicioDueño.get(String(mensaje.receptorId))) === String(usuario._id) // Verifica que el dueño sea el usuario actual
+        );
 
-        console.log("📌 Mensajes filtrados:", mensajesParaUsuario);
-
-        if (mensajesParaUsuario.length === 0) {
-            console.log("⚠ No hay mensajes recibidos en servicios creados por el usuario.");
-            return;
-        }
+        console.log("📌 Mensajes después de filtrar (solo servicios del usuario):", mensajesServicios);
 
         // 🔥 Asignar el dueño del servicio como receptor sin hacer un request innecesario
-        const mensajesAsignados = mensajesParaUsuario.map(mensaje => {
+        const mensajesAsignados = mensajesServicios.map(mensaje => {
             const dueñoId = servicioDueño.get(String(mensaje.receptorId));
 
             if (!dueñoId || !/^[a-fA-F0-9]{24}$/.test(dueñoId)) {
-                console.error("❌ ERROR: dueñoId no es un ObjectId válido:", dueñoId);
-                return null; // Evitar agregar mensajes incorrectos
+                console.error(`❌ ERROR: dueñoId no es un ObjectId válido: ${dueñoId}`);
+                return null; // Evita agregar mensajes incorrectos
             }
 
             console.log(`📌 Reasignando mensaje al dueño del servicio (ID: ${dueñoId})`);
@@ -355,33 +346,22 @@ async function cargarMensajesRecibidosPorServicio() {
             };
         }).filter(Boolean); // Filtramos mensajes inválidos
 
-        console.log("📌 Mensajes listos para ser mostrados:", mensajesAsignados);
+        console.log("📌 Mensajes de servicios listos para ser mostrados:", mensajesAsignados);
 
-        // 🔥 Obtener datos de usuarios y servicios antes de crear el mapa de nombres
-        const [usuariosResponse, serviciosResponse2] = await Promise.all([
-            fetch(`${location.protocol}//${location.hostname}${API_PORT}/read/users`),
-            fetch(`${location.protocol}//${location.hostname}${API_PORT}/read/servicios`)
-            //fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/users`),
-            //fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/servicios`)
-        ]);
+        // 🔥 Fusionamos los mensajes de usuario y los de servicios
+        const mensajesFinales = [...mensajesUsuario, ...mensajesAsignados];
 
-        const usuarios = usuariosResponse.ok ? await usuariosResponse.json() : [];
-        const servicios2 = serviciosResponse2.ok ? await serviciosResponse2.json() : [];
+        console.log("📌 Mensajes totales a renderizar:", mensajesFinales);
 
-        // 🔥 Crear un mapa de nombres reales
-        const mapaNombres = {};
-        usuarios.forEach(user => mapaNombres[user._id] = user.nombre || user.email);
-        servicios2.forEach(servicio => mapaNombres[servicio._id] = servicio.nombre);
-
-        console.log("📌 Mapa de nombres cargado en cargarMensajesRecibidosPorServicio():", mapaNombres);
-
-        // 🔥 Mostrar en la UI en lugar de reenviar al backend
-        renderizarListaChats(mensajesAsignados, usuario._id, mapaNombres);
+        // 🔥 Mostrar en la UI
+        renderizarListaChats(mensajesFinales, usuario._id, mapaNombres);
 
     } catch (error) {
         console.error("❌ Error en cargarMensajesRecibidosPorServicio:", error);
     }
 }
+
+
 //CerrarChat
 //Oculta el chat en la interfaz.
 function cerrarChat() {

@@ -53,12 +53,12 @@ async function cargarMensajes() {
 
         console.log(`📌 Buscando mensajes para el usuario: ${usuario._id}`);
 
-        // 🔥 Obtener los mensajes filtrados solo para este usuario
+        // 🔥 Obtener los mensajes del usuario
         const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/mensajes?usuarioId=${usuario._id}`);
         if (!response.ok) throw new Error(`Error al obtener mensajes (${response.status})`);
 
         const mensajes = await response.json();
-        console.log("📌 Mensajes obtenidos de la API (antes de filtrar):", mensajes);
+        console.log("📌 Mensajes obtenidos de la API:", mensajes);
 
         // 🔥 Filtrar solo los mensajes en los que el usuario es emisor o receptor
         mensajesUsuario = mensajes.filter(m => 
@@ -66,7 +66,7 @@ async function cargarMensajes() {
         );
         console.log("📌 Mensajes después de filtrar:", mensajesUsuario);
 
-        // Obtener datos de usuarios y servicios
+        // ✅ Obtener datos de usuarios y servicios
         const [usuariosResponse, serviciosResponse] = await Promise.all([
             fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/users`),
             fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/servicios`)
@@ -78,33 +78,37 @@ async function cargarMensajes() {
         console.log("✅ Usuarios obtenidos:", usuarios);
         console.log("✅ Servicios obtenidos:", servicios);
 
-        // 🔥 Crear un mapa de nombres reales
+        // 🔥 Crear un mapa de nombres correctos
         const mapaNombres = {};
-        usuarios.forEach(user => mapaNombres[user._id] = user.nombre || user.email);
+
+        // Asignar nombres de usuarios
+        usuarios.forEach(user => {
+            mapaNombres[user._id] = user.nombre || user.email || `Usuario ${user._id}`;
+        });
+
+        // Asignar nombres de servicios
         servicios.forEach(servicio => {
-            if (servicio.usuarioId === usuario._id) {
-                mapaNombres[servicio._id] = servicio.nombre;
-                console.log(`📌 Agregado servicio al mapa: ${servicio.nombre} (ID: ${servicio._id})`);
-            }
+            mapaNombres[servicio._id] = servicio.nombre || `Servicio ${servicio._id}`;
         });
 
         console.log("📌 Mapa de nombres cargado:", mapaNombres);
 
-        // Asignar nombres reales a los mensajes
+        // 🔥 Asignar nombres reales a los mensajes
         mensajesUsuario.forEach(msg => {
-            msg.nombreEmisor = mapaNombres[msg.usuarioId] || "Usuario Desconocido";
-            msg.nombreReceptor = mapaNombres[msg.receptorId] || "Usuario Desconocido";
+            msg.nombreEmisor = mapaNombres[msg.usuarioId] || `Usuario ${msg.usuarioId}`;
+            msg.nombreReceptor = mapaNombres[msg.receptorId] || `Usuario ${msg.receptorId}`;
         });
 
         console.log("✅ Mensajes después de asignar nombres:", mensajesUsuario);
 
-        // 🔥 Llamar a `cargarMensajesRecibidosPorServicio()` para fusionar mensajes
+        // 🔥 Llamar a `cargarMensajesRecibidosPorServicio()`
         await cargarMensajesRecibidosPorServicio(usuario, mapaNombres);
 
     } catch (error) {
         console.error("❌ Error al cargar mensajes:", error);
     }
 }
+
 
 //RenderizarListaChats
 //Recibe los mensajes y los organiza en una lista de chats únicos.

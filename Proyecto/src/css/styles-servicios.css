@@ -20,8 +20,30 @@ header {
   backdrop-filter: blur(10px);
   color: white;
   box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
-}
+  background: url("https://images.pexels.com/photos/2119903/pexels-photo-2119903.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1") no-repeat center center;
+  background-size: cover; /* Asegura que la imagen cubra todo el header */
+  height: 120px;
+  backdrop-filter: blur(10px) !important;
+  position: relative;
 
+
+}
+header::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4); /* Capa oscura con transparencia */
+  backdrop-filter: blur(5px); /* Difuminado extra */
+  z-index: -1; /* Coloca la capa detrás del contenido */
+}
+h1 {
+  margin-bottom: 10px;
+  font-size: 1.8rem;
+  color: #dde4e8;
+}
 /* 🔥 Navbar con hover dinámico */
 nav ul {
   list-style: none;
@@ -51,16 +73,16 @@ nav ul li a::after {
   content: "";
   width: 0;
   height: 3px;
-  background: #ffcc00; /* Amarillo vibrante */
+  background: #f04e23; /* Amarillo vibrante */
   position: absolute;
-  bottom: -5px;
+  bottom: -1px;
   left: 50%;
   transform: translateX(-50%);
   transition: width 0.3s ease-in-out;
 }
 
 nav ul li a:hover {
-  color: #ffcc00;
+  color: #f04e23;
   transform: scale(1.1);
 }
 
@@ -71,9 +93,14 @@ nav ul li a:hover::after {
 /* 📌 Distribución de botones */
 .main-buttons {
   display: flex;
+  padding: 10px;
   justify-content: center;
   text-align: center;
   padding: 20px;
+}
+input{
+  border-radius: 10px;
+  text-align: left;
 }
 
 /* ✨ Botones con efecto glow */
@@ -106,7 +133,7 @@ button:hover {
 }
 /* Aplica el efecto de desenfoque y opacidad solo a las tarjetas que NO están en hover */
 #servicios-container:hover carta-servicio:not(:hover) {
-  filter: blur(1px);
+  
   opacity: 0.99;
   transition: all 0.3s ease-in-out;
 }
@@ -124,11 +151,16 @@ carta-servicio {
   padding: 10px;
   text-align: center;
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-  backdrop-filter: blur(5px);
+  
   min-height: 410px; 
   align-self: stretch; 
 }
 
+carta-servicio:hover {
+  background-color: rgba(51, 20, 40, 0.7);
+scale: 1.03;
+ 
+}
 
 /* 📌 Imagen de la tarjeta */
 carta-servicio img {
@@ -176,11 +208,9 @@ carta-servicio .boton {
 carta-servicio .boton:hover {
   background: #b2005e;
   color: white;
-  box-shadow: 0px 4px 15px rgba(178, 0, 94, 0.5);
+  box-shadow: 0px 4px 15px   #520a00;
+  ;
 }
-
-
-
 
 /* 🎨 Tarjetas con diferentes alturas */
 .card {
@@ -188,7 +218,7 @@ carta-servicio .boton:hover {
   border-radius: 10px;
   overflow: hidden;
   box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.12);
-  
+  padding: 10px;
   text-align: center;
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
   backdrop-filter: blur(5px);
@@ -198,8 +228,9 @@ carta-servicio .boton:hover {
 
 
 .card:hover {
-  transform: scale(1.05);
+  background-color: rgba(255, 255, 255, 0.9);
   box-shadow: 0px 15px 30px rgba(0, 0, 0, 0.2);
+  color: #000000;
 }
 
 

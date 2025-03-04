@@ -9,7 +9,7 @@
 
 body {
   font-family: 'Arial', sans-serif;
-  background: linear-gradient(to right, #bbc9cf, #dde4e8);
+  background:#081c2f;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -20,24 +20,48 @@ body {
 /* 🌟 HEADER Y NAVBAR */
 /* ======================================= */
 header {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background: rgba(5, 5, 5, 0.9);
-  color: white;
-  padding: 25px 0;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-  width: 100%;
-  position: fixed;
-  top: 0;
-  z-index: 1000;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 110px !important; /* Altura fija */
+  padding: 20px 0 !important;
+  display: flex !important;
+  flex-direction: column !important; /* 🔥 Asegura que el título y el nav estén en columnas */
+  justify-content: center !important;
+  align-items: center !important;
+  z-index: 1000 !important;
+  font-size: 10px;
+  background: url("https://images.pexels.com/photos/2119903/pexels-photo-2119903.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1") 
+    no-repeat center center;
+  background-size: cover;
+  backdrop-filter: blur(10px) !important;
+  position: relative;
 }
+header::before {
+content: "";
+position: absolute;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background: rgba(0, 0, 0, 0.4); /* Capa oscura con transparencia */
+backdrop-filter: blur(5px); /* Difuminado extra */
+z-index: -1; /* Coloca la capa detrás del contenido */
+}
+
 
 h1 {
   margin-bottom: 10px;
+  color: #dde4e8;
+  font-size: 1.8rem;
 }
 
 /* 🔥 NAVBAR DINÁMICO */
+.nav-container {
+  margin-top: 10px; /* Espacio entre el título y el menú */
+}
+
 nav ul {
   list-style: none;
   padding: 0;
@@ -47,9 +71,7 @@ nav ul {
   gap: 25px;
 }
 
-nav ul li {
-  display: inline;
-}
+
 
 nav ul li a {
   text-decoration: none;
@@ -66,7 +88,7 @@ nav ul li a::after {
   content: "";
   width: 0;
   height: 3px;
-  background: #ffcc00;
+  background: #f04e23;
   position: absolute;
   bottom: -5px;
   left: 50%;
@@ -75,7 +97,7 @@ nav ul li a::after {
 }
 
 nav ul li a:hover {
-  color: #ffcc00;
+  color: #f04e23;
   transform: scale(1.1);
 }
 
@@ -87,15 +109,15 @@ nav ul li a:hover::after {
 /* 🏗️ ESTRUCTURA GENERAL */
 /* ======================================= */
 main {
-  margin-top: 50px;
-  display: block;
+
+  display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  min-height: 80vh;
+  min-height: 50vh;
   width: 50%;
-  height: 50%;
 }
+
 
 section {
   background: #fff;
@@ -106,6 +128,7 @@ section {
   text-align: center;
   transition: all 200ms ease-in-out;
   scale: 0.9;
+  justify-content: center;
 }
 
 .section-lista-usuarios {

@@ -8,7 +8,7 @@
 }
 /* 📌 Favorito-item ahora más compacto */
 .favorito-item {
-    background: rgba(255, 255, 255, 0.15); /* Fondo translúcido */
+    background: rgba(255, 255, 255); /* Fondo translúcido */
     border-radius: 12px;
     padding: 10px 15px;
     margin: 6px 0;
@@ -149,7 +149,7 @@
   
   /* Título */
   .servicios-recomendados h2 {
-    font-size: 26px;
+    font-size: 20px;
     font-weight: 700;
     color: #222;
     margin-bottom: 25px;
@@ -204,7 +204,7 @@
   
   /* Texto dentro de las tarjetas */
   .servicio-recomendado p {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 600;
     color: #444;
     margin-bottom: 20px;

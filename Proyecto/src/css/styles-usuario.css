@@ -11,8 +11,8 @@ body {
   margin: 0;
   padding: 0;
   font-family: 'Arial', sans-serif; 
-  background: linear-gradient(to right, #bbc9cf, #dde4e8) !important;
-  display: flex;
+  background: rgb(5,32,60);
+  background: linear-gradient(180deg, rgba(5,32,60,1) 17%, rgba(215,223,228,1) 100%);
   flex-direction: column;
   align-items: center;
    padding-top: 90px !important; /* 🚀 Forzamos el espacio para el header */
@@ -90,19 +90,56 @@ body {
 }
 
 /* Bienvenida */
+
 .bienvenida {
   width: 90%;
-  max-width: 800px;
+  max-width: 600px;
+  margin-top: 30px;
   text-align: center;
-  font-size: 26px;
+  font-size: 22px;
   font-weight: bold;
-  padding: 20px;
-  background: linear-gradient(135deg, #007bff, #0056b3);
+  padding: 18px 25px;
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
+  
+  /* 🌈 Fondo con efecto difuminado */
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  
+  /* 🔥 Borde con luz degradada */
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0px 4px 15px rgba(255, 255, 255, 0.2), 
+              0px 0px 25px rgba(0, 34, 68, 0.4);
+  
+  /* 🎨 Texto más llamativo */
   color: white;
-  border-radius: 10px;
-  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
-  animation: fadeIn 1s ease-in-out;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+  
+  /* ✨ Animación de aparición */
+  animation: fadeIn 1s ease-in-out, glowEffect 2s infinite alternate;
 }
+
+/* 🎬 Animación de brillo pulsante */
+@keyframes glowEffect {
+  0% {
+      box-shadow: 0px 4px 15px rgba(255, 255, 255, 0.2), 
+                  0px 0px 25px rgba(0, 34, 68, 0.3);
+  }
+  100% {
+      box-shadow: 0px 4px 20px rgba(255, 255, 255, 0.4), 
+                  0px 0px 35px rgba(0, 34, 68, 0.6);
+  }
+}
+
+/* 📱 Ajustes Responsive */
+@media (max-width: 768px) {
+  .bienvenida {
+      font-size: 18px;
+      padding: 14px 20px;
+  }
+}
+
 
 /* Animación de aparición */
 @keyframes fadeIn {

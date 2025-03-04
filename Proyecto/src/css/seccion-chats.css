@@ -1,16 +1,22 @@
 /* Sección de Chats */
 /* 📌 Estilos base de la sección de chats */
 .chats {
-    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-    border-left: 5px solid #007bff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.08);
-    transition: all 0.3s ease-in-out;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
+  background: rgba(248, 247, 247 );/* Fondo translúcido */
+  border-left: 5px solid #007bff; /* Azul destacado */
+  padding: 20px;
+  border-radius: 12px;
+  backdrop-filter: blur(8px); /* Efecto de desenfoque */
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.12), 
+              -5px -5px 15px rgba(255, 253, 253, 0.4);
+  transition: all 0.3s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ✨ Efecto WOW en hover */
+
+
   
   /* ✅ Elementos de la lista de chats */
   .chat-item {

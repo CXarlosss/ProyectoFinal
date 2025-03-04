@@ -13,13 +13,16 @@
   </head>
   <body>
     <header>
-      <nav class="nav">
-        <ul>
-         
-          <li><a href="servicios.html">Servicios</a></li>
-        </ul>
-      </nav>
+      <div class="header-container">
+        <h1>AREA PERSONAL</h1>
+        <nav class="nav">
+          <ul>
+            <li><a href="servicios.html">SERVICIOS</a></li>
+          </ul>
+        </nav>
+      </div>
     </header>
+    
     <!-- Encabezado de bienvenida -->
     <div class="bienvenida">¡Bienvenido, <span id="nombre"></span>!</div>
     <!-- Botón para abrir el modal -->
@@ -28,7 +31,7 @@
     <!-- Modal de edición de usuario -->
     <div id="modal-editar-usuario" class="modal hidden">
       <div class="modal-content">
-        <h2>Editar Usuario</h2>
+        <h2>EDITAR USUARIO</h2>
         <form id="form-editar-usuario">
           <label>Nombre</label>
           <input type="text" id="editar-nombre" required /><br />
@@ -46,7 +49,7 @@
     <div class="container">
       <!-- Sección de Chats -->
       <div class="seccion chats">
-        <h2>Chats</h2>
+        <h2>CHATS</h2>
         <div id="chat-list">
           <p>No hay chats aún.</p>
         </div>
@@ -71,7 +74,7 @@
 
       <!-- Sección de Servicios y Favoritos -->
       <div class="seccion servicios">
-        <h2>Secciones Favoritas</h2>
+        <h2>SECCIONES FAVORITAS</h2>
         <div id="favoritos-list">
           <p>No tienes favoritos aún.</p>
         </div>
@@ -90,10 +93,6 @@
 
     <!-- Botón de Cerrar Sesión -->
     <button id="btn-cerrar-sesion" class="btn-cerrar-sesion">Cerrar Sesión</button>
-
-
-
-    
 
     <!-- Vincular el script -->
     <script type="module" src="./javascript/modificarUser.js"></script>

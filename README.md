@@ -100,15 +100,7 @@ Desde el archivo `package.json`, puedes ejecutar los siguientes comandos:
 
 - Despliega la aplicación
 
-###  Render (Para backend y frontend)
 
-- Crea una cuenta en Render
-
-- Conéctalo a tu repositorio de GitHub
-
-- Configura las variables de entorno (MONGO_URI, PORT=3001)
-
-- Ejecuta npm start para iniciar la aplicación
 
 ###  Contribuciones
 

@@ -1,8 +1,5 @@
 
-/* 🌟 NAVBAR FIJO SIN SOLAPAR EL CONTENIDO */
 
-
-/* 🚀 Evitar que el contenido se oculte debajo del header */
 html {
   scroll-padding-top: 100px; /* Ajuste para anclajes y navegación */
 }

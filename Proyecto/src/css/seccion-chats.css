@@ -169,27 +169,26 @@
   /* Ventana emergente de chat */
   /* ✅ Estilos del chat */
   #chat-popup {
-    width: 400px; /* 📌 Un poco más ancho */
+    position: fixed;
+    bottom: 20px;
+    right: 20px; /* 📌 Se asegura que esté en la esquina derecha */
+    width: 400px; 
     max-width: 100%;
     background: white;
     padding: 15px;
     border-radius: 10px;
     box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.3);
-    visibility: hidden;
     opacity: 0;
+    visibility: hidden;
     transition: opacity 0.3s ease-in-out, visibility 0.3s;
-    flex-direction: column;
-    position: fixed;
-    bottom: 20px;
-    right: 20px; /* 📌 Ubicado en la derecha fuera de los chats */
-    z-index: 1;
-  }
-  
-  #chat-popup.active {
+    z-index: 1000; /* 📌 Se asegura de que esté sobre otros elementos */
+}
+
+#chat-popup.active {
     visibility: visible;
     opacity: 1;
-  }
-  
+}
+
   /* ✅ Header del chat */
   .chat-header {
     display: flex;

@@ -51,26 +51,24 @@
       <div class="seccion chats">
         <h2>CHATS</h2>
         <div id="chat-list">
-          <p>No hay chats aún.</p>
+            <p>No hay chats aún.</p>
         </div>
-
-        <!-- Chat dentro de la sección de chats -->
-        <div id="chat-popup" class="hidden">
-          <div class="chat-header">
+    </div> <!-- ✅ Cierra correctamente la sección de chats -->
+    
+    <!-- ✅ Mueve el #chat-popup afuera para que no dependa de la estructura de la página -->
+    <div id="chat-popup" class="hidden">
+        <div class="chat-header">
             <span id="chat-titulo">Chat</span>
             <button id="cerrar-chat" class="btn-cerrar">X</button>
-          </div>
-          <div id="chat-messages"></div>
-          <div class="chat-input">
-            <input
-              type="text"
-              id="mensaje-input"
-              placeholder="Escribe un mensaje..."
-            />
-            <button id="enviar-mensaje">Enviar</button>
-          </div>
         </div>
-      </div>
+        <div id="chat-messages"></div>
+        <div class="chat-input">
+            <input type="text" id="mensaje-input" placeholder="Escribe un mensaje..." />
+            <button id="enviar-mensaje">Enviar</button>
+        </div>
+    </div>
+    
+ 
 
       <!-- Sección de Servicios y Favoritos -->
       <div class="seccion servicios">

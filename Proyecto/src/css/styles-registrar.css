@@ -5,16 +5,25 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+
 }
 
+/* 🌎 Fondo con `linear-gradient` adaptado */
 body {
   font-family: 'Arial', sans-serif;
-  background:#081c2f;
+  background: linear-gradient(180deg, #05203c 20%, #d7dfe4 100%);
+  background-attachment: fixed; /* ✅ Fija el fondo para evitar cortes */
+  background-size: cover; /* ✅ Asegura que se expanda correctamente */
+  background-repeat: no-repeat; /* ✅ Evita repeticiones */
+  background-position: center center; /* ✅ Centra el degradado */
   display: flex;
   flex-direction: column;
   align-items: center;
+  min-height: 100vh; /* ✅ Ocupa toda la altura */
+  width: 100%;
   padding-top: 100px; /* Espacio para el header */
 }
+
 
 /* ======================================= */
 /* 🌟 HEADER Y NAVBAR */

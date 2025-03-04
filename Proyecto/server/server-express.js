@@ -160,7 +160,7 @@ app.post('/api/create/users', async (req, res) => {
   res.json(result);
 }) 
 // 📌 Obtener todos los usuarios
-app.get('/read/users', async (req, res) => {
+app.get('/api/read/users', async (req, res) => {
   try {
     const db = await connectDB();
     const users = await db.collection("Users").find().toArray();
@@ -434,7 +434,7 @@ app.get("/api/read/mensajes", async (req, res) => {
   }
 });
 // 📌 Obtener mensajes de un usuario o servicio
-app.get('/mensajes', async (req, res) => {
+app.get('/api/mensajes', async (req, res) => {
   try {
     const { usuarioId, contactoId } = req.query;
 
@@ -524,9 +524,6 @@ app.delete('/api/delete/mensajes', async (req, res) => {
     res.status(500).json({ error: "Error interno del servidor" });
   }
 });
-
-
-
 
 
 // 📌 Eliminar un mensaje

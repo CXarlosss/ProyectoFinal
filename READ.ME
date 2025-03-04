@@ -1,134 +1,139 @@
-README.md - Proyecto LocalMarket 🛍️
-markdown
-Copiar
-Editar
 # 🛒 Proyecto LocalMarket
 
-_LocalMarket es una plataforma desarrollada con **Node.js, Express y MongoDB** que permite la gestión de servicios y usuarios, así como la comunicación mediante un sistema de mensajería._
+LocalMarket es una plataforma desarrollada con Node.js, Express y MongoDB que permite la gestión de servicios y usuarios, así como la comunicación mediante un sistema de mensajería.
 
-## 🚀 Tecnologías Utilizadas
+# 🚀 Tecnologías Utilizadas
 
-- **Backend:** Node.js, Express.js, MongoDB
-- **Base de Datos:** MongoDB (conectado mediante `mongodb`)
-- **Autenticación:** (Si se implementa más adelante)
-- **Frontend:** (Si hay un cliente separado, se puede documentar aquí)
-- **Herramientas adicionales:** ESLint, dotenv, body-parser, CORS
+Backend: `Node.js`,` Express.js`,`MongoDB`
 
----
+Base de Datos:` MongoDB (conectado mediante mongodb)`
 
-## 📂 Estructura del Proyecto
+Autenticación: (Pendiente de implementación)
 
-📁 LocalMarket/ │── 📂 server/ # Servidor y lógica del backend │ │── server-express.js # Servidor principal Express │ │── server-api.js # API REST │ │── server-statics.js # Servidor de archivos estáticos │ │── server-mongodb.js # Conexión y operaciones en MongoDB │── 📂 public/ # Archivos estáticos (HTML, CSS, JS) │── 📂 src/ # Código fuente del frontend │── 📄 .env # Variables de entorno │── 📄 package.json # Configuración del proyecto y dependencias │── 📄 README.md # Documentación
+Frontend: (Si hay un cliente separado, se puede documentar aquí)
 
-yaml
-Copiar
-Editar
+Herramientas adicionales: ESLint, dotenv, body-parser, CORS
 
----
+# 📂 Estructura del Proyecto
+```plaintext
+📁 Proyecto/
+│── 📂 server/              # Servidor y lógica del backend
+│   │── server-express.js    # Servidor principal Express
+│   │── server-api.js        # API REST
+│   │── server-statics.js    # Servidor de archivos estáticos
+│   │── server-mongodb.js    # Conexión y operaciones en MongoDB
+│── 📂 public/              # Archivos estáticos (HTML, CSS, JS)
+│── 📂 src/                 # Código fuente del frontend
+│── 📄 .env                 # Variables de entorno
+│── 📄 package.json         # Configuración del proyecto y dependencias
+│── 📄 README.md            # Documentación
+```
+# 🔧 Instalación y Configuración
 
-## 🔧 Instalación y Configuración
-
-### 1️⃣ Clonar el Repositorio
-
-```bash
-git clone https://github.com/CXarlosss/LocalMarket.git
-cd LocalMarket
-2️⃣ Instalar Dependencias
-bash
-Copiar
-Editar
-npm install
-3️⃣ Configurar el Archivo .env
+## 1️⃣ Clonar el Repositorio
+[git clone](https://github.com/CXarlosss/ProyectoFinal.git)
+`cd Proyecto`
+## 2️⃣ Instalar Dependencias
+`npm install`
+## 3️⃣ Configurar el Archivo .env
 Crea un archivo .env en la raíz del proyecto y agrega lo siguiente:
+`MONGO_URI=mongodb://127.0.0.1:27017/LocalMarket`
+`PORT=3001`
+## 4️⃣ Iniciar el Servidor
+`npm start`
+O manualmente:
+`node server/server-express.js`
 
-env
-Copiar
-Editar
-MONGO_URI=mongodb://127.0.0.1:27017/LocalMarket
-PORT=3001
-4️⃣ Iniciar el Servidor
-bash
-Copiar
-Editar
+# 📜 Scripts Disponibles
+
+Desde el archivo package.json, puedes ejecutar los siguientes comandos:
+
+Comando
+
+Descripción
+
 npm start
-📜 Scripts Disponibles
-En el package.json, se han definido varios comandos útiles:
 
-Comando	Descripción
-npm start	Inicia el servidor principal con Express
-npm run server:express:start	Inicia el servidor con variables de entorno cargadas
-npm run server:statics:start	Inicia el servidor de archivos estáticos
-npm run server:api:start	Inicia solo el servidor de la API
-npm run lint	Ejecuta ESLint para validar código
-📡 Endpoints de la API
-📌 Usuarios
-Método	Ruta	Descripción
-POST	/create/users	Crea un nuevo usuario
-GET	/read/users	Obtiene todos los usuarios
-PUT	/update/users/:id	Actualiza un usuario
-DELETE	/delete/users/:id	Elimina un usuario
-📌 Servicios
-Método	Ruta	Descripción
-POST	/create/servicios	Crea un nuevo servicio
-GET	/read/servicios	Obtiene todos los servicios
-GET	/read/servicio/:id	Obtiene un servicio por su ID
-PUT	/update/servicios/:id	Actualiza un servicio
-DELETE	/delete/servicios/:id	Elimina un servicio
-📌 Mensajes
-Método	Ruta	Descripción
-POST	/mensajes	Envía un mensaje
-GET	/read/mensajes	Obtiene todos los mensajes
-GET	/mensajes?usuarioId=X&contactoId=Y	Obtiene mensajes entre dos usuarios
-PUT	/mensajes/:mensajeId	Marca un mensaje como leído
-DELETE	/mensajes/:mensajeId	Elimina un mensaje
-📌 Favoritos
-Método	Ruta	Descripción
-PUT	/users/:userId/favoritos/:servicioId	Agrega o quita un servicio de favoritos
-GET	/users/:userId/favoritos	Obtiene los servicios favoritos de un usuario
-DELETE	/users/:userId/favoritos/:servicioId	Elimina un servicio de los favoritos
-🛠️ Herramientas y Dependencias
-📦 Dependencias Clave
-Categoría	Dependencias
-Servidor	express, cors, body-parser
-Base de Datos	mongodb
-Autenticación	(Agregar si se implementa en el futuro)
-Utilidades	dotenv, chalk, debug
-Desarrollo	eslint, eslint-plugin-react
-📌 Instalación de Dependencias Manualmente
-Si necesitas instalar alguna dependencia adicional:
+Inicia el servidor principal con Express
 
-bash
-Copiar
-Editar
-npm install <nombre-paquete>
-🛠 Despliegue en Producción
-🌍 Opciones de Despliegue
+npm run server:express:start
 
-Netlify (Si hay frontend)
+Inicia el servidor con variables de entorno
+
+npm run server:statics:start
+
+Inicia el servidor de archivos estáticos
+
+npm run server:api:start
+
+Inicia solo el servidor de la API
+
+npm run lint
+
+Ejecuta ESLint para validar código
+
+# 📡 Endpoints de la API
+
+## 📌 Usuarios
+
+| Método  | Ruta                  | Descripción             |
+|---------|------------------------|-------------------------|
+| POST    | `/create/users`        | Crea un nuevo usuario   |
+| GET     | `/read/users`          | Obtiene todos los usuarios |
+| PUT     | `/update/users/:id`    | Actualiza un usuario    |
+| DELETE  | `/delete/users/:id`    | Elimina un usuario      |
+
+## 📌 Servicios
+
+| Método  | Ruta                     | Descripción                |
+|---------|---------------------------|----------------------------|
+| POST    | `/create/servicios`       | Crea un nuevo servicio     |
+| GET     | `/read/servicios`         | Obtiene todos los servicios |
+| GET     | `/read/servicio/:id`      | Obtiene un servicio por ID |
+| PUT     | `/update/servicios/:id`   | Actualiza un servicio      |
+| DELETE  | `/delete/servicios/:id`   | Elimina un servicio        |
+
+
+# 🛠 Despliegue en Producción
+
+## 🌍 Opciones de Despliegue
+
+### 📌 Netlify (Si hay frontend)
+
 Inicia sesión en Netlify
-bash
-Copiar
-Editar
-Crea una nueva aplicación
-bash
-Copiar
-Editar
 
-Agrega MongoDB como servicio
-bash
-Copiar
-Editar
+Crea una nueva aplicación
+
+Configura MongoDB como servicio
 
 Despliega la aplicación
-bash
-Copiar
-Editar
-git push heroku main
-🧑‍💻 Contribuciones
-💡 ¡Las contribuciones son bienvenidas!
-Si deseas contribuir, por favor sigue estos pasos:
+
+### 📌 Render (Para backend y frontend)
+
+Crea una cuenta en Render
+
+Conéctalo a tu repositorio de GitHub
+
+Configura las variables de entorno (MONGO_URI, PORT=3001)
+
+Ejecuta npm start para iniciar la aplicación
+
+### 🧑‍💻 Contribuciones
+
+#💡 ¡Las contribuciones son bienvenidas!Si deseas contribuir, sigue estos pasos:
 
 Haz un fork del repositorio.
-Crea una rama nueva para tu funcionalidad (git checkout -b feature-nueva).
-Realiza tus cambios y haz commit (git commit -m "Agrego nueva funcionalidad").
-Envía un pull request.
+
+Crea una nueva rama para tu funcionalidad:
+
+git checkout -b feature-nueva
+
+Realiza tus cambios y haz commit:
+
+git commit -m "Agrego nueva funcionalidad"
+
+Envía un pull request para revisión.
+
+###📜 Licencia
+
+📄 Este proyecto está bajo la licencia MIT.Consulta el archivo LICENSE para más detalles.

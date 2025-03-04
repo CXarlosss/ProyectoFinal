@@ -1,6 +1,16 @@
+[![Netlify Status](https://api.netlify.com/api/v1/badges/7eda913a-98f6-478d-a097-55a2bb2ef6d7/deploy-status)](https://app.netlify.com/sites/flourishing-baklava-adefd3/deploys)
 #  Proyecto LocalMarket
 
 LocalMarket es una plataforma desarrollada con Node.js, Express y MongoDB que permite la gestión de servicios y usuarios, así como la comunicación mediante un sistema de mensajería.
+Puedes visitar la pagina desplegada en Netlify: [LOCALMARKET](https://flourishing-baklava-adefd3.netlify.app/)
+Aqui podeis apreciar dos de las paginas principales:
+### Pagina del Usuario:
+Donde podra hacer favoritos a los servicios y tambien realizar chats con ellos
+![Captura de pantalla (36)](https://github.com/user-attachments/assets/5c380750-9124-4013-9a6f-e38ebd54d289)
+
+### Pagina de los servicios
+Donde podra buscar servicios nuevos para poder hablarles o añadirlos a favoritos
+![Captura de pantalla (34)](https://github.com/user-attachments/assets/18c2f812-3ae0-47b8-9037-3b29f9263a99)
 
 #  Tecnologías Utilizadas
 

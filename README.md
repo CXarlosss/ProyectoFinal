@@ -14,15 +14,47 @@ Donde podra buscar servicios nuevos para poder hablarles o añadirlos a favorito
 
 #  Tecnologías Utilizadas
 
-Backend: `Node.js`,` Express.js`,`MongoDB`
+##  Frontend
+- **HTML**
+- **CSS** (Responsive)
+- **JavaScript**: Programación funcional, principios SOLID, patrones de diseño
+- **JavaScript Nativo** y **Lit Element** como librería de componentes web
+- **TypeScript** para el tipado del código
 
-Base de Datos:` MongoDB (conectado mediante mongodb)`
+##  Backend
+- **Node.js** `>= 20.0.0`
+- **Express.js** para el servidor
+- **MongoDB** como base de datos (conectado mediante `mongodb`)
+- **APIs REST** con Express.js
 
-Autenticación: (Pendiente de implementación)
+## Progressive Web App (PWA)
+- Habilitación como PWA para instalación en dispositivos móviles
 
-Frontend: (Si hay un cliente separado, se puede documentar aquí)
+##  Documentación y Buenas Prácticas
+- **JSDoc** para la documentación del código
+- **GitHub** para gestión de repositorios
+- **Git Hooks** y **Linters** para comprobación de errores:
+  - `ESLint`
+  - `StyleLint`
+  - `Lint-Staged`
+  - `commitlint`
+- **Conventional Commits** para mensajes de commits estandarizados
 
-Herramientas adicionales: ESLint, dotenv, body-parser, CORS
+##  Testing y Herramientas de Desarrollo
+- **Jest** como herramienta de testeo (Ejemplos en `/js/test`)
+- **Postman** para pruebas de API
+- **Netlify** para despliegue:
+  - Archivo `api.mjs` en `netlify/functions`
+  - Configuración en `netlify.toml`
+
+##  Plugins y Extensiones Recomendadas (VS Code)
+- **GitHub Pull Requests**
+- **Live Preview**
+- **Live Server**
+- **Error Lens**
+- **Markdownlint**
+- **lit-html**
+- **CORS**
 
 #  Estructura del Proyecto
 ```plaintext

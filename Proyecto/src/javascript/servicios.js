@@ -150,7 +150,6 @@ async function cargarServicios() {
       cartaServicio.setAttribute("nombre", servicio.nombre);
       cartaServicio.setAttribute("descripcion", servicio.descripcion);
       cartaServicio.setAttribute("ubicacion", servicio.ubicacion);
-
       cartaServicio.setAttribute("imagen", servicio.imagen);
       cartaServicio.setAttribute("emailUsuario", servicio.emailUsuario);
 

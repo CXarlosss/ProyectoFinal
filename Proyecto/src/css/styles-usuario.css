@@ -184,6 +184,22 @@ body {
   z-index: 1000;
   transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
 }
+
+.modal-content {
+  background: rgba(255, 255, 255, 0.95); /* Fondo sólido */
+  position: relative;
+  border-radius: 15px;
+  padding: 25px;
+  max-width: 420px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.3);
+  animation: fadeIn 0.3s ease-in-out;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  max-height: 90vh;
+  overflow-y: auto; /* Permitir desplazamiento interno */
+}
+
 .modal::before {
   content: "";
   position: absolute;
@@ -236,7 +252,7 @@ body {
 
 /* 📝 Estilos para los inputs */
 .modal-content input {
-  width: 100%;
+  width: 80%;
   padding: 12px;
   margin-top: 5px;
   border: 2px solid rgba(0, 0, 0, 0.1);

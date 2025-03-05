@@ -285,81 +285,162 @@ carta-servicio .boton:hover {
   box-shadow: 0px 4px 15px rgba(178, 0, 94, 0.5);
 }
 
-/* 🔥 Modal para detalles */
+/* 🔹 Ocultar modal inicialmente */
 .modal.hidden {
   display: none;
 }
 
+/* 🟣 FONDO DIFUMINADO CUANDO EL MODAL ESTÁ ACTIVO */
+body.modal-active {
+  overflow: hidden; /* Evita scroll en el fondo */
+}
+
+body.modal-active::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(15px); /* 🔥 FONDO DESENFOCADO MÁS SUAVE */
+  background: rgba(0, 0, 0, 0.4); /* 🔹 Oscurece un poco */
+  z-index: 998; /* Detrás del modal */
+}
+
+/* 🟣 MODAL PRINCIPAL */
 .modal {
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: rgba(255, 255, 255, 0.95);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-  padding: 20px;
-  border-radius: 12px;
-  z-index: 1000;
-  width: auto; /* 🔹 Ahora mide la mitad */
-  max-height: 50vh; /* 🔹 No sobrepasa la pantalla */
-  overflow-y: auto; /* 🔹 Permite scroll interno si es necesario */
-}
-
-/* 🏆 Formulario en modal */
-modal-content {
-  width: 100%;
-  max-width: 300px; /* 🔹 Más pequeño */
+  background: rgba(255, 255, 255, 0.12); /* 🔥 Glassmorphism */
+  backdrop-filter: blur(30px); /* 🔥 Suaviza el fondo del modal */
+  box-shadow: 0px 15px 35px rgba(0, 0, 0, 0.4);
+  padding: 30px;
+  border-radius: 10px; /* 🔥 CUADRICULADO PERO CON BORDES SUAVES */
+  z-index: 999;
+  width: 130%;
+  max-width: 420px;
+  max-height: 75vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-align: center;
+  animation: fadeIn 0.4s ease-in-out;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0px 0px 20px rgba(255, 255, 255, 0.3); /* 🔥 Efecto de luz en el borde */
 }
 
-/* 📝 INPUTS y TEXTAREA */
+/* 🟣 TÍTULO DEL MODAL */
+.modal-content h2 {
+  font-size: 1.7rem;
+  color: rgb(0, 0, 0);
+  text-transform: uppercase;
+  font-weight: bold;
+  margin-bottom: 18px;
+  border-bottom: 3px solid rgba(255, 255, 255, 0.3);
+  padding-bottom: 8px;
+}
+
+/* 🟣 FORMULARIO DENTRO DEL MODAL */
+.modal-content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* ✨ INPUTS & TEXTAREA */
 .modal-content input,
 .modal-content textarea,
 .modal-content select {
-  width: 90%;
-  font-size: 0.8rem; /* 🔹 Más pequeño */
-  padding: 6px;
-  margin-bottom: 8px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-  transition: border-color 0.3s ease;
+  width: 100%;
+  font-size: 1rem;
+  padding: 12px;
+  border-radius: 10px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  transition: all 0.3s ease;
+  outline: none;
+  box-shadow: inset 3px 3px 8px rgba(0, 0, 0, 0.2),
+              inset -3px -3px 8px rgba(255, 255, 255, 0.2); /* 🔥 Neumorphism */
 }
 
-.modal-content h2 {
-  font-size: 1.5rem;
-  color: #b2005e;
-  text-transform: uppercase;
-  font-weight: bold;
-  margin-bottom: 15px;
+.modal-content input::placeholder,
+.modal-content textarea::placeholder {
+  color: rgba(255, 255, 255, 0.7);
 }
 
-
-
+/* 🔥 Efecto cuando el input está en focus */
 .modal-content input:focus,
 .modal-content textarea:focus {
-  border-color: #b2005e;
-  outline: none;
+  border-color: #ff007a;
+  background: rgba(255, 255, 255, 0.4);
+  box-shadow: inset 3px 3px 12px rgba(255, 0, 122, 0.5),
+              inset -3px -3px 12px rgba(255, 255, 255, 0.3);
 }
 
-/* 🎭 Animación para modal */
+/* 🟣 BOTÓN DE ENVÍO */
+.modal-content button {
+  background: #ff007a;
+  color: white;
+  border: none;
+  padding: 14px;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  text-transform: uppercase;
+  margin-top: 15px;
+  width: 100%;
+  box-shadow: 0px 4px 12px rgba(255, 0, 122, 0.4);
+}
+
+.modal-content button:hover {
+  background: #d60064;
+  box-shadow: 0px 4px 20px rgba(255, 0, 122, 0.6);
+  transform: scale(1.05);
+}
+
+/* 🔥 ANIMACIÓN SUAVE PARA EL MODAL */
 @keyframes fadeIn {
   from {
-      opacity: 0;
-      transform: translate(-50%, -60%);
+    opacity: 0;
+    transform: translate(-50%, -60%);
   }
   to {
-      opacity: 1;
-      transform: translate(-50%, -50%);
+    opacity: 1;
+    transform: translate(-50%, -50%);
   }
 }
 
+/* 📌 ESTILOS RESPONSIVOS */
+@media (max-width: 600px) {
+  .modal {
+    width: 95%;
+    max-width: 360px;
+    padding: 20px;
+  }
 
+  .modal-content h2 {
+    font-size: 1.5rem;
+  }
 
+  .modal-content input,
+  .modal-content textarea,
+  .modal-content select {
+    font-size: 0.9rem;
+    padding: 10px;
+  }
 
-
-
-
-
+  .modal-content button {
+    font-size: 0.9rem;
+    padding: 12px;
+  }
+}
 
 
 

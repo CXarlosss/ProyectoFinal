@@ -26,6 +26,8 @@ Herramientas adicionales: ESLint, dotenv, body-parser, CORS
 
 #  Estructura del Proyecto
 ```plaintext
+📁 netlify/functions
+│── api.mjs
 📁 Proyecto/
 │── 📂 server/              # Servidor y lógica del backend
 │   │── server-express.js    # Servidor principal Express
@@ -34,9 +36,9 @@ Herramientas adicionales: ESLint, dotenv, body-parser, CORS
 │   │── server-mongodb.js    # Conexión y operaciones en MongoDB
 │── 📂 public/              # Archivos estáticos (HTML, CSS, JS)
 │── 📂 src/                 # Código fuente del frontend
-│── 📄 .env                 # Variables de entorno
-│── 📄 package.json         # Configuración del proyecto y dependencias
-│── 📄 README.md            # Documentación
+│ 📄 .env                 # Variables de entorno
+│ 📄 package.json         # Configuración del proyecto y dependencias
+│ 📄 README.md            # Documentación
 ```
 #  Instalación y Configuración
 

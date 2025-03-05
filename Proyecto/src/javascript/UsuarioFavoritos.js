@@ -11,7 +11,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!usuario._id) {
         console.error("❌ No se encontró el ID del usuario.");
         return;
+
     }
+    mostrarServiciosRecomendados();
     // Cargar favoritos
     // Obtiene los favoritos del usuario y los muestra en la lista de favoritos
     // También muestra servicios recomendados basados en los favoritos
@@ -34,7 +36,6 @@ document.addEventListener("DOMContentLoaded", () => {
             localStorage.setItem(`favoritos_${usuario._id}`, JSON.stringify(favoritos));
     
             renderizarListaFavoritos(favoritos);
-            mostrarServiciosRecomendados();
     
         } catch (error) {
             console.error("❌ Error al cargar favoritos:", error);
@@ -47,7 +48,6 @@ document.addEventListener("DOMContentLoaded", () => {
     document.addEventListener("favoritos-actualizados", () => {
         console.log("📌 Evento 'favoritos-actualizados' recibido. Recargando lista...");
         cargarFavoritos();
-        mostrarServiciosRecomendados(); // Recargamos los servicios recomendados
 
     });
     cargarFavoritos();
@@ -75,7 +75,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 <button class="btn-eliminar" data-servicio-id="${servicio._id}">Eliminar</button>
                 <button class="btn-mensaje" data-servicio-id="${servicio._id}">Enviar Mensaje</button>
             `;
-            mostrarServiciosRecomendados(); // Recargamos los servicios recomendados
 
             favoritosList.appendChild(favoritoItem);
         });

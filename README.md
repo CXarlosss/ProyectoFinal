@@ -75,7 +75,8 @@ Desde el archivo `package.json`, puedes ejecutar los siguientes comandos:
 
 
 #  Modelo de datos y relaciones entre componentes
-![GESTION DE DATOS DE LOCALMARKET](https://github.com/user-attachments/assets/c1cac5f6-9a70-41ed-a7be-61b395952849)
+![GESTION DE DATOS DE LOCALMARKET](https://github.com/user-attachments/assets/a3e58e3c-7ba9-4c2d-adc4-792ff0b2ecb8)
+95952849)
 
 
 ##  Usuarios

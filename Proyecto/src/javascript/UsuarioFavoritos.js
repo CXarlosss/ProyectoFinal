@@ -4,18 +4,20 @@ const API_PORT = location.port ? `:${location.port}` : ''
 
 document.addEventListener("DOMContentLoaded", () => {
     cargarFavoritos(); // Recargar la lista de favoritos
-
     console.log("📌 Cargando módulo de favoritos...");
-
     const favoritosList = document.getElementById("favoritos-list");
-
     let usuario = JSON.parse(localStorage.getItem("usuarioRegistrado") || "{}");
 
     if (!usuario._id) {
         console.error("❌ No se encontró el ID del usuario.");
         return;
-      }
-      async function cargarFavoritos() {
+    }
+    // Cargar favoritos
+    // Obtiene los favoritos del usuario y los muestra en la lista de favoritos
+    // También muestra servicios recomendados basados en los favoritos
+    // Si no hay favoritos, muestra un mensaje de advertencia
+    //Guardar favoritos en localStorage para sincronizar con la página de servicios
+    async function cargarFavoritos() {
         try {
             const usuarioGuardado = localStorage.getItem("usuarioRegistrado");
             if (!usuarioGuardado) throw new Error("Usuario no registrado");
@@ -23,14 +25,12 @@ document.addEventListener("DOMContentLoaded", () => {
             const usuario = JSON.parse(usuarioGuardado);
             if (!usuario._id) throw new Error("ID de usuario no encontrado");
     
-            //const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/users/${usuario._id}/favoritos`);
             const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/users/${usuario._id}/favoritos`);
             if (!response.ok) throw new Error("Error al obtener favoritos");
     
             const favoritos = await response.json();
             console.log("✅ Favoritos obtenidos:", favoritos);
     
-            // 🔥 Guardar favoritos en localStorage para sincronizar con la página de servicios
             localStorage.setItem(`favoritos_${usuario._id}`, JSON.stringify(favoritos));
     
             renderizarListaFavoritos(favoritos);
@@ -41,9 +41,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
     
-    
     /**
-     * 📌 Escuchar evento para actualizar favoritos dinámicamente
+     * Escuchar evento para actualizar favoritos dinámicamente
      */
     document.addEventListener("favoritos-actualizados", () => {
         console.log("📌 Evento 'favoritos-actualizados' recibido. Recargando lista...");
@@ -51,10 +50,13 @@ document.addEventListener("DOMContentLoaded", () => {
         mostrarServiciosRecomendados(); // Recargamos los servicios recomendados
 
     });
-
     cargarFavoritos();
+    // Renderizar lista de favoritos
+    // Recibe un array de favoritos y los muestra en la lista de favoritos
+    // También añade eventos para eliminar favoritos y enviar mensajes
+    // Si no hay favoritos, muestra un mensaje de advertencia
     /**
-     * 📌 Renderiza la lista de favoritos y permite eliminarlos.
+     * Renderiza la lista de favoritos y permite eliminarlos.
      * @param {Array<{_id: string, nombre: string, descripcion: string}>} favoritos 
      */
    async function renderizarListaFavoritos(favoritos) {
@@ -62,9 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error("❌ No se encontró el contenedor de favoritos.");
             return;
         }
-
         favoritosList.innerHTML = favoritos.length ? "" : "<p>No tienes favoritos aún.</p>";
-
         favoritos.forEach(servicio => {
             const favoritoItem = document.createElement("div");
             favoritoItem.classList.add("favorito-item");
@@ -80,7 +80,9 @@ document.addEventListener("DOMContentLoaded", () => {
             favoritosList.appendChild(favoritoItem);
         });
 
-        // 📌 Evento para eliminar favoritos
+        // Evento para eliminar favoritos
+        // Elimina el favorito de la lista y recarga la lista de favoritos
+        // También muestra un mensaje de confirmación
         document.querySelectorAll(".btn-eliminar").forEach(btn => {
             btn.addEventListener("click", async () => {
                 const servicioId = btn.getAttribute("data-servicio-id");
@@ -92,7 +94,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     const usuarioGuardado = localStorage.getItem("usuarioRegistrado");
                     const usuario = JSON.parse(usuarioGuardado || "{}");
 
-                    //const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/users/${usuario._id}/favoritos/${servicioId}`, 
+                 
                     const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/users/${usuario._id}/favoritos/${servicioId}`, 
                      {
                         method: "DELETE",
@@ -110,7 +112,9 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         });
 
-        // 📌 Evento para enviar un mensaje al servicio desde favoritos
+        // Evento para enviar un mensaje al servicio desde favoritos
+        // Abre el chat con el servicio seleccionado
+        // Si no hay servicio seleccionado, no hace nada
         document.querySelectorAll(".btn-mensaje").forEach(btn => {
             btn.addEventListener("click", async () => {
                 const servicioId = btn.getAttribute("data-servicio-id");
@@ -118,7 +122,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 console.log(`📌 Enviando mensaje al servicio ID: ${servicioId}`);
                 
-                abrirChat(servicioId); // 🛠️ Usa la función de UsuarioMensajes.js
+                abrirChat(servicioId); 
             });
         });
 
@@ -127,24 +131,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-//LiSTA
-  // Mostrar servicios recomendados basados en los favoritos
+    //LiSTA
+    // Mostrar servicios recomendados basados en los favoritos
+    // Filtramos los servicios recomendados basados en la categoría de los favoritos
+    // Mostrar solo los primeros 3 servicios recomendados
 
 async function mostrarServiciosRecomendados() {
         const serviciosRecomendadosList = document.getElementById("servicios-recomendados-list");
-
         if (!serviciosRecomendadosList) {
             console.error("❌ No se encontró el contenedor de servicios recomendados.");
             return;
         }
-
-        //fetch(`${location.protocol}//${location.hostname}${API_PORT}/read/servicios`)
         fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/servicios`)
             .then(response => response.json())
             .then(servicios => {
-                // Filtramos los servicios recomendados basados en la categoría de los favoritos
                 const serviciosAleatorios = obtenerServiciosAleatorios(servicios, 3);
-                // Mostrar solo los primeros 3 servicios recomendados
+                
                 if (serviciosAleatorios.length > 0) {
                     serviciosRecomendadosList.innerHTML = serviciosAleatorios.map(servicio => {
                         return `<div class="servicio-recomendado">
@@ -163,7 +165,7 @@ async function mostrarServiciosRecomendados() {
                         if (!servicioId) return;
 
                         console.log(`📌 Agregando servicio ID: ${servicioId} a favoritos`);
-                        await agregarAFavoritos(usuario._id, servicioId, "Nuevo Servicio"); // Cambiar nombre si es necesario
+                        await agregarAFavoritos(usuario._id, servicioId, "Nuevo Servicio"); 
                     });
                 });
             })
@@ -193,7 +195,7 @@ async function mostrarServiciosRecomendados() {
     // Agregar un servicio a favoritos
     async function agregarAFavoritos(usuarioId, servicioId, nombreServicio) {
         console.log(`📌 Agregando a favoritos el servicio ${nombreServicio}...`);
-        //fetch(`${location.protocol}//${location.hostname}${API_PORT}/users/${usuarioId}/favoritos/${servicioId}`, 
+ 
         fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/users/${usuarioId}/favoritos/${servicioId}`,
         {
             method: "PUT",

@@ -1,36 +1,25 @@
 // @ts-check
 
+
+
 document.addEventListener("DOMContentLoaded", () => {
   console.log("📌 DOM cargado correctamente.");
 
-  // 📌 Configuración de la API
+  // Configuración de la API
   const API_PORT = location.port ? `:${location.port}` : "";
-  
   esperarContenedorServicios()
   cargarServicios();
-  let serviciosContainer =
-    /** @type {HTMLDivElement | null} */ document.getElementById(
-      "servicios-container"
-    );
-  const modalCrearServicio =
-    /** @type {HTMLDivElement | null} */ document.getElementById(
-      "modal-crear-servicio"
-    );
-  
-  const btnCerrarModal =
-    /** @type {HTMLButtonElement | null} */ document.getElementById(
-      "btn-cerrar-modal"
-    );
-    const formCrearServicio = /** @type {HTMLButtonElement | null} */ document.getElementById("crear-servicio-form");
+  let serviciosContainer =/** @type {HTMLDivElement | null} */ document.getElementById("servicios-container");
+  const modalCrearServicio = /** @type {HTMLDivElement | null} */ document.getElementById("modal-crear-servicio"  );
+  const btnCerrarModal =/** @type {HTMLButtonElement | null} */ document.getElementById("btn-cerrar-modal");
+  const formCrearServicio = /** @type {HTMLButtonElement | null} */ document.getElementById("crear-servicio-form");
 
     if (!modalCrearServicio || !formCrearServicio) {
       console.error("❌ No se encontró el modal o formulario de creación de servicios.");
       return;
     }
-  
-    // Evento para mostrar modal
-   
-  // 📌 Esperar que el contenedor `#servicios-container` esté disponible
+  //  Evento para mostrar modal de creación de servicios 
+  //  Esperar que el contenedor `#servicios-container` esté disponible
   async function esperarContenedorServicios() {
     let intentos = 0;
     const maxIntentos = 10;
@@ -38,7 +27,6 @@ document.addEventListener("DOMContentLoaded", () => {
     return new Promise((resolve, reject) => {
       const intervalo = setInterval(() => {
         serviciosContainer = document.getElementById("servicios-container");
-
         if (serviciosContainer) {
           clearInterval(intervalo);
           console.log("✅ `#servicios-container` encontrado en el DOM.");
@@ -55,19 +43,16 @@ document.addEventListener("DOMContentLoaded", () => {
       }, 300);
     });
   }
-
-  // 📌 Verificar usuario registrado
+  //  Verificar usuario registrado
   const usuarioGuardado = localStorage.getItem("usuarioRegistrado");
   if (!usuarioGuardado) {
     alert("No hay usuario registrado.");
     window.location.href = "registrar.html";
     return;
   }
-
   /** @type {{ _id: string, email: string }} */
   const usuario = JSON.parse(usuarioGuardado);
   console.log("📌 Usuario cargado desde localStorage:", usuario);
-
   /** @type {{ servicios: { _id: string, nombre: string, descripcion: string, ubicacion: string, imagen: string, categoria: string }[], favoritos: { _id: string, nombre: string }[] }} */
 
   const state = {
@@ -76,6 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
 //@ts-ignore
+// Evento para actualizar favoritos
   document.addEventListener("favoritos-actualizados", ({ detail: { servicioId, esFavorito } }) => {
     console.log("📌 Evento 'favoritos-actualizados' recibido en servicios.js. Actualizando botones...");
 
@@ -86,10 +72,15 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-
+// Función para cargar servicios
+// Obtenemos los servicios de la API y los almacenamos en el estado global
+// Luego, renderizamos los servicios en el DOM
+// Marcar los servicios como favoritos si están en la lista
+//  Hacer `state` accesible globalmente
+// Disparar evento para que `CartaSERV` reciba los servicios
 async function cargarServicios() {
   try {
-      //const serviciosAPI = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/read/servicios`);
+      
       const serviciosAPI = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/servicios`);
       const servicios = await serviciosAPI.json();
 
@@ -98,24 +89,20 @@ async function cargarServicios() {
       if (!Array.isArray(servicios))
           throw new Error("⚠️ La API no devolvió un array válido de servicios.");
 
-      // 🔥 Obtener favoritos desde localStorage
+      
       const usuarioGuardado = localStorage.getItem("usuarioRegistrado");
       const usuario = usuarioGuardado ? JSON.parse(usuarioGuardado) : null;
       const favoritos = usuario ? JSON.parse(localStorage.getItem(`favoritos_${usuario._id}`) || "[]") : [];
 
-      // 🔥 Marcar los servicios como favoritos si están en la lista
+      
       const serviciosConFavoritos = servicios.map(servicio => ({
           ...servicio,
           esFavorito: favoritos.some(fav => fav._id === servicio._id)
       }));
-
       state.servicios = serviciosConFavoritos;
-
-      // ✅ Hacer `state` accesible globalmente
       // @ts-ignore
       window.state = state;
-
-      // ✅ Disparar evento para que `CartaSERV` reciba los servicios
+      //  Disparar evento para que `CartaSERV` reciba los servicios
       document.dispatchEvent(
           new CustomEvent("servicios-cargados", { detail: { servicios: serviciosConFavoritos } })
       );
@@ -128,7 +115,11 @@ async function cargarServicios() {
 }
 
 
-  // 📌 Renderizar servicios en el DOM
+  //  Renderizar servicios en el DOM
+  //  Limpiar el contenedor antes de renderizar
+  //  Crear un componente `carta-servicio` por cada servicio
+  //  Asignar los atributos correspondientes al componente
+
   /**
    * @param {any[]} servicios
    */
@@ -141,7 +132,6 @@ async function cargarServicios() {
       return;
     }
 
-    // ❗❗❗ LIMPIAR EL CONTENEDOR ANTES DE RENDERIZAR ❗❗❗
     serviciosContainer.innerHTML = "";
 
     servicios.forEach((servicio) => {
@@ -162,18 +152,16 @@ async function cargarServicios() {
   }
 
   // Eventos del buscador
+  // Filtrar servicios por término de búsqueda
+  // Disparar evento para que `CartaSERV` reciba los servicios filtrados
   document.addEventListener("buscar-servicios", (event) => {
-    
-    // @ts-ignore
-    console.log("📡 Evento 'buscar-servicios' detectado en servicios.js:", event.detail);
-  
     if (!state.servicios || state.servicios.length === 0) {
       console.warn("⚠️ No hay servicios cargados todavía. Esperando...");
       return;
     }
   
     // @ts-ignore
-    const { busqueda } = event.detail;
+    const { busqueda /**@param {string} busqueda*/} = event.detail;
     console.log("📡 Buscando servicios con el término:", busqueda);
   
     const serviciosFiltrados = state.servicios.filter(
@@ -182,11 +170,11 @@ async function cargarServicios() {
         servicio.descripcion.toLowerCase().includes(busqueda.toLowerCase()) ||
         servicio.ubicacion.toLowerCase().includes(busqueda.toLowerCase())
     );
-  
     console.log("🔍 Servicios filtrados encontrados:", serviciosFiltrados);
     renderServicios(serviciosFiltrados);
   });
-
+  // Eventos de filtrado
+  // Filtrar servicios por actividad
   document.addEventListener("filtrar-actividades", () => {
     console.log("📡 Evento 'filtrar-actividades' capturado.");
     const filtrados = state.servicios.filter(
@@ -194,7 +182,7 @@ async function cargarServicios() {
     );
     renderServicios(filtrados);
   });
-
+  // Filtrar servicios por comercio
   document.addEventListener("filtrar-comercios", () => {
     console.log("📡 Evento 'filtrar-comercios' capturado.");
     const filtrados = state.servicios.filter(
@@ -202,17 +190,17 @@ async function cargarServicios() {
     );
     renderServicios(filtrados);
   });
-
+  //Mostramos Todos
   document.addEventListener("mostrar-todos", () => {
     console.log("📡 Evento 'mostrar-todos' capturado.");
     renderServicios(state.servicios);
   });
-
+  // Eventos de creación de servicios
   document.addEventListener("crear-servicio", () => {
     console.log("📡 Evento 'crear-servicio' capturado.");
     modalCrearServicio?.classList.remove("hidden");
   });
-
+  //Evento de cerrar mo
   btnCerrarModal?.addEventListener("click", () => {
     modalCrearServicio?.classList.add("hidden");
   });
@@ -227,6 +215,10 @@ async function cargarServicios() {
   });
 
    // Manejo de envío del formulario
+   // Crear un nuevo servicio con los datos del formulario
+   // Enviar los datos al servidor
+   // Mostrar mensaje de éxito o error
+    // Limpiar el formulario y cerrar el modal
    formCrearServicio.addEventListener("submit", async (event) => {
     event.preventDefault();
     console.log("📡 Intentando crear un servicio...");
@@ -264,7 +256,6 @@ async function cargarServicios() {
     }
 
     try {
-      //const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/create/servicios`,
       const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/create/servicios`, 
       {
         method: "POST",
@@ -292,6 +283,8 @@ async function cargarServicios() {
   });
   cargarServicios();
 
+  // Función para agregar botón de "Cargar más"
+  // Si ya existe el botón, no lo agregamos de nuevo
 function agregarBotonCargarMas() {
   let botonCargarMas = document.getElementById("btn-cargar-mas");
   

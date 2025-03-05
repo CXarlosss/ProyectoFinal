@@ -29,7 +29,6 @@ document.addEventListener("DOMContentLoaded", () => {
     cargarMensajes();
     cargarMensajesRecibidosPorServicio(); 
 });
-
 //CargarMensajes
 //Obtiene el ID del usuario desde localStorage.
 //Hace una solicitud al servidor para recuperar mensajes donde el usuario es emisor o receptor.
@@ -37,7 +36,6 @@ document.addEventListener("DOMContentLoaded", () => {
 //Asigna nombres reales a los mensajes.
 //Llama a renderizarListaChats() para actualizar la UI.
 let mensajesUsuario = []; // Variable global temporal para fusionar mensajes
-
 async function cargarMensajes() {
     try {
         console.log("📌 Ejecutando cargarMensajes()...");
@@ -53,20 +51,20 @@ async function cargarMensajes() {
 
         console.log(`📌 Buscando mensajes para el usuario: ${usuario._id}`);
 
-        // 🔥 Obtener los mensajes del usuario
+        //  Obtener los mensajes del usuario
         const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/mensajes?usuarioId=${usuario._id}`);
         if (!response.ok) throw new Error(`Error al obtener mensajes (${response.status})`);
 
         const mensajes = await response.json();
         console.log("📌 Mensajes obtenidos de la API:", mensajes);
 
-        // 🔥 Filtrar solo los mensajes en los que el usuario es emisor o receptor
+        //  Filtrar solo los mensajes en los que el usuario es emisor o receptor
         mensajesUsuario = mensajes.filter(m => 
             String(m.usuarioId) === String(usuario._id) || String(m.receptorId) === String(usuario._id)
         );
         console.log("📌 Mensajes después de filtrar:", mensajesUsuario);
 
-        // ✅ Obtener datos de usuarios y servicios
+        //  Obtener datos de usuarios y servicios
         const [usuariosResponse, serviciosResponse] = await Promise.all([
             fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/users`),
             fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/servicios`)
@@ -78,7 +76,7 @@ async function cargarMensajes() {
         console.log("✅ Usuarios obtenidos:", usuarios);
         console.log("✅ Servicios obtenidos:", servicios);
 
-        // 🔥 Crear un mapa de nombres correctos
+        //  Crear un mapa de nombres correctos
         const mapaNombres = {};
 
         // Asignar nombres de usuarios
@@ -93,7 +91,7 @@ async function cargarMensajes() {
 
         console.log("📌 Mapa de nombres cargado:", mapaNombres);
 
-        // 🔥 Asignar nombres reales a los mensajes
+        //  Asignar nombres reales a los mensajes
         mensajesUsuario.forEach(msg => {
             msg.nombreEmisor = mapaNombres[msg.usuarioId] || `Usuario ${msg.usuarioId}`;
             msg.nombreReceptor = mapaNombres[msg.receptorId] || `Usuario ${msg.receptorId}`;
@@ -101,21 +99,19 @@ async function cargarMensajes() {
 
         console.log("✅ Mensajes después de asignar nombres:", mensajesUsuario);
 
-        // 🔥 Llamar a `cargarMensajesRecibidosPorServicio()`
+        //  Llamar a `cargarMensajesRecibidosPorServicio()`
         await cargarMensajesRecibidosPorServicio(usuario, mapaNombres);
 
     } catch (error) {
         console.error("❌ Error al cargar mensajes:", error);
     }
 }
-
-
 //RenderizarListaChats
 //Recibe los mensajes y los organiza en una lista de chats únicos.
 //Muestra el último mensaje enviado en cada chat y la fecha del mensaje más reciente.
 //Permite abrir un chat al hacer clic en un contacto.
 /**
- * 📌 Renderiza la lista de chats en la UI con nombres reales.
+ *  Renderiza la lista de chats en la UI con nombres reales.
  * @param {any[]} mensajes
  * @param {string} usuarioId
  */
@@ -141,7 +137,7 @@ function renderizarListaChats(mensajes, usuarioId, mapaNombres) {
     const chats = {};
 
     mensajes.forEach((msg) => {
-        // 🔥 Ahora agrupamos por contactoId en lugar de chatId para evitar múltiples chats con la misma persona
+        //  Ahora agrupamos por contactoId en lugar de chatId para evitar múltiples chats con la misma persona
         const contactoId = msg.usuarioId === usuarioId ? msg.receptorId : msg.usuarioId;
         const contactoNombre = mapaNombres[contactoId] || `Usuario ${contactoId}`;
 
@@ -186,7 +182,7 @@ function renderizarListaChats(mensajes, usuarioId, mapaNombres) {
 //Recupera los mensajes entre el usuario y el contacto del servidor.
 //Renderiza los mensajes en la interfaz.
 /**
- * 📌 Abre un chat específico y muestra los mensajes.
+ *  Abre un chat específico y muestra los mensajes.
  * @param {string} contactoId 
 
  * 
@@ -208,7 +204,7 @@ export async function abrirChat(contactoId) {
         return;
     }
 
-    // 🔥 Guardamos el chat abierto en localStorage
+    //  Guardamos el chat abierto en localStorage
     localStorage.setItem("chatAbierto", contactoId);
 
     chatPopup.classList.add("active");
@@ -223,10 +219,9 @@ export async function abrirChat(contactoId) {
         let nombreContacto = "Desconocido";
         let esServicio = false;
 
-        // 🔍 Intentamos encontrar si el contacto es un servicio
+        // Intentamos encontrar si el contacto es un servicio
         try {
             const servicioResponse = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/servicios`);
-            //const servicioResponse = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/servicios`);
             if (servicioResponse.ok) {
                 const servicios = await servicioResponse.json();
                 const servicioEncontrado = servicios.find(s => s._id === contactoId);
@@ -239,11 +234,10 @@ export async function abrirChat(contactoId) {
             console.warn("⚠ No se pudo obtener el servicio", error);
         }
 
-        // 🔍 Si no es un servicio, buscamos si es un usuario
+        //  Si no es un servicio, buscamos si es un usuario
         if (!esServicio) {
             try {
                 const usuarioResponse = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/users`);
-                //const usuarioResponse = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/users`);
                 if (usuarioResponse.ok) {
                     const usuarios = await usuarioResponse.json();
                     const usuarioEncontrado = usuarios.find(user => user._id === contactoId);
@@ -256,10 +250,10 @@ export async function abrirChat(contactoId) {
             }
         }
 
-        // 🔥 Mostrar el nombre en el chat
+        //  Mostrar el nombre en el chat
         chatTitulo.innerHTML = `Chat con ${nombreContacto}`;
 
-        // 📨 Obtener los mensajes del chat
+        //  Obtener los mensajes del chat
         //const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/mensajes?usuarioId=${usuario._id}&contactoId=${contactoId}`);
         const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/mensajes?usuarioId=${usuario._id}&contactoId=${contactoId}`);
         if (!response.ok) throw new Error(`Error al obtener mensajes (${response.status})`);
@@ -293,7 +287,7 @@ export async function abrirChat(contactoId) {
 //Filtra mensajes donde el receptor es un servicio del usuario y reasigna estos mensajes al dueño del servicio.
 //Llama a renderizarListaChats() para mostrarlos en la interfaz.
 /**
- * 📌 Carga los mensajes que han sido enviados a un servicio y los asigna también al creador del servicio.
+ *  Carga los mensajes que han sido enviados a un servicio y los asigna también al creador del servicio.
  */
 async function cargarMensajesRecibidosPorServicio(usuario, mapaNombres) {
     try {
@@ -301,7 +295,7 @@ async function cargarMensajesRecibidosPorServicio(usuario, mapaNombres) {
 
         console.log(`📌 Buscando servicios creados por el usuario: ${usuario._id}`);
 
-        // 🔥 Obtener servicios creados por el usuario actual
+        //  Obtener servicios creados por el usuario actual
         const serviciosResponse = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/servicios?usuarioId=${usuario._id}`);
         if (!serviciosResponse.ok) throw new Error("Error al obtener servicios del usuario");
 
@@ -318,14 +312,14 @@ async function cargarMensajesRecibidosPorServicio(usuario, mapaNombres) {
 
         console.log("📌 Mapa de servicios creados por el usuario:", servicioDueño);
 
-        // 🔥 Obtener TODOS los mensajes
+        //  Obtener TODOS los mensajes
         const mensajesResponse = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/mensajes`);
         if (!mensajesResponse.ok) throw new Error("Error al obtener mensajes");
 
         const mensajes = await mensajesResponse.json();
         console.log("✅ Mensajes obtenidos en cargarMensajesRecibidosPorServicio:", mensajes);
 
-        // 🔥 Filtrar mensajes donde el receptor sea un servicio creado por el usuario actual
+        //  Filtrar mensajes donde el receptor sea un servicio creado por el usuario actual
         const mensajesServicios = mensajes.filter(mensaje =>
             servicioDueño.has(String(mensaje.receptorId)) &&
             String(servicioDueño.get(String(mensaje.receptorId))) === String(usuario._id) // Verifica que el dueño sea el usuario actual
@@ -333,7 +327,7 @@ async function cargarMensajesRecibidosPorServicio(usuario, mapaNombres) {
 
         console.log("📌 Mensajes después de filtrar (solo servicios del usuario):", mensajesServicios);
 
-        // 🔥 Asignar el dueño del servicio como receptor sin hacer un request innecesario
+        //  Asignar el dueño del servicio como receptor sin hacer un request innecesario
         const mensajesAsignados = mensajesServicios.map(mensaje => {
             const dueñoId = servicioDueño.get(String(mensaje.receptorId));
 
@@ -352,12 +346,12 @@ async function cargarMensajesRecibidosPorServicio(usuario, mapaNombres) {
 
         console.log("📌 Mensajes de servicios listos para ser mostrados:", mensajesAsignados);
 
-        // 🔥 Fusionamos los mensajes de usuario y los de servicios
+        //  Fusionamos los mensajes de usuario y los de servicios
         const mensajesFinales = [...mensajesUsuario, ...mensajesAsignados];
 
         console.log("📌 Mensajes totales a renderizar:", mensajesFinales);
 
-        // 🔥 Mostrar en la UI
+        //  Mostrar en la UI
         renderizarListaChats(mensajesFinales, usuario._id, mapaNombres);
 
     } catch (error) {
@@ -407,7 +401,6 @@ async function enviarMensaje() {
         console.log("📌 Datos enviados al servidor:", mensajeData);
 
         const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/mensajes`, 
-        // const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/mensajes`, 
         {
             method: "POST",
             headers: { "Content-Type": "application/json" },

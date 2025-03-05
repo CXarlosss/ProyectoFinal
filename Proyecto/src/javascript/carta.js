@@ -1,4 +1,11 @@
 // @ts-check
+//Escuchamos evento DOMContentLoadde para cargar el servicio
+//Buscar Contenedor donde se mostrara la informacion del servicio
+//Obtener el _id del servicio de la URL
+//Manejar el caso en que se encuentre un _id en la URL
+//Cargar el servicio desde la API y mostrarlo en la UI
+//Verificar Respues de la API
+//Convertir la respuesta a JSON
 
 document.addEventListener("DOMContentLoaded", async () => {
     const servicioContainer = /** @type {HTMLDivElement | null} */ document.getElementById("servicio-container");
@@ -18,7 +25,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
     }
 
- 
+ //Manejar el caso en el que no se encuantre el servicio en la base de datos
+ //Manejar el caso en que no se encutre el servio en la base de datos
+ //Mostrar la informacion del servicio en la UI
+ //Agregar eventos a los botones de la UI
 /** 
  * Carga un servicio desde la API y lo muestra en la UI.
  * @returns {Promise<void>}

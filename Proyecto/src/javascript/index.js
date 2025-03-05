@@ -1,8 +1,10 @@
 // @ts-check
 
-/* ==========================
-  Carrusel de Testimonios
-=========================== */
+/* ========================== Carrusel de Testimonios=========================== */
+//Detectamos los elementos necesarios en el DOM
+//Se generan indicadores para cada testimonio
+//Se agregan eventos para que cuando se le haga click en el boton de siguiente o anterior se mueva el carrusel
+//Se configura un autoplay para que el carrusel se mueva automaticamente cada 7 segundos
 document.addEventListener("DOMContentLoaded", () => {
     const sliderTestimonios = /** @type {HTMLElement | null} */ (document.querySelector(".testimonial-slider"));
     const prevBtnTestimonios = /** @type {HTMLButtonElement | null} */ (document.querySelector(".prev-testimonial"));
@@ -78,9 +80,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-/* ==========================
-  Carrusel de Negocios Destacados
-=========================== */
+/* ========================== Carrusel de Chats Destacados=========================== */
+//Muestras los negocios destacados en un carrusel
+//Se generan eventos para que cuando se le haga click en el boton de siguiente o anterior se mueva el carrusel
+//Se configura un autoplay para que el carrusel se mueva automaticamente cada 7 segundos
+
 document.addEventListener("DOMContentLoaded", () => {
     const sliderNegocios = /** @type {HTMLElement | null} */ (document.querySelector(".business-slider"));
     const prevBtnNegocios = /** @type {HTMLButtonElement | null} */ (document.querySelector(".carousel-btn.prev"));

@@ -3,18 +3,15 @@
 document.addEventListener("DOMContentLoaded", () => {
   console.log("✅ DOM cargado correctamente.");
  const API_PORT = location.port ? `:${location.port}` : ''
-  
-
-  // 📌 Verificar si hay un usuario registrado en LocalStorage
+  // Verificar si hay un usuario registrado en LocalStorage
   let usuarioRegistrado = localStorage.getItem("usuarioRegistrado");
-
+    //Si no existe o no es válido, redirige a la página de registro (registrar.html).
   if (!usuarioRegistrado || usuarioRegistrado === "undefined") {
       console.warn("⚠️ No se encontró usuario registrado en localStorage.");
       alert("No hay usuario registrado.");
       window.location.href = "registrar.html"; // Redirigir a registro
       return;
   }
-
   /** @type {import("../clases/class.js").Usuario | null} */
   const usuario = usuarioRegistrado ? JSON.parse(usuarioRegistrado) : null;
 
@@ -25,7 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
   }
 
-  // 📌 Referencias a elementos del DOM
+  //  Referencias a elementos del DOM
   const btnEditarUsuario = /** @type {HTMLButtonElement | null} */ (document.querySelector(".btn-editar"));
   const modalEditarUsuario = /** @type {HTMLDivElement | null} */ (document.getElementById("modal-editar-usuario"));
   const formEditarUsuario = /** @type {HTMLFormElement | null} */ (document.getElementById("form-editar-usuario"));
@@ -37,9 +34,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const inputDireccion = /** @type {HTMLInputElement | null} */ (document.getElementById("editar-direccion"));
   const inputPassword = /** @type {HTMLInputElement | null} */ (document.getElementById("editar-password"));
   const inputCorreo = /** @type {HTMLInputElement | null} */ (document.getElementById("editar-correo"));
-
-  /**
-   * 📌 Mostrar modal y rellenar datos al hacer clic en "Editar"
+    /**
+   *  Mostrar modal y rellenar datos al hacer clic en "Editar"
    */
   btnEditarUsuario?.addEventListener("click", () => {
       if (!usuario) return;
@@ -59,17 +55,17 @@ document.addEventListener("DOMContentLoaded", () => {
   console.log("📌 Enviando actualización para el usuario _id:", usuario._id);
 
   /**
-   * 📌 Guardar cambios al hacer submit en el formulario
+   * Guardar cambios al hacer submit en el formulario
+   * Escucha el evento "click" en el botón "Editar" y rellena los campos del formulario con los datos actuales del usuario.
+   * Evitamos el campo correo para que no se pueda editar.
    */
 formEditarUsuario?.addEventListener("submit", async (e) => {
       e.preventDefault();
-
       if (!usuario || !usuario._id) {
           console.error("❌ ERROR: El _id del usuario es inválido o no está definido.");
           alert("No se puede actualizar el usuario porque su _id no es válido.");
           return;
       }
-
       // 📌 Crear objeto con datos actualizados
       const datosActualizados = {
           nombre: inputNombre?.value.trim() || usuario.nombre,
@@ -77,10 +73,8 @@ formEditarUsuario?.addEventListener("submit", async (e) => {
           direccion: inputDireccion?.value.trim() || usuario.direccion,
           password: inputPassword?.value.trim() || usuario.password
       };
-
       console.log("📌 Enviando actualización para el usuario _id:", usuario._id);
       console.log("📩 Datos enviados al backend:", datosActualizados);
-
       try {
           //const resultado = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/update/users/${usuario._id}`,
            const resultado = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/update/users/${usuario._id}`, 
@@ -108,7 +102,7 @@ formEditarUsuario?.addEventListener("submit", async (e) => {
 
           console.log("✅ Usuario actualizado:", resultado);
 
-          // 📌 Guardar cambios en LocalStorage
+          //  Guardar cambios en LocalStorage
           const usuarioActualizado = { ...usuario, ...datosActualizados };
           localStorage.setItem("usuarioRegistrado", JSON.stringify(usuarioActualizado));
 
@@ -121,7 +115,7 @@ formEditarUsuario?.addEventListener("submit", async (e) => {
           alert("❌ No se pudo actualizar el usuario.");
       }
 });
-
+//Se agrega un evento al botón "Cerrar" para ocultar el modal cuando el usuario termine la edición.
 function cerrarModal() {
         if (modalEditarUsuario) {
             modalEditarUsuario.classList.remove("active");

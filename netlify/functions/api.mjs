@@ -30,7 +30,7 @@ export { connectDB, ObjectId };
  // SERVICIOS
  // 📌 Crear un nuevo servicio
 // 📌 Crear un nuevo servicio
-router.post('/api/create/servicios', async (req, res) => {
+router.post('/create/servicios', async (req, res) => {
   try {
     const db = await connectDB();  // 💡 Asegura que tienes acceso a la DB
     const result = await db.collection("Servicios").insertOne(req.body);

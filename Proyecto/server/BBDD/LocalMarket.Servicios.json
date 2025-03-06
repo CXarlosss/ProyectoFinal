@@ -417,57 +417,6 @@
 },
 {
   "_id": {
-    "$oid": "67ab6961b7af012d9ada21b7"
-  },
-  "nombre": "DonalDServicios",
-  "descripcion": "La mejor Heladeria",
-  "ubicacion": "calle las palomas 2",
-  "valoracion": 5,
-  "imagen": "http://kapachungus.html",
-  "categoria": "actividad",
-  "precio": 3,
-  "horarios": "10:00-21:00",
-  "metodoPago": "Efectivo,Tarjeta",
-  "etiquetas": "Cine,Palomitas,Comida,Terror",
-  "usuarioId": "1738937881895",
-  "emailUsuario": "Donald@hotmail.com"
-},
-{
-  "_id": {
-    "$oid": "67ab6961b7af012d9ada21b8"
-  },
-  "nombre": "Telefonos Nuevos 33",
-  "descripcion": "Los mejores nuevos telefonos del 2025",
-  "ubicacion": "calle de los Alcornoques 3",
-  "valoracion": 4,
-  "imagen": "http://TelefonosNuevos",
-  "categoria": "actividad",
-  "precio": 30,
-  "horarios": "10:00-21:00",
-  "metodoPago": "Efectivo,Tarjeta",
-  "etiquetas": "Tienda,Telefonos,Electrodomesticos,Moviles",
-  "usuarioId": "1739175969604",
-  "emailUsuario": "TelefonosNuevos@gmail.com"
-},
-{
-  "_id": {
-    "$oid": "67ab6961b7af012d9ada21b9"
-  },
-  "nombre": "ClaseYoga",
-  "descripcion": "1",
-  "ubicacion": "1",
-  "valoracion": 1,
-  "imagen": "http://1.tml",
-  "categoria": "actividad",
-  "precio": 1,
-  "horarios": "10:00-21:00",
-  "metodoPago": "Efectivo,Tarjeta",
-  "etiquetas": "Cine,Palomitas,Comida,Terror",
-  "usuarioId": "1739176365476",
-  "emailUsuario": "aaa@gmail.com"
-},
-{
-  "_id": {
     "$oid": "67ab6961b7af012d9ada21ba"
   },
   "nombre": "Escuela de Idiomas GlobalSpeak",
@@ -531,27 +480,6 @@
 },
 {
   "_id": {
-    "$oid": "67ab6961b7af012d9ada21bd"
-  },
-  "nombre": "Tienda de Relojes TimeStyle",
-  "descripcion": "Venta y reparación de relojes de alta gama y deportivos.",
-  "imagen": "https://images.pexels.com/photos/2773903/pexels-photo-2773903.jpeg",
-  "ubicacion": "Calle del Tiempo, 5",
-  "valoracion": 4,
-  "categoria": "comercio",
-  "precio": "0",
-  "horarios": "Lunes a Viernes de 10:00 a 19:00",
-  "metodoPago": "Efectivo, Tarjeta, Transferencia",
-  "etiquetas": [
-    "relojes",
-    "accesorios",
-    "moda"
-  ],
-  "usuarioId": "14",
-  "emailUsuario": "timestyle@example.com"
-},
-{
-  "_id": {
     "$oid": "67ab6961b7af012d9ada21be"
   },
   "nombre": "Club de Natación AquaFit",
@@ -594,240 +522,364 @@
 },
 {
   "_id": {
-    "$oid": "67ab6961b7af012d9ada21c0"
+    "$oid": "67c08c65976e652e185cdb8f"
   },
-  "nombre": "Tienda de Instrumentos Musicales Melody",
-  "descripcion": "Instrumentos y accesorios para músicos de todos los niveles.",
-  "imagen": "https://images.pexels.com/photos/2897923/pexels-photo-2897923.jpeg",
-  "ubicacion": "Calle Armonía, 18",
-  "valoracion": 4,
+  "nombre": "Cafetería Delicia",
+  "descripcion": "Café artesanal con postres caseros.",
+  "imagen": "https://images.pexels.com/photos/2396220/pexels-photo-2396220.jpeg",
+  "ubicacion": "Avenida del Café, 8",
+  "valoracion": 5,
   "categoria": "comercio",
-  "precio": "0",
-  "horarios": "Lunes a Viernes de 9:00 a 18:00",
+  "precio": 5,
+  "horarios": "Lunes a Domingo de 7:00 a 22:00",
+  "metodoPago": "Efectivo, Tarjeta",
+  "etiquetas": [
+    "café",
+    "postres",
+    "artesanal"
+  ],
+  "usuarioId": "21",
+  "emailUsuario": "cafeteriadelicia@example.com"
+},
+{
+  "_id": {
+    "$oid": "67c08da0976e652e185cdb99"
+  },
+  "nombre": "Cafetería Aroma Divino",
+  "descripcion": "Café de especialidad y pastelería artesanal.",
+  "imagen": "https://images.pexels.com/photos/302899/pexels-photo-302899.jpeg",
+  "ubicacion": "Calle Café, 7",
+  "valoracion": 4.8,
+  "categoria": "comercio",
+  "precio": 0,
+  "horarios": "Lunes a Domingo de 8:00 a 20:00",
+  "metodoPago": "Efectivo, Tarjeta",
+  "etiquetas": [
+    "café",
+    "pastelería",
+    "desayuno"
+  ],
+  "usuarioId": "31",
+  "emailUsuario": "aromadivino@example.com"
+},
+{
+  "_id": {
+    "$oid": "67c08da0976e652e185cdb9a"
+  },
+  "nombre": "Gimnasio Fitness Total",
+  "descripcion": "Entrenamientos personalizados y clases grupales.",
+  "imagen": "https://images.pexels.com/photos/841130/pexels-photo-841130.jpeg",
+  "ubicacion": "Avenida Salud, 12",
+  "valoracion": 4.7,
+  "categoria": "actividad",
+  "precio": 30,
+  "horarios": "Lunes a Viernes de 6:00 a 22:00",
+  "metodoPago": "Tarjeta, Transferencia",
+  "etiquetas": [
+    "gimnasio",
+    "fitness",
+    "entrenamiento"
+  ],
+  "usuarioId": "32",
+  "emailUsuario": "fitnesstotal@example.com"
+},
+{
+  "_id": {
+    "$oid": "67c08da0976e652e185cdb9b"
+  },
+  "nombre": "Librería Páginas Mágicas",
+  "descripcion": "Libros de todos los géneros y eventos literarios.",
+  "imagen": "https://images.pexels.com/photos/159711/books-bookstore-book-reading-159711.jpeg",
+  "ubicacion": "Calle Lectura, 20",
+  "valoracion": 4.9,
+  "categoria": "comercio",
+  "precio": 0,
+  "horarios": "Lunes a Sábado de 10:00 a 20:00",
+  "metodoPago": "Efectivo, Tarjeta",
+  "etiquetas": [
+    "libros",
+    "lectura",
+    "literatura"
+  ],
+  "usuarioId": "33",
+  "emailUsuario": "paginasmagicas@example.com"
+},
+{
+  "_id": {
+    "$oid": "67c08da0976e652e185cdb9c"
+  },
+  "nombre": "Estudio de Yoga Serenidad",
+  "descripcion": "Clases de yoga para todos los niveles.",
+  "imagen": "https://images.pexels.com/photos/1552631/pexels-photo-1552631.jpeg",
+  "ubicacion": "Centro de Bienestar Serenidad",
+  "valoracion": 5,
+  "categoria": "actividad",
+  "precio": 20,
+  "horarios": "Lunes a Viernes de 7:00 a 21:00",
+  "metodoPago": "Efectivo, Tarjeta",
+  "etiquetas": [
+    "yoga",
+    "bienestar",
+    "relajación"
+  ],
+  "usuarioId": "34",
+  "emailUsuario": "yogaserenidad@example.com"
+},
+{
+  "_id": {
+    "$oid": "67c08da0976e652e185cdb9d"
+  },
+  "nombre": "Taller de Arte Creativo",
+  "descripcion": "Clases de pintura, dibujo y escultura.",
+  "imagen": "https://images.pexels.com/photos/356043/pexels-photo-356043.jpeg",
+  "ubicacion": "Calle Arte, 5",
+  "valoracion": 4.8,
+  "categoria": "actividad",
+  "precio": 25,
+  "horarios": "Lunes a Sábado de 10:00 a 19:00",
+  "metodoPago": "Efectivo, Tarjeta",
+  "etiquetas": [
+    "arte",
+    "pintura",
+    "creatividad"
+  ],
+  "usuarioId": "35",
+  "emailUsuario": "artecreativo@example.com"
+},
+{
+  "_id": {
+    "$oid": "67c08da0976e652e185cdb9e"
+  },
+  "nombre": "Restaurante Sabores del Mar",
+  "descripcion": "Cocina mediterránea con productos frescos.",
+  "imagen": "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg",
+  "ubicacion": "Avenida Marítima, 3",
+  "valoracion": 4.9,
+  "categoria": "comercio",
+  "precio": 0,
+  "horarios": "Lunes a Domingo de 12:00 a 23:00",
+  "metodoPago": "Efectivo, Tarjeta, PayPal",
+  "etiquetas": [
+    "mariscos",
+    "mediterráneo",
+    "gastronomía"
+  ],
+  "usuarioId": "36",
+  "emailUsuario": "saboresdelmar@example.com"
+},
+{
+  "_id": {
+    "$oid": "67c08da0976e652e185cdb9f"
+  },
+  "nombre": "Centro de Masajes Relax",
+  "descripcion": "Masajes relajantes y terapéuticos.",
+  "imagen": "https://images.pexels.com/photos/6628520/pexels-photo-6628520.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1\n",
+  "ubicacion": "Calle Bienestar, 8",
+  "valoracion": 4.7,
+  "categoria": "actividad",
+  "precio": 35,
+  "horarios": "Lunes a Sábado de 9:00 a 21:00",
+  "metodoPago": "Efectivo, Tarjeta",
+  "etiquetas": [
+    "masajes",
+    "relajación",
+    "bienestar"
+  ],
+  "usuarioId": "37",
+  "emailUsuario": "masajesrelax@example.com"
+},
+{
+  "_id": {
+    "$oid": "67c08da0976e652e185cdba0"
+  },
+  "nombre": "Tienda de Mascotas Amigo Fiel",
+  "descripcion": "Productos y accesorios para mascotas.",
+  "imagen": "https://images.pexels.com/photos/33053/dog-young-dog-small-dog-maltese.jpg",
+  "ubicacion": "Avenida Animal, 15",
+  "valoracion": 4.8,
+  "categoria": "comercio",
+  "precio": 0,
+  "horarios": "Lunes a Sábado de 10:00 a 20:00",
+  "metodoPago": "Efectivo, Tarjeta",
+  "etiquetas": [
+    "mascotas",
+    "animales",
+    "accesorios"
+  ],
+  "usuarioId": "38",
+  "emailUsuario": "amigofiel@example.com"
+},
+{
+  "_id": {
+    "$oid": "67c08da0976e652e185cdba1"
+  },
+  "nombre": "Escuela de Música Sonidos del Alma",
+  "descripcion": "Clases de piano, guitarra y canto.",
+  "imagen": "https://images.pexels.com/photos/30869001/pexels-photo-30869001/free-photo-of-sesion-de-escucha-de-vinilos-antiguos-en-yakarta.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1\n",
+  "ubicacion": "Centro Cultural Sonidos",
+  "valoracion": 5,
+  "categoria": "actividad",
+  "precio": 30,
+  "horarios": "Lunes a Viernes de 16:00 a 21:00",
   "metodoPago": "Efectivo, Tarjeta",
   "etiquetas": [
     "música",
     "instrumentos",
-    "accesorios"
+    "canto"
   ],
-  "usuarioId": "17",
-  "emailUsuario": "melody@example.com"
+  "usuarioId": "39",
+  "emailUsuario": "sonidosdelalma@example.com"
 },
 {
   "_id": {
-    "$oid": "67ab6961b7af012d9ada21c1"
+    "$oid": "67c08da0976e652e185cdba2"
   },
-  "nombre": "Escuela de Baile Rítmica",
-  "descripcion": "Aprende salsa, tango, flamenco y más con instructores expertos.",
-  "imagen": "https://images.pexels.com/photos/3770081/pexels-photo-3770081.jpeg",
-  "ubicacion": "Centro Cultural Danza Viva",
-  "valoracion": 5,
-  "categoria": "actividad",
-  "precio": "25",
-  "horarios": "Lunes a Viernes de 17:00 a 21:00",
-  "metodoPago": "Efectivo, Tarjeta",
-  "etiquetas": [
-    "baile",
-    "danza",
-    "ritmo"
-  ],
-  "usuarioId": "18",
-  "emailUsuario": "baile@example.com"
-},
-{
-  "_id": {
-    "$oid": "67ab6961b7af012d9ada21c2"
-  },
-  "nombre": "Estudio de Fotografía Captura el Momento",
-  "descripcion": "Sesiones fotográficas profesionales y edición de imágenes.",
-  "imagen": "https://images.pexels.com/photos/2896420/pexels-photo-2896420.jpeg",
-  "ubicacion": "Avenida de la Luz, 8",
-  "valoracion": 5,
-  "categoria": "actividad",
-  "precio": "50",
-  "horarios": "Lunes a Sábado de 10:00 a 18:00",
-  "metodoPago": "Efectivo, Tarjeta, Transferencia",
-  "etiquetas": [
-    "fotografía",
-    "estudio",
-    "arte"
-  ],
-  "usuarioId": "19",
-  "emailUsuario": "fotografia@example.com"
-},
-{
-  "_id": {
-    "$oid": "67ab6961b7af012d9ada21c3"
-  },
-  "nombre": "Veterinaria Amigo Fiel",
-  "descripcion": "Atención médica y estética para mascotas.",
-  "imagen": "https://images.pexels.com/photos/4587974/pexels-photo-4587974.jpeg",
-  "ubicacion": "Calle Mascotas, 22",
-  "valoracion": 5,
+  "nombre": "Tienda de Deportes Activo",
+  "descripcion": "Equipamiento deportivo y ropa técnica.",
+  "imagen": "https://images.pexels.com/photos/1552242/pexels-photo-1552242.jpeg",
+  "ubicacion": "Calle Deporte, 22",
+  "valoracion": 4.9,
   "categoria": "comercio",
-  "precio": "0",
-  "horarios": "Lunes a Domingo de 8:00 a 20:00",
+  "precio": 0,
+  "horarios": "Lunes a Sábado de 10:00 a 20:00",
   "metodoPago": "Efectivo, Tarjeta",
   "etiquetas": [
-    "veterinaria",
-    "mascotas",
-    "salud"
+    "deportes",
+    "equipamiento",
+    "ropa"
   ],
-  "usuarioId": "20",
-  "emailUsuario": "veterinaria@example.com"
+  "usuarioId": "40",
+  "emailUsuario": "tiendaactivo@example.com"
 },
 {
   "_id": {
-    "$oid": "67aba13cd66477a8a6d65822"
+    "$oid": "67c0aead2474b1d512661867"
   },
-  "nombre": "Arreglo PS5",
-  "descripcion": "En mi compañia Arreglo PS4",
-  "ubicacion": "calle las palomas 2",
-  "valoracion": 4,
-  "imagen": "https://images.pexels.com/photos/4523031/pexels-photo-4523031.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-  "categoria": "actividad",
-  "precio": 50,
-  "horarios": "10:00-21:00",
-  "metodoPago": "Efectivo,Tarjeta",
-  "etiquetas": "PS4, Arreglo,Tienda",
-  "usuarioId": "1739301009314",
-  "emailUsuario": "petronila@gmail.com"
-},
-{
-  "_id": {
-    "$oid": "67aca81daf4127da26264dcc"
-  },
-  "nombre": "DonalDServicios22",
-  "descripcion": "La mejor libreria de Coslada",
-  "ubicacion": "Calle de los Buitres",
-  "valoracion": 4,
-  "imagen": "https://images.pexels.com/photos/30665025/pexels-photo-30665025/free-photo-of-interior-acogedor-de-una-libreria-con-clientes-paseando.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-  "categoria": "actividad",
+  "nombre": "Libreria Teresa",
+  "descripcion": "jdasjifdjfs",
+  "ubicacion": "djasdsadjk",
+  "valoracion": 2,
   "precio": 5,
-  "horarios": "10:00-21:00",
   "metodoPago": "Efectivo,Tarjeta",
-  "etiquetas": "Libreria,Confort,Tranquilidad",
-  "usuarioId": "67ac90dd451e0c959b3fa1d9",
-  "emailUsuario": "carlosdepet@gmaaail.com"
-},
-{
-  "_id": {
-    "$oid": "67aef9e003090d9cf40e61e4"
-  },
-  "nombre": "Panes y Perritos",
-  "descripcion": "Las mejores Baguettes de españa estan en Torrejon",
-  "ubicacion": "calle Tanatos 12",
-  "valoracion": 4,
-  "imagen": "https://images.pexels.com/photos/30667029/pexels-photo-30667029/free-photo-of-croissants-recien-horneados-en-la-panaderia-de-berlin.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-  "categoria": "comercio",
-  "precio": 3,
-  "horarios": "10:00-21:00",
-  "metodoPago": "Efectivo,Tarjeta",
-  "etiquetas": "Panaderia, Croasans",
-  "usuarioId": "67aef92003090d9cf40e61e3",
-  "emailUsuario": "JuanPanadero@gmail.com"
-},
-{
-  "_id": {
-    "$oid": "67b872ebf4550311af78eee3"
-  },
-  "nombre": "Prueba API",
-  "descripcion": "Descripción de prueba",
-  "ubicacion": "Madrid",
-  "valoracion": 5,
-  "imagen": "default.jpg",
-  "categoria": "comercio",
-  "precio": 10,
-  "horarios": "10:00-18:00",
-  "metodoPago": "Tarjeta",
-  "etiquetas": "test",
-  "usuarioId": "1234567890",
-  "emailUsuario": "test@example.com"
-},
-{
-  "_id": {
-    "$oid": "67b873bc8a3fb77d6d31368c"
-  },
-  "nombre": "Prueba API",
-  "descripcion": "Descripción de prueba",
-  "ubicacion": "Madrid",
-  "valoracion": 5,
-  "imagen": "default.jpg",
-  "categoria": "comercio",
-  "precio": 10,
-  "horarios": "10:00-18:00",
-  "metodoPago": "Tarjeta",
-  "etiquetas": "test",
-  "usuarioId": "1234567890",
-  "emailUsuario": "test@example.com"
-},
-{
-  "_id": {
-    "$oid": "67b8a248633bf005607e0fee"
-  },
-  "nombre": "kapachungu",
-  "descripcion": "1",
-  "ubicacion": "1",
-  "valoracion": 3,
-  "imagen": "https://nutricionelenadepetronila.com/wp-content/uploads/2024/01/IMG_15jj48-scaled.jpg",
-  "categoria": "actividad",
-  "precio": 10,
-  "horarios": "9:00 AM - 5:00 PM",
-  "metodoPago": "efectivo",
-  "etiquetas": "nuevo",
-  "usuarioId": "usuario_id",
-  "emailUsuario": "usuario_email"
-},
-{
-  "_id": {
-    "$oid": "67ba1ec29d145ccb90e2cb1d"
-  },
-  "nombre": "Prueba",
-  "descripcion": "Servicio de prueba",
-  "ubicacion": "Madrid",
-  "valoracion": 5,
-  "imagen": "default.jpg",
-  "categoria": "Categoría de prueba",
-  "precio": 100,
-  "horarios": "9:00 - 18:00",
-  "metodoPago": "Tarjeta",
-  "etiquetas": "prueba, test",
-  "usuarioId": "123456789",
-  "emailUsuario": "test@example.com"
-},
-{
-  "_id": {
-    "$oid": "67bb432d76388987f952ccef"
-  },
-  "nombre": "Test Servicio",
-  "descripcion": "Descripción del servicio",
-  "ubicacion": "Ubicación de prueba",
-  "valoracion": 5,
-  "precio": 100,
-  "metodoPago": "efectivo",
   "etiquetas": [
-    "prueba",
-    "test"
+    "Libreria"
+  ],
+  "usuarioId": "67c0ae312474b1d512661866",
+  "emailUsuario": "teresa@gmail.com"
+},
+{
+  "_id": {
+    "$oid": "67c0aee42474b1d512661868"
+  },
+  "nombre": "Teresa",
+  "descripcion": "asffnfdasa",
+  "ubicacion": "aasda",
+  "valoracion": 1,
+  "precio": 1,
+  "metodoPago": "1",
+  "etiquetas": [
+    "1"
+  ],
+  "usuarioId": "67c0ae312474b1d512661866",
+  "emailUsuario": "teresa@gmail.com"
+},
+{
+  "_id": {
+    "$oid": "67c17aaeec334efcdf73bc48"
+  },
+  "nombre": "Libreria Carlos",
+  "descripcion": "LibreriaC Carlos",
+  "ubicacion": "coslada.1",
+  "valoracion": 3,
+  "precio": 5,
+  "metodoPago": "Efectivo,Tarjeta",
+  "etiquetas": [
+    "Libreria"
   ],
   "usuarioId": "67ac72bed9875a3ac6bb1d6b",
   "emailUsuario": "carlosdepet@gmail.com"
 },
 {
   "_id": {
-    "$oid": "67bb49fd76388987f952ccf0"
+    "$oid": "67c41911ce0d2db87cff8707"
   },
-  "nombre": "kapachungu1",
-  "descripcion": "1",
-  "ubicacion": "1",
-  "valoracion": 1,
+  "nombre": "a@a",
+  "descripcion": "Mejor tienda de muebles",
+  "ubicacion": "calle de los Alcornoques 3",
   "precio": 1,
-  "metodoPago": "1",
+  "metodoPago": "Efectivo,Tarjeta",
+  "etiquetas": [
+    "Panaderia",
+    "Croasans"
+  ],
+  "usuarioId": "67c417d4ce0d2db87cff8706",
+  "emailUsuario": "a@a"
+},
+{
+  "_id": {
+    "$oid": "67c57ba5357f2c9b43a40352"
+  },
+  "nombre": "ServicioCarlosdepet@gmail.com",
+  "descripcion": "saas",
+  "ubicacion": "calle las palomas 2",
+  "precio": 1,
+  "metodoPago": "Efectivo,Tarjeta",
   "etiquetas": [
     "Cine",
     "Palomitas",
     "Comida",
     "Terror"
   ],
-  "usuarioId": "67ac72bed9875a3ac6bb1d6b",
-  "emailUsuario": "carlosdepet@gmail.com"
+  "usuarioId": "67c57b12357f2c9b43a40350",
+  "emailUsuario": "carlosdepeet@gmail.com"
+},
+{
+  "_id": {
+    "$oid": "67c960e07083389013f187f7"
+  },
+  "nombre": "DonalDServicios22",
+  "descripcion": "CLa nueva biblioteca",
+  "ubicacion": "1",
+  "precio": 10,
+  "metodoPago": "Efectivo,Tarjeta",
+  "etiquetas": [
+    "Cine",
+    "Palomitas",
+    "Comida",
+    "Terror"
+  ],
+  "usuarioId": "67c95feb7083389013f187f5",
+  "emailUsuario": "Pedro@gmail.com"
+},
+{
+  "_id": {
+    "$oid": "67c98c71b1948ab84ca91404"
+  },
+  "nombre": "TorneoFutsal",
+  "descripcion": "Partidos de futbol sala",
+  "ubicacion": "Campos de Las Vacas",
+  "precio": 0,
+  "metodoPago": "Gratis",
+  "etiquetas": [
+    "Futbol",
+    "Diversión",
+    "Premios"
+  ],
+  "usuarioId": "67c417d4ce0d2db87cff8706",
+  "emailUsuario": "a@a"
+},
+{
+  "_id": {
+    "$oid": "67c98d3bb1948ab84ca91405"
+  },
+  "nombre": "kapachungu",
+  "descripcion": "1",
+  "ubicacion": "1",
+  "precio": 1,
+  "metodoPago": "1",
+  "etiquetas": [
+    "1"
+  ],
+  "usuarioId": "67c417d4ce0d2db87cff8706",
+  "emailUsuario": "a@a"
 }]

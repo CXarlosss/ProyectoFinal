@@ -168,7 +168,7 @@ class CartaServicio extends HTMLElement {
     console.log("✅ <carta-servicio> conectado al DOM.");
     this.render();
     this.addEventListeners();
-    setTimeout(() => this.cargarEstadoFavoritos(), 100); // 👈 Llamamos a cargarEstadoFavoritos() después de renderizar
+    setTimeout(() => this.cargarEstadoFavoritos(), 100);
   }
  /**
    * @param {string} name
@@ -186,7 +186,7 @@ class CartaServicio extends HTMLElement {
  
 
   /**
-   * 📌 Lee los favoritos desde `localStorage` y actualiza el botón si el servicio está en favoritos.
+   *  Lee los favoritos desde `localStorage` y actualiza el botón si el servicio está en favoritos.
    */
   cargarEstadoFavoritos() {
     const usuarioGuardado = localStorage.getItem("usuarioRegistrado");

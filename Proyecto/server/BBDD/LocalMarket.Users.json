@@ -134,9 +134,6 @@
   "direccion": "Calle Enhorabuena,2",
   "favoritos": [
     {
-      "$oid": "67ab6961b7af012d9ada21aa"
-    },
-    {
       "$oid": "67ab6961b7af012d9ada21a5"
     },
     {
@@ -144,6 +141,9 @@
     },
     {
       "$oid": "67c41911ce0d2db87cff8707"
+    },
+    {
+      "$oid": "67ab6961b7af012d9ada21a4"
     }
   ]
 },
@@ -199,4 +199,14 @@
   "telefono": "06712725533",
   "direccion": "C.Mejico 1",
   "favoritos": []
+},
+{
+  "_id": {
+    "$oid": "67c98adfd6f0fdeab133387f"
+  },
+  "nombre": "Javi",
+  "email": "javi@mail.com",
+  "password": "12345678",
+  "telefono": "111111111",
+  "direccion": "111111111"
 }]

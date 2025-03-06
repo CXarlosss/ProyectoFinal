@@ -91,7 +91,7 @@ export class CargarServicios extends HTMLElement {
   async cargarServicios() {
     try {
       const API_PORT = location.port ? `:${location.port}` : "";
-      //const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/read/servicios`);
+     
       const response = await fetch(`${location.protocol}//${location.hostname}${API_PORT}/api/read/servicios`);
       const servicios = await response.json();
 

@@ -1,0 +1,119 @@
+[{
+  "_id": {
+    "$oid": "67c83d5daf723c92960e554e"
+  },
+  "chatId": "67c08da0976e652e185cdb9a_67c41a7dce0d2db87cff8708",
+  "usuarioId": {
+    "$oid": "67c41a7dce0d2db87cff8708"
+  },
+  "receptorId": {
+    "$oid": "67c08da0976e652e185cdb9a"
+  },
+  "contenido": "Buenos dias querria saber a cuanto esta la tarifa mensual?",
+  "leido": false,
+  "fecha": {
+    "$date": "2025-03-05T12:02:37.287Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "67c8400faf723c92960e554f"
+  },
+  "chatId": "67c417d4ce0d2db87cff8706_67c41a7dce0d2db87cff8708",
+  "usuarioId": {
+    "$oid": "67c417d4ce0d2db87cff8706"
+  },
+  "receptorId": {
+    "$oid": "67c41a7dce0d2db87cff8708"
+  },
+  "contenido": "Te contesto desde a@a claro que desaria ussted??",
+  "leido": false,
+  "fecha": {
+    "$date": "2025-03-05T12:14:07.121Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "67c84067af723c92960e5550"
+  },
+  "chatId": "67c417d4ce0d2db87cff8706_67c41a7dce0d2db87cff8708",
+  "usuarioId": {
+    "$oid": "67c41a7dce0d2db87cff8708"
+  },
+  "receptorId": {
+    "$oid": "67c417d4ce0d2db87cff8706"
+  },
+  "contenido": "Pues deseraria tener un sofa de 150x 300 a cuanto mas o menos saldria",
+  "leido": false,
+  "fecha": {
+    "$date": "2025-03-05T12:15:35.634Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "67c840c2af723c92960e5551"
+  },
+  "chatId": "67c417d4ce0d2db87cff8706_67c41a7dce0d2db87cff8708",
+  "usuarioId": {
+    "$oid": "67c417d4ce0d2db87cff8706"
+  },
+  "receptorId": {
+    "$oid": "67c41a7dce0d2db87cff8708"
+  },
+  "contenido": "Pues sobre esas medidas mas o menos estan a 300$ si quiere puede acercarse a ver los modelos pero rondarían los 300 o 350",
+  "leido": false,
+  "fecha": {
+    "$date": "2025-03-05T12:17:06.253Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "67c840f3af723c92960e5552"
+  },
+  "chatId": "67ab6961b7af012d9ada21ac_67c417d4ce0d2db87cff8706",
+  "usuarioId": {
+    "$oid": "67c417d4ce0d2db87cff8706"
+  },
+  "receptorId": {
+    "$oid": "67ab6961b7af012d9ada21ac"
+  },
+  "contenido": "Hola necesitaría sacar unas fotos de un sofa para venderlos me podria dar información sobre tus ofertas?",
+  "leido": false,
+  "fecha": {
+    "$date": "2025-03-05T12:17:55.979Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "67c960317083389013f187f6"
+  },
+  "chatId": "67ab6961b7af012d9ada21be_67c95feb7083389013f187f5",
+  "usuarioId": {
+    "$oid": "67c95feb7083389013f187f5"
+  },
+  "receptorId": {
+    "$oid": "67ab6961b7af012d9ada21be"
+  },
+  "contenido": "Hola quisiera tener una clase de natacion sobre las 6;Cuanto costaria la clase??",
+  "leido": false,
+  "fecha": {
+    "$date": "2025-03-06T08:43:29.095Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "67c9626a7083389013f187f8"
+  },
+  "chatId": "67c417d4ce0d2db87cff8706_67c41a7dce0d2db87cff8708",
+  "usuarioId": {
+    "$oid": "67c41a7dce0d2db87cff8708"
+  },
+  "receptorId": {
+    "$oid": "67c417d4ce0d2db87cff8706"
+  },
+  "contenido": "Claro muchas gracias estaría interesado hoy sobre las 3 me acerco",
+  "leido": false,
+  "fecha": {
+    "$date": "2025-03-06T08:52:58.209Z"
+  }
+}]

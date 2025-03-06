@@ -1,0 +1,202 @@
+[{
+  "_id": {
+    "$oid": "67ab6ea9b7af012d9ada21c5"
+  },
+  "nombre": "SilverSurfer",
+  "email": "carlosdepet@gwwail.com",
+  "password": "1",
+  "telefono": "628192253",
+  "direccion": "C.Mejico N 1",
+  "tipo": "cliente",
+  "historial": "",
+  "servicios": "",
+  "id": "1739183486723"
+},
+{
+  "_id": {
+    "$oid": "67ac65990054ac04e46050e4"
+  },
+  "nombre": "HOla",
+  "email": "juan@gmail.com",
+  "password": "1",
+  "telefono": "12312312",
+  "direccion": "12313132"
+},
+{
+  "_id": {
+    "$oid": "67ac72bed9875a3ac6bb1d6b"
+  },
+  "nombre": "JuanCarlosPetron",
+  "email": "carlosdepet@gmail.com",
+  "password": "1",
+  "telefono": "628192253",
+  "direccion": "C.Mejico N 1",
+  "favoritos": [
+    {
+      "$oid": "67c08da0976e652e185cdba2"
+    },
+    {
+      "$oid": "67ab6961b7af012d9ada21b2"
+    },
+    {
+      "$oid": "67ab6961b7af012d9ada21b0"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "67ac90dd451e0c959b3fa1d9"
+  },
+  "nombre": "CarlosPresiDiiario",
+  "email": "carlosdepet@gmaaail.com",
+  "password": "1",
+  "telefono": "628192253",
+  "direccion": "C.Mejico N 1",
+  "favoritos": [
+    {
+      "$oid": "67aca81daf4127da26264dcc"
+    },
+    "67adf5bd57c22acea14a6cda"
+  ]
+},
+{
+  "_id": {
+    "$oid": "67aef92003090d9cf40e61e3"
+  },
+  "nombre": "Juan El panadero",
+  "email": "JuanPanadero@gmail.com",
+  "password": "1",
+  "telefono": "62222222233",
+  "direccion": "Calle de los Buitres 38",
+  "favoritos": [
+    {
+      "$oid": "67ab6961b7af012d9ada21a4"
+    },
+    {
+      "$oid": "67ab6961b7af012d9ada21a3"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "67b5b271c57124553be65d7d"
+  },
+  "nombre": "CarlosPresi",
+  "email": "elenap.nutricionista@gmail.com",
+  "password": "1",
+  "telefono": "0671272557",
+  "direccion": "C.Mejico N 1"
+},
+{
+  "_id": {
+    "$oid": "67bda43d28c31550d96a6571"
+  },
+  "nombre": "Elena de troya",
+  "email": "elena.nutricionista@gmail.com",
+  "password": "1234",
+  "telefono": "0671272557",
+  "direccion": "C.Mejico N 1",
+  "favoritos": [
+    {
+      "$oid": "67ab6961b7af012d9ada21a4"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "67c0ae312474b1d512661866"
+  },
+  "nombre": "Teresa",
+  "email": "teresa@gmail.com",
+  "password": "1",
+  "telefono": "34144241",
+  "direccion": "Calle de los Buitres 38",
+  "favoritos": [
+    {
+      "$oid": "67ab6961b7af012d9ada21a3"
+    },
+    {
+      "$oid": "67ab6961b7af012d9ada21a4"
+    },
+    {
+      "$oid": "67ab6961b7af012d9ada21a8"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "67c417d4ce0d2db87cff8706"
+  },
+  "nombre": "a@a",
+  "email": "a@a",
+  "password": "1",
+  "telefono": "6213131212",
+  "direccion": "Calle Enhorabuena,2",
+  "favoritos": [
+    {
+      "$oid": "67ab6961b7af012d9ada21aa"
+    },
+    {
+      "$oid": "67ab6961b7af012d9ada21a5"
+    },
+    {
+      "$oid": "67ab6961b7af012d9ada21ac"
+    },
+    {
+      "$oid": "67c41911ce0d2db87cff8707"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "67c41a7dce0d2db87cff8708"
+  },
+  "nombre": "b@b",
+  "email": "b@b",
+  "password": "1",
+  "telefono": "123423133",
+  "direccion": "1331231",
+  "favoritos": [
+    {
+      "$oid": "67c41911ce0d2db87cff8707"
+    },
+    {
+      "$oid": "67c08da0976e652e185cdb9a"
+    },
+    {
+      "$oid": "67ab6961b7af012d9ada21b3"
+    },
+    {
+      "$oid": "67ab6961b7af012d9ada21a9"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "67c57b12357f2c9b43a40350"
+  },
+  "nombre": "carloss",
+  "email": "carlosdepeet@gmail.com",
+  "password": "1",
+  "telefono": "628192253",
+  "direccion": "C.Mejico N 1",
+  "favoritos": [
+    {
+      "$oid": "67c08da0976e652e185cdb9f"
+    },
+    {
+      "$oid": "67c57ba5357f2c9b43a40352"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "67c95feb7083389013f187f5"
+  },
+  "nombre": "PedroC",
+  "email": "Pedro@gmail.com",
+  "password": "123",
+  "telefono": "06712725533",
+  "direccion": "C.Mejico 1",
+  "favoritos": []
+}]

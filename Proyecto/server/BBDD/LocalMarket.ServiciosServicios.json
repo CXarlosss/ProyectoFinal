@@ -1,0 +1,853 @@
+[{
+  "_id": {
+    "$oid": "67ab6961b7af012d9ada21a3"
+  },
+  "nombre": "Clase de Yoga",
+  "descripcion": "Clases de Yoga individualizadas para todos los niveles",
+  "imagen": "https://images.pexels.com/photos/3823062/pexels-photo-3823062.jpeg",
+  "ubicacion": "Avenida de la Paz, 123",
+  "valoracion": 5,
+  "categoria": "actividad",
+  "precio": "0",
+  "horarios": "Lunes a Viernes de 9:00 a 18:00",
+  "metodoPago": "Efectivo, Tarjeta",
+  "etiquetas": [
+    "servicio",
+    "especial"
+  ],
+  "usuarioId": "1",
+  "emailUsuario": "ClasedeYoga@example.com"
+},
+{
+  "_id": {
+    "$oid": "67ab6961b7af012d9ada21a4"
+  },
+  "nombre": "Carnicería Los Tres",
+  "descripcion": "Carnes frescas de calidad, producidas localmente.",
+  "imagen": "https://images.pexels.com/photos/65174/pexels-photo-65174.jpeg",
+  "ubicacion": "Calle de la Libertad, 45",
+  "valoracion": 4,
+  "categoria": "comercio",
+  "precio": "0",
+  "horarios": "Lunes a Viernes de 9:00 a 18:00",
+  "metodoPago": "Efectivo, Tarjeta",
+  "etiquetas": [
+    "servicio",
+    "especial"
+  ],
+  "usuarioId": "1",
+  "emailUsuario": "CarniceriaLosTres@example.com"
+},
+{
+  "_id": {
+    "$oid": "67ab6961b7af012d9ada21a5"
+  },
+  "nombre": "Crosfit",
+  "descripcion": "Clases de Crosfit de forma individual o grupal.",
+  "imagen": "https://images.pexels.com/photos/1552249/pexels-photo-1552249.jpeg",
+  "ubicacion": "Calle del Sol, 67",
+  "valoracion": 4,
+  "categoria": "actividad",
+  "precio": "0",
+  "horarios": "Lunes a Viernes de 9:00 a 18:00",
+  "metodoPago": "Efectivo, Tarjeta",
+  "etiquetas": [
+    "servicio",
+    "especial"
+  ],
+  "usuarioId": "1",
+  "emailUsuario": "Crosfit@gmail.com"
+},
+{
+  "_id": {
+    "$oid": "67ab6961b7af012d9ada21a6"
+  },
+  "nombre": "Spa Relax",
+  "descripcion": "Sesiones de spa y masajes terapéuticos.",
+  "imagen": "https://images.pexels.com/photos/3865676/pexels-photo-3865676.jpeg",
+  "ubicacion": "Calle Primavera, 10",
+  "valoracion": 5,
+  "categoria": "actividad",
+  "precio": "50",
+  "horarios": "Lunes a Domingo de 10:00 a 20:00",
+  "metodoPago": "Efectivo, Tarjeta, PayPal",
+  "etiquetas": [
+    "relax",
+    "masajes",
+    "spa"
+  ],
+  "usuarioId": "2",
+  "emailUsuario": "SpaRelax@example.com"
+},
+{
+  "_id": {
+    "$oid": "67ab6961b7af012d9ada21a7"
+  },
+  "nombre": "Gimnasio Fuerza Total",
+  "descripcion": "Entrenamientos personalizados y clases grupales.",
+  "imagen": "https://images.pexels.com/photos/1954524/pexels-photo-1954524.jpeg",
+  "ubicacion": "Avenida del Progreso, 5",
+  "valoracion": 5,
+  "categoria": "actividad",
+  "precio": "35",
+  "horarios": "Lunes a Sábado de 6:00 a 22:00",
+  "metodoPago": "Efectivo, Tarjeta, Transferencia",
+  "etiquetas": [
+    "fitness",
+    "gimnasio",
+    "entrenamiento"
+  ],
+  "usuarioId": "2",
+  "emailUsuario": "GimnasioFuerzaTotal@example.com"
+},
+{
+  "_id": {
+    "$oid": "67ab6961b7af012d9ada21a8"
+  },
+  "nombre": "Librería La Pluma",
+  "descripcion": "Libros de todo tipo y accesorios para lectura.",
+  "imagen": "https://images.pexels.com/photos/417060/pexels-photo-417060.jpeg",
+  "ubicacion": "Calle Sabiduría, 12",
+  "valoracion": 4,
+  "categoria": "comercio",
+  "precio": "0",
+  "horarios": "Lunes a Viernes de 9:00 a 19:00",
+  "metodoPago": "Efectivo, Tarjeta",
+  "etiquetas": [
+    "libros",
+    "cultura",
+    "lectura"
+  ],
+  "usuarioId": "3",
+  "emailUsuario": "LibreriaLaPluma@example.com"
+},
+{
+  "_id": {
+    "$oid": "67ab6961b7af012d9ada21a9"
+  },
+  "nombre": "Cafetería El Aroma",
+  "descripcion": "Café artesanal y pastelería casera.",
+  "imagen": "https://images.pexels.com/photos/374885/pexels-photo-374885.jpeg",
+  "ubicacion": "Calle del Café, 9",
+  "valoracion": 5,
+  "categoria": "comercio",
+  "precio": "5",
+  "horarios": "Lunes a Domingo de 7:00 a 21:00",
+  "metodoPago": "Efectivo, Tarjeta",
+  "etiquetas": [
+    "café",
+    "pastelería",
+    "artesanal"
+  ],
+  "usuarioId": "3",
+  "emailUsuario": "CafeteriaElAroma@example.com"
+},
+{
+  "_id": {
+    "$oid": "67ab6961b7af012d9ada21aa"
+  },
+  "nombre": "Escuela de Pintura Creativa",
+  "descripcion": "Desarrolla tu talento artístico en un ambiente relajado.",
+  "imagen": "https://images.pexels.com/photos/933255/pexels-photo-933255.jpeg",
+  "ubicacion": "Plaza de las Artes, 21",
+  "valoracion": 4,
+  "categoria": "actividad",
+  "precio": "20",
+  "horarios": "Martes y Jueves de 16:00 a 19:00",
+  "metodoPago": "Efectivo, Tarjeta, Transferencia",
+  "etiquetas": [
+    "arte",
+    "pintura",
+    "clases"
+  ],
+  "usuarioId": "4",
+  "emailUsuario": "PinturaCreativa@example.com"
+},
+{
+  "_id": {
+    "$oid": "67ab6961b7af012d9ada21ab"
+  },
+  "nombre": "Tienda de Tecnología TechWorld",
+  "descripcion": "Últimos gadgets y dispositivos electrónicos.",
+  "imagen": "https://images.pexels.com/photos/3861968/pexels-photo-3861968.jpeg",
+  "ubicacion": "Calle Tecnología, 3",
+  "valoracion": 4,
+  "categoria": "comercio",
+  "precio": "0",
+  "horarios": "Lunes a Viernes de 10:00 a 20:00",
+  "metodoPago": "Efectivo, Tarjeta, PayPal",
+  "etiquetas": [
+    "tecnología",
+    "gadgets",
+    "electrónica"
+  ],
+  "usuarioId": "4",
+  "emailUsuario": "TechWorld@example.com"
+},
+{
+  "_id": {
+    "$oid": "67ab6961b7af012d9ada21ac"
+  },
+  "nombre": "Taller de Fotografía Urbana",
+  "descripcion": "Explora la ciudad y aprende técnicas de fotografía.",
+  "imagen": "https://images.pexels.com/photos/3194513/pexels-photo-3194513.jpeg",
+  "ubicacion": "Punto de encuentro: Plaza Central",
+  "valoracion": 5,
+  "categoria": "actividad",
+  "precio": "25",
+  "horarios": "Sábados de 10:00 a 13:00",
+  "metodoPago": "Efectivo, Tarjeta",
+  "etiquetas": [
+    "fotografía",
+    "urbano",
+    "taller"
+  ],
+  "usuarioId": "5",
+  "emailUsuario": "FotografiaUrbana@example.com"
+},
+{
+  "_id": {
+    "$oid": "67ab6961b7af012d9ada21ad"
+  },
+  "nombre": "Floristería Naturaleza Viva",
+  "descripcion": "Arreglos florales y plantas de interior.",
+  "imagen": "https://images.pexels.com/photos/4503736/pexels-photo-4503736.jpeg",
+  "ubicacion": "Calle Primavera, 15",
+  "valoracion": 5,
+  "categoria": "comercio",
+  "precio": "0",
+  "horarios": "Lunes a Viernes de 9:00 a 18:00",
+  "metodoPago": "Efectivo, Tarjeta",
+  "etiquetas": [
+    "flores",
+    "naturaleza",
+    "decoración"
+  ],
+  "usuarioId": "5",
+  "emailUsuario": "FloristeriaNaturalezaViva@example.com"
+},
+{
+  "_id": {
+    "$oid": "67ab6961b7af012d9ada21ae"
+  },
+  "nombre": "Tienda de Ropa Vintage",
+  "descripcion": "Encuentra piezas únicas de estilo retro.",
+  "imagen": "https://images.pexels.com/photos/2062433/pexels-photo-2062433.jpeg",
+  "ubicacion": "Calle del Tiempo, 7",
+  "valoracion": 4,
+  "categoria": "comercio",
+  "precio": "0",
+  "horarios": "Lunes a Sábado de 11:00 a 20:00",
+  "metodoPago": "Efectivo, Tarjeta, Transferencia",
+  "etiquetas": [
+    "ropa",
+    "vintage",
+    "moda"
+  ],
+  "usuarioId": "6",
+  "emailUsuario": "TiendaVintage@example.com"
+},
+{
+  "_id": {
+    "$oid": "67ab6961b7af012d9ada21af"
+  },
+  "nombre": "Escuela de Cocina Gourmet",
+  "descripcion": "Aprende a preparar recetas internacionales.",
+  "imagen": "https://images.pexels.com/photos/4252138/pexels-photo-4252138.jpeg",
+  "ubicacion": "Calle Sazón, 10",
+  "valoracion": 5,
+  "categoria": "actividad",
+  "precio": "30",
+  "horarios": "Viernes de 17:00 a 20:00",
+  "metodoPago": "Efectivo, Tarjeta, PayPal",
+  "etiquetas": [
+    "cocina",
+    "gastronomía",
+    "clases"
+  ],
+  "usuarioId": "6",
+  "emailUsuario": "CocinaGourmet@example.com"
+},
+{
+  "_id": {
+    "$oid": "67ab6961b7af012d9ada21b0"
+  },
+  "nombre": "Taller de Cerámica",
+  "descripcion": "Diseña y crea tus propias piezas de cerámica.",
+  "imagen": "https://images.pexels.com/photos/4041467/pexels-photo-4041467.jpeg",
+  "ubicacion": "Avenida del Arte, 32",
+  "valoracion": 5,
+  "categoria": "actividad",
+  "precio": "40",
+  "horarios": "Miércoles y Sábados de 15:00 a 18:00",
+  "metodoPago": "Efectivo, Tarjeta, Transferencia",
+  "etiquetas": [
+    "arte",
+    "manualidades",
+    "cerámica"
+  ],
+  "usuarioId": "7",
+  "emailUsuario": "TallerCeramica@example.com"
+},
+{
+  "_id": {
+    "$oid": "67ab6961b7af012d9ada21b1"
+  },
+  "nombre": "Escuela de Danza Clásica",
+  "descripcion": "Clases de ballet y danza contemporánea.",
+  "imagen": "https://images.pexels.com/photos/1820145/pexels-photo-1820145.jpeg",
+  "ubicacion": "Centro Cultural Moderno, 20",
+  "valoracion": 5,
+  "categoria": "actividad",
+  "precio": "30",
+  "horarios": "Lunes y Jueves de 16:00 a 19:00",
+  "metodoPago": "Efectivo, Tarjeta",
+  "etiquetas": [
+    "danza",
+    "ballet",
+    "arte"
+  ],
+  "usuarioId": "7",
+  "emailUsuario": "DanzaClasica@example.com"
+},
+{
+  "_id": {
+    "$oid": "67ab6961b7af012d9ada21b2"
+  },
+  "nombre": "Tienda de Bicicletas EcoRide",
+  "descripcion": "Venta y reparación de bicicletas.",
+  "imagen": "https://images.pexels.com/photos/276517/pexels-photo-276517.jpeg",
+  "ubicacion": "Avenida de la Naturaleza, 9",
+  "valoracion": 4,
+  "categoria": "comercio",
+  "precio": "0",
+  "horarios": "Lunes a Sábado de 10:00 a 19:00",
+  "metodoPago": "Efectivo, Tarjeta",
+  "etiquetas": [
+    "bicicletas",
+    "movilidad",
+    "ecológico"
+  ],
+  "usuarioId": "8",
+  "emailUsuario": "EcoRide@example.com"
+},
+{
+  "_id": {
+    "$oid": "67ab6961b7af012d9ada21b3"
+  },
+  "nombre": "Centro de Yoga Zen",
+  "descripcion": "Clases de yoga y meditación guiada.",
+  "imagen": "https://images.pexels.com/photos/317157/pexels-photo-317157.jpeg",
+  "ubicacion": "Calle Tranquilidad, 5",
+  "valoracion": 5,
+  "categoria": "actividad",
+  "precio": "20",
+  "horarios": "Lunes a Viernes de 8:00 a 20:00",
+  "metodoPago": "Efectivo, Tarjeta, PayPal",
+  "etiquetas": [
+    "yoga",
+    "meditación",
+    "relajación"
+  ],
+  "usuarioId": "8",
+  "emailUsuario": "YogaZen@example.com"
+},
+{
+  "_id": {
+    "$oid": "67ab6961b7af012d9ada21b4"
+  },
+  "nombre": "Tienda de Juguetes Creativos",
+  "descripcion": "Juguetes educativos y ecológicos para niños.",
+  "imagen": "https://images.pexels.com/photos/620309/pexels-photo-620309.jpeg",
+  "ubicacion": "Calle de la Imaginación, 12",
+  "valoracion": 4,
+  "categoria": "comercio",
+  "precio": "0",
+  "horarios": "Lunes a Domingo de 10:00 a 18:00",
+  "metodoPago": "Efectivo, Tarjeta",
+  "etiquetas": [
+    "juguetes",
+    "educación",
+    "niños"
+  ],
+  "usuarioId": "9",
+  "emailUsuario": "JuguetesCreativos@example.com"
+},
+{
+  "_id": {
+    "$oid": "67ab6961b7af012d9ada21b5"
+  },
+  "nombre": "Peluquería Belleza Total",
+  "descripcion": "Cortes, tintes y tratamientos capilares.",
+  "imagen": "https://images.pexels.com/photos/3993444/pexels-photo-3993444.jpeg",
+  "ubicacion": "Avenida del Estilo, 15",
+  "valoracion": 4,
+  "categoria": "comercio",
+  "precio": "25",
+  "horarios": "Martes a Sábado de 9:00 a 18:00",
+  "metodoPago": "Efectivo, Tarjeta",
+  "etiquetas": [
+    "belleza",
+    "peluquería",
+    "cuidado"
+  ],
+  "usuarioId": "9",
+  "emailUsuario": "BellezaTotal@example.com"
+},
+{
+  "_id": {
+    "$oid": "67ab6961b7af012d9ada21b6"
+  },
+  "nombre": "Academia de Música SonArte",
+  "descripcion": "Clases de guitarra, piano y canto.",
+  "imagen": "https://images.pexels.com/photos/164743/pexels-photo-164743.jpeg",
+  "ubicacion": "Calle Melodía, 10",
+  "valoracion": 5,
+  "categoria": "actividad",
+  "precio": "35",
+  "horarios": "Lunes a Viernes de 15:00 a 20:00",
+  "metodoPago": "Efectivo, Tarjeta, Transferencia",
+  "etiquetas": [
+    "música",
+    "guitarra",
+    "piano"
+  ],
+  "usuarioId": "10",
+  "emailUsuario": "SonArte@example.com"
+},
+{
+  "_id": {
+    "$oid": "67ab6961b7af012d9ada21ba"
+  },
+  "nombre": "Escuela de Idiomas GlobalSpeak",
+  "descripcion": "Aprende inglés, francés, alemán y más con profesores nativos.",
+  "imagen": "https://images.pexels.com/photos/3184398/pexels-photo-3184398.jpeg",
+  "ubicacion": "Calle Internacional, 7",
+  "valoracion": 5,
+  "categoria": "actividad",
+  "precio": "20",
+  "horarios": "Lunes a Viernes de 8:00 a 20:00",
+  "metodoPago": "Efectivo, Tarjeta, Transferencia",
+  "etiquetas": [
+    "idiomas",
+    "educación",
+    "cursos"
+  ],
+  "usuarioId": "11",
+  "emailUsuario": "globalspeak@example.com"
+},
+{
+  "_id": {
+    "$oid": "67ab6961b7af012d9ada21bb"
+  },
+  "nombre": "Centro de Masajes Vital",
+  "descripcion": "Masajes terapéuticos y relajantes para aliviar el estrés.",
+  "imagen": "https://images.pexels.com/photos/3865792/pexels-photo-3865792.jpeg",
+  "ubicacion": "Avenida Bienestar, 10",
+  "valoracion": 4,
+  "categoria": "actividad",
+  "precio": "45",
+  "horarios": "Lunes a Sábado de 10:00 a 21:00",
+  "metodoPago": "Efectivo, Tarjeta",
+  "etiquetas": [
+    "relax",
+    "bienestar",
+    "masajes"
+  ],
+  "usuarioId": "12",
+  "emailUsuario": "masajesvital@example.com"
+},
+{
+  "_id": {
+    "$oid": "67ab6961b7af012d9ada21bc"
+  },
+  "nombre": "Panadería La Tradición",
+  "descripcion": "Pan artesanal y bollería recién horneada todos los días.",
+  "imagen": "https://images.pexels.com/photos/2092903/pexels-photo-2092903.jpeg",
+  "ubicacion": "Calle Dulce, 14",
+  "valoracion": 5,
+  "categoria": "comercio",
+  "precio": "0",
+  "horarios": "Lunes a Domingo de 6:00 a 18:00",
+  "metodoPago": "Efectivo, Tarjeta",
+  "etiquetas": [
+    "pan",
+    "pastelería",
+    "artesanal"
+  ],
+  "usuarioId": "13",
+  "emailUsuario": "panaderialatradicion@example.com"
+},
+{
+  "_id": {
+    "$oid": "67ab6961b7af012d9ada21be"
+  },
+  "nombre": "Club de Natación AquaFit",
+  "descripcion": "Clases de natación y entrenamiento acuático para todas las edades.",
+  "imagen": "https://images.pexels.com/photos/863988/pexels-photo-863988.jpeg",
+  "ubicacion": "Centro Deportivo Agua Azul",
+  "valoracion": 5,
+  "categoria": "actividad",
+  "precio": "30",
+  "horarios": "Lunes a Domingo de 7:00 a 20:00",
+  "metodoPago": "Efectivo, Tarjeta, Transferencia",
+  "etiquetas": [
+    "natación",
+    "fitness",
+    "agua"
+  ],
+  "usuarioId": "15",
+  "emailUsuario": "aquafit@example.com"
+},
+{
+  "_id": {
+    "$oid": "67ab6961b7af012d9ada21bf"
+  },
+  "nombre": "Restaurante Sabores del Mundo",
+  "descripcion": "Platos internacionales con ingredientes frescos y locales.",
+  "imagen": "https://images.pexels.com/photos/3184192/pexels-photo-3184192.jpeg",
+  "ubicacion": "Calle Gastronómica, 3",
+  "valoracion": 5,
+  "categoria": "comercio",
+  "precio": "20",
+  "horarios": "Lunes a Domingo de 12:00 a 23:00",
+  "metodoPago": "Efectivo, Tarjeta, PayPal",
+  "etiquetas": [
+    "restaurante",
+    "internacional",
+    "gourmet"
+  ],
+  "usuarioId": "16",
+  "emailUsuario": "saboresdelmundo@example.com"
+},
+{
+  "_id": {
+    "$oid": "67c08c65976e652e185cdb8f"
+  },
+  "nombre": "Cafetería Delicia",
+  "descripcion": "Café artesanal con postres caseros.",
+  "imagen": "https://images.pexels.com/photos/2396220/pexels-photo-2396220.jpeg",
+  "ubicacion": "Avenida del Café, 8",
+  "valoracion": 5,
+  "categoria": "comercio",
+  "precio": 5,
+  "horarios": "Lunes a Domingo de 7:00 a 22:00",
+  "metodoPago": "Efectivo, Tarjeta",
+  "etiquetas": [
+    "café",
+    "postres",
+    "artesanal"
+  ],
+  "usuarioId": "21",
+  "emailUsuario": "cafeteriadelicia@example.com"
+},
+{
+  "_id": {
+    "$oid": "67c08da0976e652e185cdb99"
+  },
+  "nombre": "Cafetería Aroma Divino",
+  "descripcion": "Café de especialidad y pastelería artesanal.",
+  "imagen": "https://images.pexels.com/photos/302899/pexels-photo-302899.jpeg",
+  "ubicacion": "Calle Café, 7",
+  "valoracion": 4.8,
+  "categoria": "comercio",
+  "precio": 0,
+  "horarios": "Lunes a Domingo de 8:00 a 20:00",
+  "metodoPago": "Efectivo, Tarjeta",
+  "etiquetas": [
+    "café",
+    "pastelería",
+    "desayuno"
+  ],
+  "usuarioId": "31",
+  "emailUsuario": "aromadivino@example.com"
+},
+{
+  "_id": {
+    "$oid": "67c08da0976e652e185cdb9a"
+  },
+  "nombre": "Gimnasio Fitness Total",
+  "descripcion": "Entrenamientos personalizados y clases grupales.",
+  "imagen": "https://images.pexels.com/photos/841130/pexels-photo-841130.jpeg",
+  "ubicacion": "Avenida Salud, 12",
+  "valoracion": 4.7,
+  "categoria": "actividad",
+  "precio": 30,
+  "horarios": "Lunes a Viernes de 6:00 a 22:00",
+  "metodoPago": "Tarjeta, Transferencia",
+  "etiquetas": [
+    "gimnasio",
+    "fitness",
+    "entrenamiento"
+  ],
+  "usuarioId": "32",
+  "emailUsuario": "fitnesstotal@example.com"
+},
+{
+  "_id": {
+    "$oid": "67c08da0976e652e185cdb9b"
+  },
+  "nombre": "Librería Páginas Mágicas",
+  "descripcion": "Libros de todos los géneros y eventos literarios.",
+  "imagen": "https://images.pexels.com/photos/159711/books-bookstore-book-reading-159711.jpeg",
+  "ubicacion": "Calle Lectura, 20",
+  "valoracion": 4.9,
+  "categoria": "comercio",
+  "precio": 0,
+  "horarios": "Lunes a Sábado de 10:00 a 20:00",
+  "metodoPago": "Efectivo, Tarjeta",
+  "etiquetas": [
+    "libros",
+    "lectura",
+    "literatura"
+  ],
+  "usuarioId": "33",
+  "emailUsuario": "paginasmagicas@example.com"
+},
+{
+  "_id": {
+    "$oid": "67c08da0976e652e185cdb9c"
+  },
+  "nombre": "Estudio de Yoga Serenidad",
+  "descripcion": "Clases de yoga para todos los niveles.",
+  "imagen": "https://images.pexels.com/photos/1552631/pexels-photo-1552631.jpeg",
+  "ubicacion": "Centro de Bienestar Serenidad",
+  "valoracion": 5,
+  "categoria": "actividad",
+  "precio": 20,
+  "horarios": "Lunes a Viernes de 7:00 a 21:00",
+  "metodoPago": "Efectivo, Tarjeta",
+  "etiquetas": [
+    "yoga",
+    "bienestar",
+    "relajación"
+  ],
+  "usuarioId": "34",
+  "emailUsuario": "yogaserenidad@example.com"
+},
+{
+  "_id": {
+    "$oid": "67c08da0976e652e185cdb9d"
+  },
+  "nombre": "Taller de Arte Creativo",
+  "descripcion": "Clases de pintura, dibujo y escultura.",
+  "imagen": "https://images.pexels.com/photos/356043/pexels-photo-356043.jpeg",
+  "ubicacion": "Calle Arte, 5",
+  "valoracion": 4.8,
+  "categoria": "actividad",
+  "precio": 25,
+  "horarios": "Lunes a Sábado de 10:00 a 19:00",
+  "metodoPago": "Efectivo, Tarjeta",
+  "etiquetas": [
+    "arte",
+    "pintura",
+    "creatividad"
+  ],
+  "usuarioId": "35",
+  "emailUsuario": "artecreativo@example.com"
+},
+{
+  "_id": {
+    "$oid": "67c08da0976e652e185cdb9e"
+  },
+  "nombre": "Restaurante Sabores del Mar",
+  "descripcion": "Cocina mediterránea con productos frescos.",
+  "imagen": "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg",
+  "ubicacion": "Avenida Marítima, 3",
+  "valoracion": 4.9,
+  "categoria": "comercio",
+  "precio": 0,
+  "horarios": "Lunes a Domingo de 12:00 a 23:00",
+  "metodoPago": "Efectivo, Tarjeta, PayPal",
+  "etiquetas": [
+    "mariscos",
+    "mediterráneo",
+    "gastronomía"
+  ],
+  "usuarioId": "36",
+  "emailUsuario": "saboresdelmar@example.com"
+},
+{
+  "_id": {
+    "$oid": "67c08da0976e652e185cdb9f"
+  },
+  "nombre": "Centro de Masajes Relax",
+  "descripcion": "Masajes relajantes y terapéuticos.",
+  "imagen": "https://images.pexels.com/photos/6628520/pexels-photo-6628520.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1\n",
+  "ubicacion": "Calle Bienestar, 8",
+  "valoracion": 4.7,
+  "categoria": "actividad",
+  "precio": 35,
+  "horarios": "Lunes a Sábado de 9:00 a 21:00",
+  "metodoPago": "Efectivo, Tarjeta",
+  "etiquetas": [
+    "masajes",
+    "relajación",
+    "bienestar"
+  ],
+  "usuarioId": "37",
+  "emailUsuario": "masajesrelax@example.com"
+},
+{
+  "_id": {
+    "$oid": "67c08da0976e652e185cdba0"
+  },
+  "nombre": "Tienda de Mascotas Amigo Fiel",
+  "descripcion": "Productos y accesorios para mascotas.",
+  "imagen": "https://images.pexels.com/photos/33053/dog-young-dog-small-dog-maltese.jpg",
+  "ubicacion": "Avenida Animal, 15",
+  "valoracion": 4.8,
+  "categoria": "comercio",
+  "precio": 0,
+  "horarios": "Lunes a Sábado de 10:00 a 20:00",
+  "metodoPago": "Efectivo, Tarjeta",
+  "etiquetas": [
+    "mascotas",
+    "animales",
+    "accesorios"
+  ],
+  "usuarioId": "38",
+  "emailUsuario": "amigofiel@example.com"
+},
+{
+  "_id": {
+    "$oid": "67c08da0976e652e185cdba1"
+  },
+  "nombre": "Escuela de Música Sonidos del Alma",
+  "descripcion": "Clases de piano, guitarra y canto.",
+  "imagen": "https://images.pexels.com/photos/30869001/pexels-photo-30869001/free-photo-of-sesion-de-escucha-de-vinilos-antiguos-en-yakarta.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1\n",
+  "ubicacion": "Centro Cultural Sonidos",
+  "valoracion": 5,
+  "categoria": "actividad",
+  "precio": 30,
+  "horarios": "Lunes a Viernes de 16:00 a 21:00",
+  "metodoPago": "Efectivo, Tarjeta",
+  "etiquetas": [
+    "música",
+    "instrumentos",
+    "canto"
+  ],
+  "usuarioId": "39",
+  "emailUsuario": "sonidosdelalma@example.com"
+},
+{
+  "_id": {
+    "$oid": "67c08da0976e652e185cdba2"
+  },
+  "nombre": "Tienda de Deportes Activo",
+  "descripcion": "Equipamiento deportivo y ropa técnica.",
+  "imagen": "https://images.pexels.com/photos/1552242/pexels-photo-1552242.jpeg",
+  "ubicacion": "Calle Deporte, 22",
+  "valoracion": 4.9,
+  "categoria": "comercio",
+  "precio": 0,
+  "horarios": "Lunes a Sábado de 10:00 a 20:00",
+  "metodoPago": "Efectivo, Tarjeta",
+  "etiquetas": [
+    "deportes",
+    "equipamiento",
+    "ropa"
+  ],
+  "usuarioId": "40",
+  "emailUsuario": "tiendaactivo@example.com"
+},
+{
+  "_id": {
+    "$oid": "67c0aead2474b1d512661867"
+  },
+  "nombre": "Libreria Teresa",
+  "descripcion": "jdasjifdjfs",
+  "ubicacion": "djasdsadjk",
+  "valoracion": 2,
+  "precio": 5,
+  "metodoPago": "Efectivo,Tarjeta",
+  "etiquetas": [
+    "Libreria"
+  ],
+  "usuarioId": "67c0ae312474b1d512661866",
+  "emailUsuario": "teresa@gmail.com"
+},
+{
+  "_id": {
+    "$oid": "67c0aee42474b1d512661868"
+  },
+  "nombre": "Teresa",
+  "descripcion": "asffnfdasa",
+  "ubicacion": "aasda",
+  "valoracion": 1,
+  "precio": 1,
+  "metodoPago": "1",
+  "etiquetas": [
+    "1"
+  ],
+  "usuarioId": "67c0ae312474b1d512661866",
+  "emailUsuario": "teresa@gmail.com"
+},
+{
+  "_id": {
+    "$oid": "67c17aaeec334efcdf73bc48"
+  },
+  "nombre": "Libreria Carlos",
+  "descripcion": "LibreriaC Carlos",
+  "ubicacion": "coslada.1",
+  "valoracion": 3,
+  "precio": 5,
+  "metodoPago": "Efectivo,Tarjeta",
+  "etiquetas": [
+    "Libreria"
+  ],
+  "usuarioId": "67ac72bed9875a3ac6bb1d6b",
+  "emailUsuario": "carlosdepet@gmail.com"
+},
+{
+  "_id": {
+    "$oid": "67c41911ce0d2db87cff8707"
+  },
+  "nombre": "a@a",
+  "descripcion": "Mejor tienda de muebles",
+  "ubicacion": "calle de los Alcornoques 3",
+  "precio": 1,
+  "metodoPago": "Efectivo,Tarjeta",
+  "etiquetas": [
+    "Panaderia",
+    "Croasans"
+  ],
+  "usuarioId": "67c417d4ce0d2db87cff8706",
+  "emailUsuario": "a@a"
+},
+{
+  "_id": {
+    "$oid": "67c57ba5357f2c9b43a40352"
+  },
+  "nombre": "ServicioCarlosdepet@gmail.com",
+  "descripcion": "saas",
+  "ubicacion": "calle las palomas 2",
+  "precio": 1,
+  "metodoPago": "Efectivo,Tarjeta",
+  "etiquetas": [
+    "Cine",
+    "Palomitas",
+    "Comida",
+    "Terror"
+  ],
+  "usuarioId": "67c57b12357f2c9b43a40350",
+  "emailUsuario": "carlosdepeet@gmail.com"
+},
+{
+  "_id": {
+    "$oid": "67c960e07083389013f187f7"
+  },
+  "nombre": "DonalDServicios22",
+  "descripcion": "CLa nueva biblioteca",
+  "ubicacion": "1",
+  "precio": 10,
+  "metodoPago": "Efectivo,Tarjeta",
+  "etiquetas": [
+    "Cine",
+    "Palomitas",
+    "Comida",
+    "Terror"
+  ],
+  "usuarioId": "67c95feb7083389013f187f5",
+  "emailUsuario": "Pedro@gmail.com"
+}]

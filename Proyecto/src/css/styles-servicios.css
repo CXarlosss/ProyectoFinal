@@ -16,12 +16,12 @@ body {
 header {
   text-align: center;
   padding: 20px;
-  background: rgba(51, 51, 51, 0.8); /* 🎭 Efecto Glassmorphism */
+  background: rgba(51, 51, 51, 0.8); 
   backdrop-filter: blur(10px);
   color: white;
   box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
   background: url("https://images.pexels.com/photos/2119903/pexels-photo-2119903.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1") no-repeat center center;
-  background-size: cover; /* Asegura que la imagen cubra todo el header */
+  background-size: cover; 
   height: 120px;
   backdrop-filter: blur(10px) !important;
   position: relative;
@@ -35,9 +35,9 @@ header::before {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.4); /* Capa oscura con transparencia */
-  backdrop-filter: blur(5px); /* Difuminado extra */
-  z-index: -1; /* Coloca la capa detrás del contenido */
+  background: rgba(0, 0, 0, 0.4); 
+  backdrop-filter: blur(5px); 
+  z-index: -1; 
 }
 h1 {
   margin-bottom: 10px;
@@ -73,7 +73,7 @@ nav ul li a::after {
   content: "";
   width: 0;
   height: 3px;
-  background: #f04e23; /* Amarillo vibrante */
+  background: #f04e23; 
   position: absolute;
   bottom: -1px;
   left: 50%;
@@ -126,10 +126,10 @@ button:hover {
 #servicios-container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  grid-auto-rows: minmax(430px, auto); /* 🔹 Aumentado para evitar cortes */
-  gap: 20px; /* Espaciado uniforme */
+  grid-auto-rows: minmax(430px, auto);
+  gap: 20px; 
   padding: 10px;
-  align-items: start; /* Evita que las tarjetas se estiren */
+  align-items: start; 
 }
 /* Aplica el efecto de desenfoque y opacidad solo a las tarjetas que NO están en hover */
 #servicios-container:hover carta-servicio:not(:hover) {
@@ -162,7 +162,7 @@ scale: 1.03;
  
 }
 
-/* 📌 Imagen de la tarjeta */
+/*  Imagen de la tarjeta */
 carta-servicio img {
   width: 100%;
   height: 200px; 
@@ -170,7 +170,7 @@ carta-servicio img {
   border-radius: 10px;
 }
 
-/* 📌 Información del servicio */
+/* Información del servicio */
 carta-servicio h2 {
   font-size: 1.4rem;
   margin-top: 10px;
@@ -182,7 +182,7 @@ carta-servicio p {
   font-size: 1rem;
   color: #555;
   margin: 10px 0;
-  flex-grow: 1; /* 🔹 Permite que el contenido crezca sin cortar el botón */
+  flex-grow: 1;
 }
 
 /* 📌 Ubicación y detalles */
@@ -195,8 +195,8 @@ carta-servicio .ubicacion {
 /* 🎯 Botón de acción alineado abajo */
 carta-servicio .boton {
   display: inline-block;
-  margin-top: auto; /* 🔹 Empuja el botón hacia abajo */
-  padding: 12px 20px; /* 🔹 Más grande */
+  margin-top: auto; 
+  padding: 12px 20px; 
   border-radius: 10px;
   color: #b2005e;
   font-weight: bold;
@@ -223,7 +223,7 @@ carta-servicio .boton:hover {
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
   backdrop-filter: blur(5px);
 
-  align-self: start; /* 🔹 Asegura que las tarjetas no crezcan más de lo necesario */
+  align-self: start; 
 }
 
 
@@ -292,7 +292,7 @@ carta-servicio .boton:hover {
 
 /* 🟣 FONDO DIFUMINADO CUANDO EL MODAL ESTÁ ACTIVO */
 body.modal-active {
-  overflow: hidden; /* Evita scroll en el fondo */
+  overflow: hidden; 
 }
 
 body.modal-active::before {
@@ -302,9 +302,9 @@ body.modal-active::before {
   left: 0;
   width: 100%;
   height: 100%;
-  backdrop-filter: blur(15px); /* 🔥 FONDO DESENFOCADO MÁS SUAVE */
-  background: rgba(0, 0, 0, 0.4); /* 🔹 Oscurece un poco */
-  z-index: 998; /* Detrás del modal */
+  backdrop-filter: blur(15px);
+  background: rgba(0, 0, 0, 0.4); 
+  z-index: 998; 
 }
 
 /* 🟣 MODAL PRINCIPAL */
@@ -313,11 +313,11 @@ body.modal-active::before {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: rgba(255, 255, 255, 0.12); /* 🔥 Glassmorphism */
-  backdrop-filter: blur(30px); /* 🔥 Suaviza el fondo del modal */
+  background: rgba(255, 255, 255, 0.12); 
+  backdrop-filter: blur(30px); 
   box-shadow: 0px 15px 35px rgba(0, 0, 0, 0.4);
   padding: 30px;
-  border-radius: 10px; /* 🔥 CUADRICULADO PERO CON BORDES SUAVES */
+  border-radius: 10px; 
   z-index: 999;
   width: 130%;
   max-width: 420px;
@@ -329,7 +329,7 @@ body.modal-active::before {
   text-align: center;
   animation: fadeIn 0.4s ease-in-out;
   border: 2px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0px 0px 20px rgba(255, 255, 255, 0.3); /* 🔥 Efecto de luz en el borde */
+  box-shadow: 0px 0px 20px rgba(255, 255, 255, 0.3);
 }
 
 /* 🟣 TÍTULO DEL MODAL */
@@ -361,11 +361,11 @@ body.modal-active::before {
   border-radius: 10px;
   border: 2px solid rgba(255, 255, 255, 0.3);
   background: rgba(255, 255, 255, 0.2);
-  color: white;
+  color: rgb(24, 23, 23);
   transition: all 0.3s ease;
   outline: none;
   box-shadow: inset 3px 3px 8px rgba(0, 0, 0, 0.2),
-              inset -3px -3px 8px rgba(255, 255, 255, 0.2); /* 🔥 Neumorphism */
+              inset -3px -3px 8px rgba(255, 255, 255, 0.2); 
 }
 
 .modal-content input::placeholder,
@@ -451,7 +451,7 @@ body.modal-active::before {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.6); /* Fondo oscuro semi-transparente */
+  background: rgba(0, 0, 0, 0.6); 
   display: flex;
   justify-content: center;
   align-items: center;
@@ -536,7 +536,7 @@ footer {
 @media (min-width: 1025px) {
   #servicios-container {
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    margin-bottom: 50px; /* 🔹 Más espacio debajo */
+    margin-bottom: 50px; 
   }
   header {
     padding: 15px;
@@ -563,7 +563,7 @@ footer {
   #servicios-container {
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     grid-auto-rows: minmax(380px, auto);
-    margin-bottom: 50px; /* 🔹 Más espacio debajo */
+    margin-bottom: 50px; 
   }
   header {
     padding: 15px;
@@ -613,7 +613,7 @@ footer {
   #servicios-container {
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     grid-auto-rows: minmax(360px, auto);
-    margin-bottom: 50px; /* 🔹 Más espacio debajo */
+    margin-bottom: 50px; 
   }
   .modal-content {
     width: 90%;
@@ -670,7 +670,7 @@ footer {
     grid-template-columns: 1fr;
     grid-auto-rows: minmax(350px, auto);
     padding: 10px;
-    margin-bottom: 70px; /* 🔹 Aún más espacio debajo */
+    margin-bottom: 70px; 
   }
   .modal-content {
     width: 90%;

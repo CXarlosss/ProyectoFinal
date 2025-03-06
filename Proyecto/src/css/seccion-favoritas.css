@@ -438,4 +438,12 @@
   .servicio-recomendado {
     width: 100%;
   }
+  .favorito-item{
+    width: 100%;
+    font-size: 0.7rem;
+  }
+  .favorito-buttons{
+    width: 20%;
+    
+  }
 }

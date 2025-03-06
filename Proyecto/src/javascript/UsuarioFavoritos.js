@@ -128,8 +128,6 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("✅ Favoritos renderizados en la UI.");
     }
 
-
-
     //LiSTA
     // Mostrar servicios recomendados basados en los favoritos
     // Filtramos los servicios recomendados basados en la categoría de los favoritos

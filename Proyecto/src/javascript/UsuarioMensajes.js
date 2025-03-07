@@ -4,6 +4,7 @@ const API_PORT = location.port ? `:${location.port}` : '';
 document.addEventListener("DOMContentLoaded", () => {
     
     //Captura elementos clave del DOM como botones y el área del chat.
+    //Verifica si hay un servicio guardado en localStorage y abre el chat con su ID.
     //Recupera el servicio guardado en localStorage y abre el chat si hay un servicio seleccionado.
     //Llama a cargarMensajes() y cargarMensajesRecibidosPorServicio() para obtener mensajes existentes.
 
@@ -34,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
 //Hace una solicitud al servidor para recuperar mensajes donde el usuario es emisor o receptor.
 //Filtra mensajes relevantes y obtiene datos de usuarios y servicios.
 //Asigna nombres reales a los mensajes.
-//Llama a renderizarListaChats() para actualizar la UI.
+//Llamar a `cargarMensajesRecibidosPorServicio()`
 let mensajesUsuario = []; // Variable global temporal para fusionar mensajes
 async function cargarMensajes() {
     try {
@@ -107,8 +108,9 @@ async function cargarMensajes() {
     }
 }
 //RenderizarListaChats
-//Recibe los mensajes y los organiza en una lista de chats únicos.
-//Muestra el último mensaje enviado en cada chat y la fecha del mensaje más reciente.
+//Captura el contenedor donde se mostraran los chats
+//Agrupa los mensajes en una lista de chats unicos
+//Para cada chat, te muestra: Nombre de contacto, Ultimo Mensaje enviado y Fecha
 //Permite abrir un chat al hacer clic en un contacto.
 /**
  *  Renderiza la lista de chats en la UI con nombres reales.
@@ -138,6 +140,9 @@ function renderizarListaChats(mensajes, usuarioId, mapaNombres) {
 
     mensajes.forEach((msg) => {
         //  Ahora agrupamos por contactoId en lugar de chatId para evitar múltiples chats con la misma persona
+        //Determinamos el ID del contacto con el que se esta chateando
+        //Si el usuario es el emisor, el contacto es el receptorID
+        //Si el usuario es el receptor, el contacto es el usuarioID
         const contactoId = msg.usuarioId === usuarioId ? msg.receptorId : msg.usuarioId;
         const contactoNombre = mapaNombres[contactoId] || `Usuario ${contactoId}`;
 
@@ -177,9 +182,11 @@ function renderizarListaChats(mensajes, usuarioId, mapaNombres) {
 }
 
 //AbrirChats
+//Captura los elementos HTML del chat
 //Recupera el chat guardado en localStorage.
 //Busca si el contactoId es un servicio o un usuario y obtiene su nombre.
 //Recupera los mensajes entre el usuario y el contacto del servidor.
+//Desplaza el área del chat hacia abajo para mostrar el último mensaje.
 //Renderiza los mensajes en la interfaz.
 /**
  *  Abre un chat específico y muestra los mensajes.
